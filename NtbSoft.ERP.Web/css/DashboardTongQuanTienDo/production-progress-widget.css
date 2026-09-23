@@ -1,0 +1,534 @@
+﻿/**
+ * Production Progress Widget - Stylesheet
+ * Module Dashboard: TIẾN ĐỘ SẢN XUẤT (Production Progress)
+ * - Header: TIẾN ĐỘ SẢN XUẤT | Nút tab Ngày / Tuần / Tháng / Năm
+ * - Bên trái: Lưới Tiến độ sản xuất (PO NO. | KHÁCH HÀNG | QTY (PCS) | MÃ HÀNG | TIẾN ĐỘ SX | HẠN SX)
+ * - Bên phải: Biểu đồ tròn phân bổ sản lượng các PO, TÊN PO GHI Ở BÊN TRONG Ô (INSIDE SLICE)
+ * - Tooltip khi rê chuột: Thẻ card chi tiết chuẩn phong cách ảnh thứ 2 (PO, Mã hàng, Khách hàng, Số lượng SX, Thời gian SX, Tiến độ SX %)
+ * - Dưới cùng: Dải trạng thái sản xuất: Hoàn thành (>=95%) | Đạt (80-94%) | Trung bình (50-79%) | Chậm (<50%) | Hôm nay | Hạn hoàn thành
+ */
+
+:root {
+    /* Octo Code - Status & Analytics Colors */
+    --ppw-color-blue: #2563EB; /* Vibrant Royal Blue (Đang chạy / Đã đặt) */
+    --ppw-color-green: #10B981; /* Vibrant Green (Hoàn thành / Đạt / Đã về) */
+    --ppw-color-orange: #F97316; /* Warm Amber/Orange (Sắp về / Trung bình) */
+    --ppw-color-red: #EF4444; /* Vibrant Coral Red (Chậm / Trễ) */
+    /* Octo Code - Canvas & Surface */
+    --ppw-bg: #EBF0F6; /* Xám xanh nhạt dịu mắt */
+    --ppw-card-bg: #FFFFFF; /* Trắng tinh khiết */
+    --ppw-border: #DCE3EC; /* Nét mỏng xám xanh mượt mà */
+    --ppw-border-light: #EBF0F6;
+    --ppw-text-main: #1E293B; /* Slate 800 */
+    --ppw-text-muted: #64748B; /* Slate 500 */
+    --ppw-bg-subtle: #F4F7FA;
+    --ppw-radius: 10px;
+    --ppw-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.ppw-theme-dark {
+    --ppw-color-blue: #60a5fa;
+    --ppw-color-green: #34d399;
+    --ppw-color-orange: #fb923c;
+    --ppw-color-red: #f87171;
+    --ppw-bg: #090d16;
+    --ppw-card-bg: #131b2e;
+    --ppw-border: #1e293b;
+    --ppw-border-light: #1e293b;
+    --ppw-text-main: #f8fafc;
+    --ppw-text-muted: #94a3b8;
+    --ppw-bg-subtle: #1a233a;
+    --ppw-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Container */
+.ppw-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ppw-text-main);
+    background: var(--ppw-card-bg);
+    border: 1px solid var(--ppw-border);
+    border-radius: var(--ppw-radius);
+    box-shadow: var(--ppw-shadow);
+    padding: 1.15rem 1.35rem;
+    margin-bottom: 1.5rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+    .ppw-container * {
+        box-sizing: border-box;
+    }
+
+/* 1. Header: TIẾN ĐỘ SẢN XUẤT & Tab buttons Ngày | Tuần | Tháng | Năm */
+.ppw-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    margin-bottom: 0.85rem;
+    border-bottom: 1px solid var(--ppw-border-light);
+}
+
+.ppw-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.ppw-main-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--ppw-text-main);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ppw-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Tabs: Ngày | Tuần | Tháng | Năm */
+.ppw-tab-filters {
+    display: inline-flex;
+    background: var(--ppw-bg-subtle);
+    border: 1px solid var(--ppw-border);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+}
+
+.ppw-tab-btn {
+    border: none;
+    background: transparent;
+    color: var(--ppw-text-muted);
+    font-size: 0.775rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+    .ppw-tab-btn:hover {
+        color: var(--ppw-text-main);
+    }
+
+    .ppw-tab-btn.active {
+        background: #ffffff;
+        color: var(--ppw-text-main);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        font-weight: 700;
+    }
+
+.ppw-theme-dark .ppw-tab-btn.active {
+    background: #334155;
+    color: #f8fafc;
+}
+
+.ppw-nav-arrows {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ppw-nav-btn {
+    background: var(--ppw-bg-subtle);
+    border: 1px solid var(--ppw-border);
+    border-radius: 4px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--ppw-text-muted);
+    transition: all 0.15s;
+}
+
+    .ppw-nav-btn:hover {
+        background: #e2e8f0;
+        color: var(--ppw-text-main);
+    }
+
+/* 2. Main Body Split: BÊN TRÁI (LƯỚI SX) - BÊN PHẢI (BIỂU ĐỒ TRÒN PHÂN BỔ) */
+.ppw-body {
+    display: flex;
+    gap: 1.25rem;
+    align-items: stretch;
+    min-height: 400px;
+}
+
+@media (max-width: 1024px) {
+    .ppw-body {
+        flex-direction: column;
+    }
+
+    .ppw-left-table-col,
+    .ppw-right-pie-col {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+}
+
+/* BÊN TRÁI: BẢNG LƯỚI TIẾN ĐỘ SẢN XUẤT */
+.ppw-left-table-col {
+    flex: 0 0 58%;
+    width: 58%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--ppw-border);
+    padding-right: 1.25rem;
+}
+
+.ppw-table-wrapper {
+    flex: 1;
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Bảng hiển thị Tiến độ sản xuất */
+.ppw-grid-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+    .ppw-grid-table th {
+        text-align: left;
+        font-weight: 700;
+        color: #64748b;
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--ppw-border);
+        font-size: 0.75rem;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+    }
+
+    .ppw-grid-table td {
+        padding: 11px 8px;
+        border-bottom: 1px solid var(--ppw-border-light);
+        color: #1e293b;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+.ppw-theme-dark .ppw-grid-table td {
+    color: #f8fafc;
+}
+
+.ppw-grid-table tbody tr {
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+    .ppw-grid-table tbody tr:hover,
+    .ppw-grid-table tbody tr.ppw-row-hover {
+        background-color: #f1f5f9;
+    }
+
+    .ppw-grid-table tbody tr.ppw-row-selected {
+        background-color: #eff6ff !important;
+        outline: 1.5px solid #93c5fd;
+    }
+
+.ppw-theme-dark .ppw-grid-table tbody tr:hover,
+.ppw-theme-dark .ppw-grid-table tbody tr.ppw-row-hover {
+    background-color: #334155;
+}
+
+.ppw-col-po {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.ppw-theme-dark .ppw-col-po {
+    color: #f8fafc;
+}
+
+.ppw-col-cust {
+    font-weight: 600;
+    color: #475569;
+}
+
+.ppw-theme-dark .ppw-col-cust {
+    color: #cbd5e1;
+}
+
+.ppw-col-qty {
+    font-weight: 700;
+    text-align: right;
+    font-family: 'Inter', monospace, sans-serif;
+}
+
+.ppw-col-ordercode {
+    color: #475569;
+    text-align: center;
+    font-weight: 600;
+}
+
+.ppw-col-progress {
+    min-width: 110px;
+}
+
+.ppw-progress-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ppw-progress-bar-track {
+    flex: 1;
+    height: 7px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 50px;
+}
+
+.ppw-theme-dark .ppw-progress-bar-track {
+    background: #334155;
+}
+
+.ppw-progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.ppw-progress-pct-label {
+    font-weight: 700;
+    font-size: 0.775rem;
+    width: 36px;
+    text-align: right;
+}
+
+.ppw-col-etd {
+    text-align: center;
+    color: #475569;
+}
+
+/* BÊN PHẢI: BIỂU ĐỒ TRÒN (PIE CHART TIẾN ĐỘ SẢN XUẤT) */
+.ppw-right-pie-col {
+    flex: 0 0 calc(42% - 1.25rem);
+    width: calc(42% - 1.25rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+}
+
+.ppw-pie-title-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px dashed var(--ppw-border);
+}
+
+    .ppw-pie-title-bar span {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--ppw-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+.ppw-btn-back-all {
+    font-size: 0.75rem;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s;
+}
+
+    .ppw-btn-back-all:hover {
+        background: #dbeafe;
+    }
+
+.ppw-pie-container {
+    width: 100%;
+    height: 340px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 3. TOOLTIP CARD CHI TIẾT SẢN XUẤT (ĐÚNG PHONG CÁCH ẢNH THỨ 2) */
+.ppw-custom-tooltip {
+    position: fixed;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+    padding: 10px 14px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 12px;
+    line-height: 1.65;
+    color: #334155;
+    pointer-events: none;
+    z-index: 99999;
+    min-width: 230px;
+    transition: opacity 0.12s ease, transform 0.12s ease;
+    opacity: 0;
+    transform: translateY(4px);
+    display: none;
+}
+
+    .ppw-custom-tooltip.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+.ppw-tooltip-po-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 4px;
+}
+
+.ppw-tooltip-line {
+    margin: 1.5px 0;
+    font-size: 12px;
+}
+
+    .ppw-tooltip-line strong {
+        color: #0f172a;
+    }
+
+.ppw-tooltip-progress-val {
+    font-weight: 800;
+}
+
+.ppw-tooltip-stages {
+    margin-top: 5px;
+    padding-top: 4px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 11px;
+    color: #64748b;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.ppw-tooltip-stage-item {
+    background: #f8fafc;
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+}
+
+/* 4. DƯỚI CÙNG: DẢI TRẠNG THÁI / LEGEND SẢN XUẤT */
+.ppw-footer-legend {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--ppw-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.775rem;
+    color: var(--ppw-text-muted);
+}
+
+.ppw-legend-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.1rem;
+}
+
+.ppw-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+    .ppw-legend-item:hover {
+        opacity: 0.85;
+        color: var(--ppw-text-main);
+    }
+
+    .ppw-legend-item.active {
+        font-weight: 700;
+        color: var(--ppw-text-main);
+    }
+
+.ppw-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.ppw-dot-complete {
+    background-color: var(--ppw-color-blue);
+}
+/* Hoàn thành (>=95%) - Xanh dương */
+.ppw-dot-passed {
+    background-color: var(--ppw-color-green);
+}
+/* Đạt tiến độ (80-94%) - Xanh lá */
+.ppw-dot-average {
+    background-color: var(--ppw-color-orange);
+}
+/* Trung bình (50-79%) - Cam */
+.ppw-dot-slow {
+    background-color: var(--ppw-color-red);
+}
+/* Chậm tiến độ (<50%) - Đỏ */
+
+.ppw-line-today {
+    display: inline-block;
+    width: 14px;
+    height: 2px;
+    background-color: #64748b;
+    margin-right: 2px;
+}
+
+.ppw-diamond-etd {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border: 1.5px solid #0f172a;
+    transform: rotate(45deg);
+    margin-right: 2px;
+}
+
+.ppw-footer-btn-all {
+    font-size: 0.75rem;
+    color: #3b82f6;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background 0.15s;
+}
+
+    .ppw-footer-btn-all:hover {
+        background: #eff6ff;
+        text-decoration: underline;
+    }

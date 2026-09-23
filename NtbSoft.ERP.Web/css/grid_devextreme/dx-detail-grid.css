@@ -1,0 +1,420 @@
+/**
+ * ==========================================================================
+ * NTBSOFT ERP - DEVEXTREME REUSABLE DETAIL GRID COMPONENT
+ * CSS: dx-detail-grid.css
+ * Stylesheet cho component Grid DevExtreme kèm Popup chi tiết
+ * ==========================================================================
+ */
+
+/* Master Grid Card Wrapper */
+.dx-component-card {
+    background-color: var(--octo-surface, #FFFFFF);
+    border: 1px solid var(--octo-border, #CBD5E1);
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    transition: box-shadow 0.2s ease;
+}
+
+.dx-component-card.fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    border-radius: 0 !important;
+    padding: 20px !important;
+    overflow: auto;
+}
+
+.dx-component-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dx-component-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--octo-text-primary, #0F172A);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.dx-component-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dx-btn-expand {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #64748B;
+    border-radius: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s ease;
+}
+
+.dx-btn-expand:hover {
+    background-color: #F1F5F9;
+    color: #1D4ED8;
+    border-color: #CBD5E1;
+}
+
+/* Master Grid Table Overrides */
+.dx-detail-grid-container {
+    width: 100%;
+}
+
+.dx-detail-grid-container .dx-datagrid {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 13px;
+    color: #0F172A;
+}
+
+.dx-detail-grid-container .dx-datagrid-headers {
+    background-color: #F8FAFC;
+    color: #475569;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-bottom: 1.5px solid #E2E8F0;
+}
+
+.dx-detail-grid-container .dx-datagrid-rowsview .dx-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.dx-detail-grid-container .dx-datagrid-rowsview .dx-row:hover {
+    background-color: #F8FAFC !important;
+}
+
+.dx-detail-grid-container .dx-datagrid-rowsview .dx-data-row td {
+    padding: 8px 10px !important;
+    vertical-align: middle;
+}
+
+/* Trạng thái chấm tròn Status Dot */
+.dx-status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.dx-status-dot.status-green { background-color: #10B981; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
+.dx-status-dot.status-blue { background-color: #3B82F6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+.dx-status-dot.status-orange { background-color: #F59E0B; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2); }
+.dx-status-dot.status-red { background-color: #EF4444; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
+
+/* Chú thích Legend */
+.dx-component-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 8px;
+    border-top: 1px solid #E2E8F0;
+    font-size: 11.5px;
+    color: #64748B;
+    flex-wrap: wrap;
+}
+
+.dx-component-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   POPUP MODAL CHI TIẾT (dxPopup Custom Styles)
+   ========================================================================== */
+.dx-popup-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 10px 4px 4px 4px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* Thẻ thống kê KPI trên đầu Popup */
+.dx-popup-kpi-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dx-popup-kpi-card {
+    flex: 1;
+    min-width: 160px;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 8px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dx-popup-kpi-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.dx-popup-kpi-val {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0F172A;
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* Toolbar Tìm kiếm & Gom nhóm trong Popup */
+.dx-popup-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dx-popup-search-wrap {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+}
+
+.dx-popup-search-wrap i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94A3B8;
+    font-size: 13px;
+}
+
+.dx-popup-search-input {
+    width: 100%;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 7px 12px 7px 32px;
+    font-size: 12.5px;
+    font-family: 'Inter', sans-serif;
+    color: #0F172A;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.dx-popup-search-input:focus {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.dx-popup-group-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #475569;
+    font-weight: 600;
+}
+
+.dx-popup-group-select {
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    color: #0F172A;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+}
+
+/* DataGrid trong Popup */
+.dx-popup-grid-wrapper {
+    flex: 1;
+    min-height: 280px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #FFFFFF;
+}
+
+.dx-popup-grid-wrapper .dx-datagrid-headers {
+    background-color: #F8FAFC;
+    color: #334155;
+    font-weight: 700;
+    font-size: 11.5px;
+    text-transform: uppercase;
+}
+
+.dx-popup-grid-wrapper .dx-data-row td {
+    padding: 6px 8px !important;
+    font-size: 12px;
+}
+
+.dx-popup-grid-wrapper .dx-datagrid-total-footer {
+    background-color: #F8FAFC;
+    font-weight: 700;
+}
+
+/* =========================================================================
+   DEVEXTREME PAGER CUSTOM STYLES (ĐẸP, TINH TẾ, HIỆN ĐẠI)
+   ========================================================================= */
+.dx-datagrid .dx-datagrid-pager,
+.dx-pager {
+    padding: 6px 12px 6px 12px !important;
+    background-color: transparent !important;
+    border-top: 1px solid #F1F5F9 !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+}
+
+/* Ẩn hoàn toàn dòng thông báo "Page 1 of 3 (11 items)" */
+.dx-pager .dx-info {
+    display: none !important;
+}
+
+.dx-pager .dx-pages {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Các ô số trang: 1, 2, 3... */
+.dx-pager .dx-pages .dx-page {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 6px !important;
+    border: 1px solid #CBD5E1 !important;
+    background-color: #FFFFFF !important;
+    color: #334155 !important;
+    font-family: var(--font-inter, 'Inter', sans-serif) !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.dx-pager .dx-pages .dx-page:hover {
+    background-color: #F8FAFC !important;
+    border-color: #94A3B8 !important;
+    color: #1D4ED8 !important;
+}
+
+/* Nút trang hiện tại đang Active */
+.dx-pager .dx-pages .dx-page.dx-selection {
+    background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%) !important;
+    border-color: #1D4ED8 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35) !important;
+}
+
+/* Nút điều hướng Previous (<) và Next (>) */
+.dx-pager .dx-pages .dx-navigate-button {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 6px !important;
+    border: 1px solid #CBD5E1 !important;
+    background-color: #FFFFFF !important;
+    color: #475569 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.dx-pager .dx-pages .dx-navigate-button:hover:not(.dx-button-disable) {
+    background-color: #F8FAFC !important;
+    border-color: #94A3B8 !important;
+    color: #1D4ED8 !important;
+}
+
+.dx-pager .dx-pages .dx-navigate-button.dx-button-disable {
+    opacity: 0.35 !important;
+    cursor: not-allowed !important;
+    background-color: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+    color: #94A3B8 !important;
+    box-shadow: none !important;
+}
+
+/* =========================================================================
+   TRẠNG THÁI KHÔNG CÓ DỮ LIỆU CHI TIẾT (EMPTY STATE)
+   ========================================================================= */
+.dx-detail-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #64748B;
+    text-align: center;
+    gap: 8px;
+    height: 100%;
+    min-height: 260px;
+    border: 1px dashed #CBD5E1;
+    border-radius: 8px;
+    background-color: #F8FAFC;
+    margin-top: 10px;
+}
+
+.dx-detail-empty-icon {
+    font-size: 48px;
+    color: #94A3B8;
+    margin-bottom: 8px;
+}
+
+.dx-detail-empty-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+.dx-detail-empty-sub {
+    font-size: 13px;
+    color: #64748B;
+    max-width: 450px;
+    line-height: 1.5;
+}

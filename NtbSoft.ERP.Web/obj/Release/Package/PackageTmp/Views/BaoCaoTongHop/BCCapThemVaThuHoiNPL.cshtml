@@ -1,0 +1,247 @@
+﻿@{
+    ViewBag.Title = "Báo cáo cấp thêm và thu hồi NPL";
+    Layout = null;
+}
+<head>
+    @* Library CSS *@
+    <link href="~/Content/plugins/select2/css/select2.css" rel="stylesheet" />
+    <link href="~/css/TheoDoiHangXuat/fontawesome.pro.6.0.0.css" rel="stylesheet" />
+    <link href="~/css/DevExtreme/dx.light.css" rel="stylesheet" />
+    <link href="~/css/DevExtreme/dx.common.css" rel="stylesheet" />
+    <link href="~/Scripts/ViTriKho/bootstrap5.3.min.css" rel="stylesheet" />
+
+    <style>
+        /* ===== BASE ===== */
+        body {
+            padding: 0;
+            margin: 10px;
+        }
+        header {
+            display: flex;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: rgba(0,0,0,0.1) 0px 10px 15px -3px, rgba(0,0,0,0.05) 0px 4px 6px -2px;
+            align-items: center;
+        }
+        main {
+            padding: 5px;
+        }
+
+        /* ===== TAB ===== */
+        .nav-tabs {
+            margin-bottom: 5px;
+        }
+        .nav-tabs > li.active > a,
+        .nav-tabs > li.active > a:hover,
+        .nav-tabs > li.active > a:focus {
+            background-color: #7ea7ef;
+            color: #000;
+        }
+
+        /* ===== GAP ===== */
+        .gap-1 { gap: 1rem; }
+        .gap-2 { gap: 1.5rem; }
+        .gap-3 { gap: 2rem; }
+        .gap-4 { gap: 2.5rem; }
+
+        /* ===== DATAGRID STICKY HEADER ===== */
+        .dx-datagrid-headers {
+            position: sticky !important;
+            top: 24px !important;
+            z-index: 1 !important;
+        }
+
+        /* ===== DROPDOWN Z-INDEX FIX ===== */
+        .select2-dropdown,
+        .select2-container--open {
+            z-index: 9999 !important;
+        }
+        .dx-overlay-wrapper {
+            z-index: 9999 !important;
+        }
+
+        /* ===== FILTER MAHANG ===== */
+        #filter_mahang .dx-texteditor-input {
+            text-overflow: clip !important;
+            white-space: normal !important;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            min-width: 100%;
+        }
+        #filter_mahang.dx-dropdowneditor {
+            height: auto !important;
+            min-height: 36px;
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        #loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            animation: fadeIn 0.3s ease;
+        }
+        @@keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .spinner-container {
+            text-align: center;
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            min-width: 250px;
+            animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @@keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.9); }
+            to   { opacity: 1; transform: translateY(0)   scale(1);   }
+        }
+        .spinner {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(102,126,234,0.2);
+            border-top: 4px solid #667eea;
+            border-right: 4px solid #764ba2;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s cubic-bezier(0.68,-0.55,0.265,1.55) infinite;
+            box-shadow: 0 0 20px rgba(102,126,234,0.3);
+        }
+        @@keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner-text {
+            color: #2d3748;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .spinner-progress {
+            margin-top: 15px;
+            height: 4px;
+            background: rgba(102,126,234,0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .spinner-progress::after {
+            content: '';
+            display: block;
+            height: 100%;
+            width: 40%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            animation: progress 1.5s ease-in-out infinite;
+        }
+        @@keyframes progress {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(350%); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @@media (max-width: 767px) {
+            .spinner-container { padding: 30px 20px; min-width: 200px; }
+            .spinner { width: 50px; height: 50px; }
+            .spinner-text { font-size: 14px; }
+        }
+        /* Khung ngoài của popup grid */
+        .dx-overlay-content .dx-datagrid {
+            border: 2px solid #a8b4c2;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .dx-popup-content{
+            padding:3px !important;
+        }
+        /* Header */
+        .dx-datagrid-headers {
+            background: #2288ff;
+        }
+
+            .dx-datagrid-headers .dx-header-row > td {
+                background: #2288ff !important;
+                color: white !important;
+                font-weight: 600;
+                text-align: center;
+                border-right: 1px solid rgba(255,255,255,.2);
+            }
+
+        /* Dòng filter */
+        .dx-datagrid-filter-row td {
+            background: #f5f9ff;
+        }
+
+        /* Hover */
+        .dx-data-row:hover > td {
+            background: #eef6ff !important;
+        }
+        .dx-datagrid-borders > .dx-datagrid-rowsview.dx-last-row-border tbody:last-child > .dx-data-row:nth-last-child(2), .dx-datagrid-borders > .dx-datagrid-rowsview.dx-last-row-border tbody:last-child > .dx-data-row:nth-last-child(2) > td {
+            border-bottom-width:1px !important;
+        }
+
+    </style>
+</head>
+
+<header class="d-flex w-100 gap-3"
+        style="position: sticky; top: 0; z-index: 1000; background: #fff;
+               padding: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+    <div id="select-startdate"></div>
+    <div id="select-enddate"></div>
+    <div id="filter_mahang" style="width: 25%"></div>
+    <div id="filter_mahang_thuhoi" style="width: 25%; display:none"></div>
+    <button class="btn btn-default" id="btn-refresh" style="margin-left:auto">
+        <i class="fa-solid fa-arrow-rotate-right"></i> Tải lại
+    </button>
+    <button class="btn btn-success" id="btn-xuat-excel" onclick="xuatExcel()">
+        <i class="fa-solid fa-file-export"></i> Xuất excel
+    </button>
+</header>
+
+<main>
+    <ul class="nav nav-tabs" id="custom-tabs-npl" role="tablist"
+        style="position: sticky; top: 53px; z-index: 999; background: #fff;
+               padding: 4px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.08);">
+        <li class="nav-item">
+            <a class="nav-link active" id="tab-cap-them-tab" data-bs-toggle="pill" href="#tab-cap-them" role="tab">
+                Cấp thêm NPL
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="tab-thu-hoi-tab" data-bs-toggle="pill" href="#tab-thu-hoi" role="tab">
+                Thu hồi NPL
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="tab-cap-them-ngoai-don-hang-tab" data-bs-toggle="pill" href="#tab-cap-them-ngoai-don-hang" role="tab">
+                Cấp thêm ngoài đơn hàng
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="tab-cap-them" role="tabpanel">
+            <div id="grid-cap-them"></div>
+        </div>
+        <div class="tab-pane fade" id="tab-thu-hoi" role="tabpanel">
+            <div id="grid-thu-hoi"></div>
+        </div>
+        <div class="tab-pane fade" id="tab-cap-them-ngoai-don-hang" role="tabpanel">
+            <div id="grid-cap-them-ngoai-don-hang"></div>
+        </div>
+    </div>
+</main>
+
+<footer></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="~/Scripts/jquery.min-3.6.1.js"></script>
+<script src="~/css/DevExtreme/dx.all.js"></script>
+<script src="~/Scripts/ViTriKho/bootstrap5.3.bundle.min.js"></script>
+<script src="~/Scripts/BCCapThemVaThuHoiNPL/function_item.js?version=04072026"></script>
+<script src="~/Scripts/BCCapThemVaThuHoiNPL/function_baocaocapthepthuhoi.js?version=04072026"></script>
+<script src="~/Scripts/BCCapThemVaThuHoiNPL/create_views.js?version=04072026"></script>

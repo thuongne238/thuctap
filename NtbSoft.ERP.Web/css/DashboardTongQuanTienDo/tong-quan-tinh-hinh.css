@@ -1,0 +1,684 @@
+/**
+ * Stylesheet cho Dashboard Tổng Quan Tình Hình (TongQuanTinhHinh.cshtml)
+ * Áp dụng Octo Code - ERP Clean Light Design System (Reference Inspired):
+ * - Page Canvas Background: #EBF0F6 (Xám xanh nhạt dịu mắt)
+ * - Card Surface: #FFFFFF (Trắng tinh khiết bo góc nổi bật)
+ * - Border: #DCE3EC (Nét mỏng xám xanh mượt mà)
+ * - Border Hover: #BCC8D8
+ * - Typography: Slate 800 (#1E293B), Slate 500 (#64748B), Slate 400 (#94A3B8)
+ * - KPI Stat Cards: Viền màu tương ứng trạng thái (Xanh dương #3B82F6, Xanh lá #10B981, Cam #F97316, Đỏ #EF4444)
+ */
+
+:root {
+    /* Octo Code - Canvas & Surface */
+    --octo-bg: #EBF0F6;
+    --octo-surface: #FFFFFF;
+    --octo-surface-hover: #F4F7FA;
+    --octo-border: #DCE3EC;
+    --octo-border-hover: #BCC8D8;
+    /* Octo Code - Typography */
+    --octo-text-primary: #1E293B;
+    --octo-text-secondary: #64748B;
+    --octo-text-muted: #94A3B8;
+    /* Primary & Brand */
+    --octo-primary: #2563EB;
+    --octo-primary-hover: #1D4ED8;
+    /* Radii */
+    --radius-sm: 4px;
+    --radius-md: 10px;
+    --radius-pill: 9999px;
+    /* Octo Code - Status & Analytics Palette */
+    --octo-green: #10B981;
+    --octo-green-dark: #047857;
+    --octo-green-bg: #ECFDF5;
+    --octo-blue: #2563EB;
+    --octo-blue-border: #3B82F6;
+    --octo-blue-dark: #1D4ED8;
+    --octo-blue-bg: #EFF6FF;
+    --octo-amber: #F59E0B;
+    --octo-orange-border: #F97316;
+    --octo-orange-dark: #C2410C;
+    --octo-orange-bg: #FFF7ED;
+    --octo-red: #EF4444;
+    --octo-red-dark: #B91C1C;
+    --octo-red-bg: #FEF2F2;
+    --octo-radius: 10px;
+    --octo-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+body.tqth-theme-dark {
+    --octo-bg: #090d16;
+    --octo-surface: #131b2e;
+    --octo-surface-hover: #1a233a;
+    --octo-border: #1e293b;
+    --octo-border-hover: #334155;
+    --octo-text-primary: #F8FAFC;
+    --octo-text-secondary: #94A3B8;
+    --octo-text-muted: #64748B;
+    --octo-green-bg: rgba(16, 185, 129, 0.15);
+    --octo-blue-bg: rgba(37, 99, 235, 0.15);
+    --octo-orange-bg: rgba(249, 115, 22, 0.15);
+    --octo-red-bg: rgba(239, 68, 68, 0.15);
+}
+
+.tqth-dashboard-page {
+    background-color: var(--octo-bg);
+    color: var(--octo-text-primary);
+    font-family: var(--font-inter, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+    .tqth-dashboard-page * {
+        box-sizing: border-box;
+    }
+
+.tqth-main-container,
+.octo-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   HEADER BAR (Reused & Enhanced from MerchandiserDashboard)
+   ========================================================================== */
+.octo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--octo-surface);
+    border: 1px solid var(--octo-border);
+    border-radius: var(--radius-md);
+    padding: 10px 16px;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.page-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--octo-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.01em;
+}
+
+    .page-title i {
+        color: var(--octo-primary);
+    }
+
+/* Side Nav Segmented Toggle */
+.header-side-nav {
+    display: inline-flex;
+    align-items: center;
+    background-color: #E2E8F0;
+    border: 1px solid #CBD5E1;
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    gap: 4px;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.side-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    background: transparent;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    user-select: none;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.side-nav-btn:hover {
+    color: #0F172A;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.side-nav-btn.active {
+    background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #1D4ED8 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35) !important;
+}
+
+.side-nav-btn.active i {
+    color: #FFFFFF !important;
+}
+
+.side-nav-btn i {
+    font-size: 13px;
+    transition: transform 0.2s ease;
+}
+
+.side-nav-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* REALTIME CLOCK */
+.header-realtime-clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background-color: #F8FAFC;
+    border: 1px solid var(--octo-border);
+    border-radius: var(--radius-sm);
+    padding: 3px 10px;
+    height: 28px;
+    font-size: 12px;
+    color: var(--octo-text-primary);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    transition: all 0.15s ease;
+}
+
+.header-realtime-clock:hover {
+    border-color: var(--octo-border-hover);
+    background-color: #FFFFFF;
+}
+
+.realtime-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #10B981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: realtimeDotPulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    flex-shrink: 0;
+}
+
+@keyframes realtimeDotPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.header-realtime-clock .realtime-icon {
+    font-size: 12px;
+    color: #2563EB;
+}
+
+.realtime-time {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 12.5px;
+    color: #0F172A;
+    letter-spacing: 0.5px;
+}
+
+.realtime-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: #0F172A;
+    border-left: 1px solid #CBD5E1;
+    padding-left: 6px;
+    margin-left: 1px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.octo-btn-icon {
+    background-color: #F8FAFC;
+    border: 1px solid var(--octo-border);
+    color: var(--octo-text-secondary);
+    border-radius: var(--radius-md);
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 14px;
+}
+
+    .octo-btn-icon:hover {
+        color: var(--octo-text-primary);
+        border-color: var(--octo-border-hover);
+        background-color: var(--octo-surface-hover);
+    }
+
+/* Bộ lọc (ngày tháng) phụ trợ */
+.tqth-date-range-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--octo-surface-hover);
+    border: 1px solid var(--octo-border);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--octo-text-primary);
+    font-weight: 600;
+}
+
+    .tqth-date-range-box input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-family: inherit;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--octo-text-primary);
+        width: 180px;
+    }
+
+/* =========================================================================
+   2. SUMMARY KPI CARDS (Khung Thống Kê Chuẩn Theo Mẫu Octo Code)
+   ========================================================================= */
+.tqth-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.15rem;
+}
+
+@media (max-width: 1024px) {
+    .tqth-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .tqth-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tqth-kpi-card {
+    background: var(--octo-surface);
+    border-radius: var(--octo-radius);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--octo-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+}
+
+    .tqth-kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .tqth-kpi-card.kpi-total {
+        border: 1.5px solid var(--octo-blue-border);
+    }
+
+    .tqth-kpi-card.kpi-producing {
+        border: 1.5px solid var(--octo-green);
+    }
+
+    .tqth-kpi-card.kpi-delivered {
+        border: 1.5px solid var(--octo-orange-border);
+    }
+
+    .tqth-kpi-card.kpi-delayed {
+        border: 1.5px solid var(--octo-red);
+    }
+
+.tqth-kpi-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.tqth-kpi-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--octo-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.35rem;
+}
+
+.tqth-kpi-number-wrap {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.65rem;
+    margin: 0.2rem 0 0.3rem 0;
+}
+
+.tqth-kpi-number {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-family: 'Inter', monospace, sans-serif;
+}
+
+.tqth-kpi-pcs-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: 'Inter', monospace, sans-serif;
+    letter-spacing: -0.2px;
+    line-height: 1.25;
+    transition: all 0.2s ease;
+}
+
+    .tqth-kpi-pcs-badge:hover {
+        transform: scale(1.03);
+    }
+
+.kpi-total .tqth-kpi-pcs-badge {
+    background: rgba(37, 99, 235, 0.08);
+    color: #1D4ED8;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.kpi-producing .tqth-kpi-pcs-badge {
+    background: rgba(16, 185, 129, 0.1);
+    color: #047857;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.kpi-delivered .tqth-kpi-pcs-badge {
+    background: rgba(249, 115, 22, 0.1);
+    color: #C2410C;
+    border: 1px solid rgba(249, 115, 22, 0.25);
+}
+
+.kpi-delayed .tqth-kpi-pcs-badge {
+    background: rgba(239, 68, 68, 0.1);
+    color: #B91C1C;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.kpi-total .tqth-kpi-number {
+    color: var(--octo-blue);
+}
+
+.kpi-producing .tqth-kpi-number {
+    color: #059669;
+}
+
+.kpi-delivered .tqth-kpi-number {
+    color: #EA580C;
+}
+
+.kpi-delayed .tqth-kpi-number {
+    color: #DC2626;
+}
+
+.tqth-kpi-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.kpi-total .tqth-kpi-icon-wrap {
+    background: var(--octo-blue-bg);
+    color: var(--octo-blue);
+}
+
+.kpi-producing .tqth-kpi-icon-wrap {
+    background: var(--octo-green-bg);
+    color: var(--octo-green);
+}
+
+.kpi-delivered .tqth-kpi-icon-wrap {
+    background: var(--octo-orange-bg);
+    color: var(--octo-orange-border);
+}
+
+.kpi-delayed .tqth-kpi-icon-wrap {
+    background: var(--octo-red-bg);
+    color: var(--octo-red);
+}
+
+/* =========================================================================
+   3. MIDDLE: TÌNH HÌNH SẢN XUẤT
+   ========================================================================= */
+.tqth-middle-block {
+    background: var(--octo-surface);
+    border: 1px solid var(--octo-border);
+    border-radius: var(--octo-radius);
+    padding: 1.15rem 1.35rem;
+    box-shadow: var(--octo-shadow);
+}
+
+.tqth-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    margin-bottom: 0.85rem;
+    border-bottom: 1px solid var(--octo-border);
+}
+
+.tqth-block-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--octo-text-primary);
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+/* =========================================================================
+   4. BOTTOM: TIẾN ĐỘ THEO CÔNG ĐOẠN
+   ========================================================================= */
+.tqth-stages-block {
+    background: var(--octo-surface);
+    border: 1px solid var(--octo-border);
+    border-radius: var(--octo-radius);
+    padding: 1.25rem 1.35rem;
+    box-shadow: var(--octo-shadow);
+}
+
+.tqth-pipeline-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    margin-top: 0.85rem;
+}
+
+.tqth-pipeline-row-top,
+.tqth-pipeline-row-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    position: relative;
+}
+
+.tqth-pipeline-row-bottom {
+    justify-content: flex-end;
+}
+
+@media (max-width: 1024px) {
+    .tqth-pipeline-row-top,
+    .tqth-pipeline-row-bottom {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+}
+
+.tqth-stage-card {
+    flex: 1;
+    min-width: 180px;
+    background: var(--octo-surface);
+    border: 1.5px solid var(--octo-border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+    .tqth-stage-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--octo-border-hover);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+.tqth-stage-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tqth-stage-title-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.tqth-stage-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.tqth-stage-card:hover .tqth-stage-icon {
+    transform: scale(1.12);
+}
+
+.tqth-stage-name {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--octo-text-primary);
+}
+
+.tqth-stage-pct {
+    font-size: 0.95rem;
+    font-weight: 800;
+    font-family: 'Inter', monospace, sans-serif;
+}
+
+.tqth-stage-progress-track {
+    width: 100%;
+    height: 6px;
+    background: #E2E8F0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+body.tqth-theme-dark .tqth-stage-progress-track {
+    background: #334155;
+}
+
+.tqth-stage-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.tqth-stage-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.725rem;
+    color: var(--octo-text-secondary);
+    font-weight: 600;
+}
+
+.tqth-arrow-right,
+.tqth-arrow-left,
+.tqth-arrow-down {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--octo-text-muted);
+    flex-shrink: 0;
+}
+
+.tqth-corner-connector {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 80px;
+    margin: -0.5rem 0;
+}
+
+@media (max-width: 1024px) {
+    .tqth-arrow-right,
+    .tqth-arrow-left,
+    .tqth-arrow-down,
+    .tqth-corner-connector {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   OCTO TOAST NOTIFICATION
+   ========================================================================== */
+.octo-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #FFFFFF;
+    border: 1px solid #DCE3EC;
+    color: #1E293B;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+}
+
+.octo-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}

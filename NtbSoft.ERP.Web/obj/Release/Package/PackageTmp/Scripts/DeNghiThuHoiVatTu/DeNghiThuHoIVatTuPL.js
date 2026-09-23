@@ -1,0 +1,2768 @@
+﻿/// VARIABLE
+var userNameSave = localStorage.getItem("username1");
+let dxDataGridDangKyVatTu;
+let dxDataGridDanhSachDangKy;
+let dxDataGridEditVatTu;
+let selectedItems = [];
+let selectedRowsToDelete = [];
+let lstDataDangKyVatTu = [];
+let batchData;
+let dot;
+let selectSoPhieu = '';
+let selectSoPhieuDisplay = '';
+let rowDelete = {};
+let rowEdit = {};
+let lstEditDangKyVatTu = [];
+let isDeleteAll = false;
+let isDeleteDK = false;
+let isDeleteAllDK = false;
+var isShowNgayCapAndGioCap = false;
+let picker1, picker2, picker3, picker4;
+let phieuDKJoin = [];
+let pickerTuNgayFilter, pickerDenNgayFilter;
+let currentUserIsTBP = false;
+const TBP_PB2_USERID = 'QLDH_01';
+const SUPER_USERS = ['QLDH_01', 'QuanLyKhoNPL', 'admin'];
+
+function isSuperUser() {
+    const user = (window.userNameSave || userNameSave || '').trim();
+    return SUPER_USERS.includes(user);
+}
+
+let currentUserPB = '';
+
+async function initCurrentUserPB() {
+    if (currentUserPB) return;
+    try {
+        const data = await API.Get("GetUserInfo", { para1: userNameSave });
+        if (data && data.length > 0) {
+            currentUserPB = (data[0].PhongBan || "").trim();
+            currentUserIsTBP = data[0].TBP == 1;
+        }
+    } catch (e) {
+        console.error("Không lấy được PhongBan:", e);
+    }
+}
+
+/// UTILS
+function ddmmyyyyToYmd(dateStr) {
+    if (!dateStr) return "1990-01-01";
+    const [d, m, y] = dateStr.split("/");
+    return `${y}-${m}-${d}`;
+}
+
+function PlayAudio() {
+    const beepSound = document.getElementById("beepSound");
+    beepSound.currentTime = 0;
+    beepSound.play();
+}
+
+function PlayAudioError() {
+    const beepSoundE = document.getElementById("beepSoundError");
+    beepSoundE.currentTime = 0;
+    beepSoundE.play();
+}
+
+/// API
+const API = {
+    async Get(action, para = {}, textSuccess = '') {
+        const paraConvert = Object.entries(para || {})
+            .map(([key, value]) => `${key}=${value}`)
+            .join("&");
+
+        const url = `/api/DangKyThuHoiVT/Get?action=${action}${paraConvert ? '&' + paraConvert : ''}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Response status: ${response.status}`);
+
+            const data = await response.json();
+            if (textSuccess) showToast("success", textSuccess);
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    async Post(router = 'Post', action, arrSave, textSuccess = "Lưu thành công!", para = {}) {
+        const paraConvert = Object.entries(para || {})
+            .map(([key, value]) => `${key}=${value}`)
+            .join("&");
+
+        const url = `/api/DangKyThuHoiVT/${router}?action=${action}${paraConvert ? '&' + paraConvert : ''}`;
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(arrSave),
+            });
+
+            if (!response.ok) throw new Error(`Response status: ${response.status}`);
+
+            const data = await response.json();
+            if (data == "True") showToast('success', textSuccess, 1500);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+};
+
+/// API CALLS
+async function GetMaLenhDangKyVatTu() {
+    const maKH = $("#khachhang").val() || "all";
+    const $maLenhSelect = $("#malenhdangkyvattu");
+
+    // Destroy select2 trước khi khởi tạo lại
+    if ($maLenhSelect.hasClass("select2-hidden-accessible")) {
+        $maLenhSelect.select2("destroy");
+    }
+
+    $maLenhSelect.empty().append(`<option ></option>`);
+
+    const data = await API.Get("GetLenhDNTH", { para1: isNPL, para2: maKH });
+    if (data.length > 0) {
+        const html = data.map(x => `<option value="${x.MaLenhSanXuat}">${x.Display}</option>`).join('');
+        $maLenhSelect.append(html);
+    }
+
+    $maLenhSelect.select2({
+        dropdownParent: $("#modalAddPhieu")
+    });
+}
+
+/// check1
+async function GetPhieuDangKyXuat() {
+    const maLenh = $("#malenhdangkyvattu").val();
+    const data = await API.Get("GetPhieuDKTHLenh", { para1: isNPL, para2: maLenh });
+    batchData = data;
+    renderList(data);
+}
+
+
+async function GetChiTietLenhThuHoi() {
+    const maLenh = $("#malenhdangkyvattu").val();
+
+    const data = await API.Get("GetChiTietLenhThuHoi", { para1: isNPL, para2: maLenh, para3: 1 })
+    data.map(item => {
+        item.Status = 1
+    })
+    createViewDxDataGridDangKyVatTu(data)
+}
+
+async function GetMaLenh2() {
+    //    const $maLenhSelect = $("#malenh");
+    //    const data = await API.Get("GetPYCDNTH", { para1: isNPL });
+    //    $maLenhSelect.empty();
+
+    //    if (data.length > 0) {
+    //        const html = data.map(x => `<option value="${x.MaLenhSX}">${x.MaLenh}</option>`).join('');
+    //        $maLenhSelect.append(html);
+    //    }
+
+    //    $maLenhSelect.select2();
+    await GetPhieu();
+}
+
+
+async function GetDSPhieuDNTHVT() {
+    const data = await API.Get("GetViewPDKVT", { para1: 'all', para2: isNPL })
+
+    lstDSPhieuDKVT = data
+    updateGrid(dxDataPhieuDKVT, data)
+}
+
+async function GetLenhChiTiet(maLenhSanXuat) {
+    return await API.Get("GetChiTietLenh", { para1: isNPL, para2: maLenhSanXuat });
+}
+
+async function GetKhachHang() {
+    const data = await API.Get("GetMaKH");
+    const $khachHangSelect = $("#khachhang");
+
+    if ($khachHangSelect.data('select2')) $khachHangSelect.select2('destroy');
+
+    $khachHangSelect.empty().append(`<option value="all">Tất cả</option>`);
+
+    if (data.length > 0) {
+        const html = data.map(x => `<option value="${x.MaKH}">${x.TenKH}</option>`).join('');
+        $khachHangSelect.append(html);
+    }
+
+    $khachHangSelect.select2({ dropdownParent: $('#modalAddPhieu') });
+}
+
+async function GetPhieuMax() {
+    const data = await API.Get("GetPhieuMaxYCTH", { para1: isNPL });
+    dot = data[0].PXH;
+    $("#txtPhieu").val(`PDNTHPL_${dot}`);
+}
+
+async function GetPhieu() {
+
+    /*  const maLenhSanXuat = $("#malenh").val();*/
+    //const data = await API.Get("GetPhieuDNTH", { para1: isNPL, para2: maLenhSanXuat });
+    const data = await API.Get("GetPhieuDNTH", { para1: isNPL, para2: '' });
+    const $soPhieu = $("#maphieu");
+
+    if ($soPhieu.hasClass("select2-hidden-accessible")) {
+        $soPhieu.select2("destroy");
+    }
+    $soPhieu.empty();
+
+    if (data.length > 0) {
+        const html = data.map(x => `<option data-display="${x.Display}" value="${x.PhieuTH}">${x.Display}</option>`).join('');
+        selectSoPhieuDisplay = data[0].Display
+        $soPhieu.append(html);
+    }
+
+    $soPhieu.select2();
+
+    GetDSPhieuDNTH();
+}
+
+async function GetDSPhieuDNTH() {
+    const soPhieu = $("#maphieu option:selected").val() || '';
+    /* const MaLenhSX = $("#malenh").val() || '';*/
+    if (!soPhieu) return;
+    const data = await API.Get("GetDSChiTietPhieu", { para1: soPhieu, para2: isNPL, /*para3: MaLenhSX*/ });
+    lstDataDangKyVatTu = data;
+    updateGrid(dxDataGridDanhSachDangKy, data);
+    loadPhongBanOptions();
+    filterByTrangThai();
+}
+
+async function SavePhieu(arrSave) {
+    await API.Post("PostDNTH", "PostDeNghiThuHoi", arrSave, "Lưu phiếu thành công", { para1: isNPL });
+    const phieuVuaTao = `PDNTHPL_${dot}`;
+
+    resetModalState();
+
+    await GetMaLenh2();
+    await GetPhieuMax();
+
+    $("#maphieu").val(phieuVuaTao).trigger("change");
+    $("#modalAddPhieu").modal("hide")
+}
+async function UpdateKiTenPhieu(arrSave) {
+    await API.Post("PostDNTH", "PostDeNghiThuHoi", arrSave, "Lưu phiếu thành công", { para1: isNPL });
+    await GetDSPhieuDNTH();
+}
+async function DeletePhieuDNTH() {
+    console.log("DELETE PL:", {
+        selectSoPhieu,
+        rowDelete,
+        userNameSave
+    });
+
+    const res = await API.Get("DeletePhieuDNTH", {
+        para1: rowDelete.PhieuTH || selectSoPhieu,
+        para2: userNameSave,
+        para3: rowDelete.MaNPL || ''
+    });
+
+    if (res && res[0]?.SoDongDaXoa > 0) {
+        showToast("success", "Xóa thành công");
+        await GetMaLenh2();
+
+        if (lstDataDangKyVatTu.length === 0) {
+            await resetToDefault();
+        }
+    } else {
+        showToast("error", res?.[0]?.Message || "Không thể xóa");
+    }
+
+    $("#modalComfimrtDeleteVT").modal('hide');
+}
+
+async function DeleteAllPhieu() {
+    await API.Get("Delete", { para1: selectSoPhieu, para2: '', para3: '' }, "Xóa phiếu thành công");
+    await resetToDefault();
+    chiTietLenhCache = {};
+
+    $("#modalComfimrtDeleteVT").modal('hide');
+}
+
+async function UpdatePhieu() {
+    const dataSource = dxDataGridEditVatTu.option("dataSource");
+    const arrSave = [];
+    if (dataSource.length === 0) {
+        showToast("warning", "Không có dữ liệu để cập nhật");
+        PlayAudioError();
+        return;
+    }
+
+    const ngayThuHoi = ddmmyyyyToYmd($("#ngayCapEdit").val());
+    dataSource.map(item => {
+
+        const objectUpdate = {
+            PhieuTH: item.PhieuTH,
+            MaLenhSX: item.MaLenhSX,
+            MaDH: item.MaDH,
+            MaLenh: item.MaLenh,
+            MaNPL: item.MaNPL,
+            SLDK: item.SLDK,
+            GhiChu: item.GhiChu,
+            MaVT: item.MaVT,
+            MauVT: item.MauVT,
+            KhoVai: item.KhoVai,
+            MaDVVT: item.MaDVVT,
+            NgayDK: item.NgayDK,
+            NgayTH: ngayThuHoi,
+            NgayTao: new Date(),
+            IsNPL: isNPL,
+            NguoiTH: userNameSave,
+            PhieuDK: "",
+            SignNgDK: "",
+            NgayKi: "",
+            SignTBPNgDK: "",
+            NgayKiTBPNgDK: "",
+            SignMer: "",
+            NgaySignMer: "",
+            SignTBPMer: "",
+            NgaySignTBPMer: "",
+        }
+
+        arrSave.push(objectUpdate)
+    })
+    await API.Post("PostDNTH", "PostDeNghiThuHoi", arrSave, "Cập nhật thành công");
+    $('#modalEditDKVT').modal('hide');
+    await GetDSPhieuDNTH();
+
+    // trả về lại null
+    picker4.dates.setValue('');
+}
+
+/// HELPER FUNCTIONS
+function updateGrid(grid, dataSource) {
+    grid.beginUpdate();
+    grid.option({ dataSource: dataSource });
+    grid.endUpdate();
+}
+
+function resetModalState() {
+    selectedItems = [];
+    selectedRowsToDelete = [];
+    $('#itemList input[type="checkbox"]').prop('checked', false);
+    $('#checkAll').prop('checked', false);
+    $('#phieuDKXInput').val('');
+    $('#dropdownList').removeClass('show');
+
+    updateGrid(dxDataGridDangKyVatTu, []);
+}
+
+async function resetToDefault() {
+    selectSoPhieu = '';
+    lstDataDangKyVatTu = [];
+
+    await GetPhieu();
+    $("#maphieu").val('all').trigger("change");
+    await GetPhieuMax();
+
+    updateGrid(dxDataGridDanhSachDangKy, []);
+    isDeleteAll = false;
+}
+
+function renderList(data) {
+    const itemList = $('#itemList');
+    itemList.empty();
+
+    // Kiểm tra data có tồn tại và là array không
+    if (!data || !Array.isArray(data)) {
+        return;
+    }
+
+    const html = data.map(item => {
+        const isChecked = selectedItems.some(selected => selected.PhieuDK == item.PhieuDK);
+        return `
+            <div class="dropdown-item">
+                <input type="checkbox" 
+                       id="${item.PhieuDK}"
+                       data-display="${item.PhieuDK}"
+                       ${isChecked ? 'checked' : ''}>
+                <label class="mb-0" for="${item.PhieuDK}">${item.PhieuDK}</label>
+            </div>
+        `;
+    }).join('');
+
+    itemList.append(html);
+    updateCheckAll();
+}
+
+function updateCheckAll() {
+    const total = $('#itemList input[type="checkbox"]').length;
+    const checked = $('#itemList input[type="checkbox"]:checked').length;
+    $('#checkAll').prop('checked', total > 0 && total == checked);
+}
+
+
+function updateInput() {
+    const displayText = selectedItems.map(item => item.PhieuDK).join(', ');
+    $('#phieuDKXInput').val(displayText);
+    phieuDKJoin = selectedItems.map(item => item.PhieuDK);
+}
+
+function showLoading() {
+    $('#loadingSpinner').fadeIn(200);
+    $('#modalAddPhieu .modal-body section').css('opacity', '0.5');
+}
+
+function hideLoading() {
+    $('#loadingSpinner').fadeOut(200);
+    $('#modalAddPhieu .modal-body section').css('opacity', '1');
+}
+
+function updateSummary(grid) {
+    const dataSource = grid.option("dataSource");
+
+    const total = dataSource.reduce(
+        (sum, item) => sum + (Number(item.SLDK) || 0),
+        0
+    );
+
+    // CẮT 4 số thập phân – KHÔNG LÀM TRÒN
+    let str = total.toString();
+    let intPart = str;
+    let decPart = "";
+
+    if (str.includes(".")) {
+        [intPart, decPart] = str.split(".");
+        decPart = decPart.substring(0, 4);
+    }
+
+    const formattedInt = Number(intPart).toLocaleString("en");
+    const result = decPart ? `${formattedInt}.${decPart}` : formattedInt;
+
+    // tìm summary cell
+    const columns = grid.option("columns");
+    const visibleColumns = columns.filter(col => col.visible !== false);
+    const sldkColumnIndex = visibleColumns.findIndex(col => col.dataField === "SLDK");
+
+    if (sldkColumnIndex !== -1) {
+        const $summaryRow = grid.element().find('.dx-datagrid-total-footer .dx-row');
+        const $summaryCell = $summaryRow.find('td').eq(sldkColumnIndex);
+        const $summaryItem = $summaryCell.find('.dx-datagrid-summary-item');
+
+        if ($summaryItem.length) {
+            $summaryItem.text(result);
+        }
+    }
+}
+
+function formatNumber(value) {
+    let str = value.toString();
+    let intPart = str;
+    let decPart = "";
+
+    if (str.includes(".")) {
+        [intPart, decPart] = str.split(".");
+        decPart = decPart.substring(0, 4); // cắt, không làm tròn
+    }
+
+    // format phần nguyên
+    let formattedInt = Number(intPart).toLocaleString();
+
+    return decPart ? `${formattedInt}.${decPart}` : formattedInt;
+}
+
+/// EVENTS
+$(document).ready(async function () {
+    $(".select_2").select2();
+    $("#malenhdangkyvattu").select2({
+        dropdownParent: $("#modalAddPhieu")
+    });
+    createViewDxDataGridDanhSachDangKy();
+    createViewDxDataGridDangKyVatTu();
+    createViewDxDataGridEditVatTu();
+    createViewDxGridDanhSachPhieuDKVT();
+
+    await initCurrentUserPB();
+    await GetMaLenh2();
+    await GetMaLenhDangKyVatTu();
+    await GetDSPhieuDNTH();
+    selectSoPhieu = $("#maphieu option:selected").val();
+});
+
+$(function () {
+    $("#khachhang").val("all").select2('destroy').select2();
+
+    $("#home").on("click", () => window.location.href = '/Home/Dashboard');
+
+    $("#khachhang").on("change", function () {
+        GetMaLenh()
+    });
+
+    $('#phieuDKXInput').click(function (e) {
+        e.stopPropagation();
+        $('#dropdownList').toggleClass('show');
+        $('#searchInput').val('').focus();
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.select-container').length) {
+            $('#dropdownList').removeClass('show');
+        }
+    });
+
+    picker1 = new tempusDominus.TempusDominus(
+        document.getElementById('datetimepicker'),
+        {
+            defaultDate: new tempusDominus.DateTime(),
+            display: {
+                components: {
+                    calendar: true,
+                    date: true,
+                    month: true,
+                    year: true,
+                    clock: false,
+                    hours: false,
+                    minutes: false,
+                    seconds: false
+                }
+            },
+            localization: {
+                format: 'dd/MM/yyyy'
+            }
+        }
+    );
+    document.getElementById('datetimepicker').disabled = true;
+
+    picker2 = new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), {
+        display: {
+            components: {
+                calendar: true, date: true, month: true, year: true,
+                clock: false, hours: false, minutes: false, seconds: false
+            }
+        },
+        localization: { format: 'dd/MM/yyyy' },
+        restrictions: {
+            minDate: new tempusDominus.DateTime()
+        }
+    });
+
+    picker4 = new tempusDominus.TempusDominus(document.getElementById('datetimepicker3'), {
+        display: {
+            components: {
+                calendar: true, date: true, month: true, year: true,
+                clock: false, hours: false, minutes: false, seconds: false
+            }
+        },
+        localization: { format: 'dd/MM/yyyy' }
+    });
+
+    $("#tuNgay").trigger("click");
+    $("#ngayCap").trigger("click");
+    picker1.hide();
+    picker2.hide();
+
+    $('#searchInput').on('input', function () {
+        const searchTerm = $(this).val().toLowerCase();
+        const filtered = batchData.filter(item => item.Display.toLowerCase().includes(searchTerm));
+        renderList(filtered);
+    });
+
+    $('#btnSavePhieu').on("click", async function () {
+        const $btn = $(this);
+
+        // Nếu đang loading thì chặn luôn
+        if ($btn.prop("disabled")) return;
+
+        setLoadingButton($btn, true);
+        try {
+            await SaveDeNghiThuHoi();
+        }
+        catch (err) {
+            console.error(err);
+        } finally {
+            // Luôn mở lại nút sau khi xong
+            setLoadingButton($btn, false);
+        }
+
+    });
+
+    $('#checkAll').change(async function () {
+        const isChecked = $(this).is(':checked');
+
+        dxDataGridDangKyVatTu.beginCustomLoading("Đang tải dữ liệu...");
+
+        try {
+            if (isChecked) {
+                selectedItems = [...batchData];
+
+            } else {
+                phieuDKJoin = [];
+                selectedItems = [];
+            }
+
+            $('#itemList input[type="checkbox"]').prop('checked', isChecked);
+            updateInput();
+            GetChiTietLenhThuHoi();
+        } finally {
+            dxDataGridDangKyVatTu.endCustomLoading();
+        }
+    });
+
+    $(document).on('change', '#itemList input[type="checkbox"]', async function () {
+        const itemId = $(this).attr('id');
+        const isChecked = $(this).is(':checked');
+
+        if (isChecked) {
+            const item = batchData.find(x => x.PhieuDK == itemId);
+            if (item && !selectedItems.some(x => x.PhieuDK == itemId)) {
+                selectedItems.push(item);
+            }
+        } else {
+            selectedItems = selectedItems.filter(x => x.PhieuDK != itemId);
+        }
+
+        updateCheckAll();
+        updateInput();
+        GetChiTietLenhThuHoi();
+    });
+
+    $("#maphieu").on("change", function () {
+        const $selectedOption = $(this).find("option:selected");
+
+        selectSoPhieu = $selectedOption.val();
+        selectSoPhieuDisplay = $selectedOption.data("display") || '';
+        GetDSPhieuDNTH();
+    });
+
+    $("#btnShowModal").on("click", function () {
+        // Reset các picker về ngày giờ hiện tại
+        const now = new tempusDominus.DateTime();
+        picker1.dates.setValue(now);
+        picker2.dates.setValue(now);
+        //picker3.dates.setValue(now);
+
+        $("#modalAddPhieu").modal("show");
+    });
+
+    $("#btnDeleteAllPhieu").on("click", function () {
+        if (selectSoPhieu == '' || !selectSoPhieu || selectSoPhieu === "all") {
+            showToast("warning", "Vui lòng chọn phiếu để xóa");
+            return;
+        }
+        isDeleteAll = true;
+        $("#modalComfimrtDeleteVT").modal("show");
+    });
+
+    $("#btnEditAllPhieu").on("click", function () {
+        if (selectSoPhieu == '' || !selectSoPhieu || selectSoPhieu === "all") {
+            showToast("warning", "Vui lòng chọn phiếu để chỉnh sửa");
+            return;
+        }
+
+        lstEditDangKyVatTu = dxDataGridDanhSachDangKy.option("dataSource")
+
+        const daDuocKy = lstEditDangKyVatTu.some(item =>
+
+            (item.SignTBPNgDK && item.SignTBPNgDK.trim() !== '') ||
+            (item.SignMer && item.SignMer.trim() !== '') ||
+            (item.SignTBPMer && item.SignTBPMer.trim() !== '')
+        );
+
+        if (daDuocKy) {
+            showToast("warning", "Phiếu đã được ký, không thể chỉnh sửa!");
+            return;
+        }
+        updateGrid(dxDataGridEditVatTu, lstEditDangKyVatTu)
+        // Cập nhật ngày cấp và giờ cấp theo phiếu
+        if (lstEditDangKyVatTu.length > 0) {
+            const ngayCap = moment(lstEditDangKyVatTu[0].NgayCap).toDate();
+
+            picker4.dates.setValue(tempusDominus.DateTime.convert(ngayCap));
+        }
+        isShowNgayCapAndGioCap = true
+        $("#modalEditDKVT").modal("show");
+        $("#txtNgayChinhSua").text(selectSoPhieuDisplay)
+    });
+
+    $("#btnConfirmtDeletePhieu").on("click", function () {
+        if (isDeleteAllDK) {
+            let dataSource = dxDataGridDangKyVatTu.option("dataSource");
+            const deleteCount = selectedRowsToDelete.length;
+
+            // Lọc bỏ tất cả các item đã chọn
+            const updatedDataSource = dataSource.filter(item => {
+                return !selectedRowsToDelete.some(selected =>
+                    selected.MaLenhSanXuat === item.MaLenhSanXuat &&
+                    selected.MaVT === item.MaVT
+                );
+            });
+
+            updateGrid(dxDataGridDangKyVatTu, updatedDataSource);
+
+            selectedRowsToDelete = [];
+            $('#checkAllRows').prop('checked', false);
+            $('.row-checkbox').prop('checked', false);
+
+            showToast("success", `Đã xóa ${deleteCount} vật tư`);
+
+            $("#txtSLVTDelete").empty();
+            isDeleteAllDK = false;
+            $("#modalComfimrtDeleteVT").modal("hide");
+            return;
+        }
+
+        if (isDeleteDK) {
+            let dataSource = dxDataGridDangKyVatTu.option("dataSource");
+            const index = dataSource.findIndex(item =>
+                item.MaLenhSanXuat === rowDelete.MaLenhSanXuat &&
+                item.MaVT === rowDelete.MaVT &&
+                item.KhoVai === rowDelete.KhoVai
+            );
+
+            if (index !== -1) {
+                dataSource.splice(index, 1);
+                updateGrid(dxDataGridDangKyVatTu, dataSource);
+                selectedRowsToDelete = [];
+                showToast("success", "Xóa thành công");
+            }
+
+            isDeleteDK = false;
+            $("#modalComfimrtDeleteVT").modal("hide");
+
+            return;
+        }
+
+        if (isDeleteAll) {
+            DeleteAllPhieu();
+        } else {
+            DeletePhieuDNTH();
+        }
+    });
+
+    // Khi đóng modal - reset tất cả checkbox và state
+    $('#modalAddPhieu').on('hidden.bs.modal', function () {
+        // Reset checkbox
+        $('#itemList input[type="checkbox"]').prop('checked', false);
+        $('#checkAll').prop('checked', false);
+        $('#phieuDKXInput').val('');
+        $('#dropdownList').removeClass('show');
+        $("#malenhdangkyvattu").empty();
+
+        // Reset state
+        selectedItems = [];
+        $("#txtSLVTDelete").empty();
+        // Clear grid
+        if (dxDataGridDangKyVatTu) {
+            updateGrid(dxDataGridDangKyVatTu, []);
+        }
+    });
+
+    // Khi mở modal - khởi tạo lại
+    $('#modalAddPhieu').on('show.bs.modal', function () {
+        GetPhieuMax();
+        GetMaLenhDangKyVatTu();
+        renderList([])
+        selectedItems = []
+        selectedRowsToDelete = [];
+        phieuDKJoin = [];
+    });
+
+    // Nút xóa tất cả vật tư
+    //$("#btnDeleteAllDKVT").on("click", function () {
+    //    if (selectedRowsToDelete.length === 0) {
+    //        showToast("warning", "Vui lòng chọn vật tư để xóa")
+    //        return;
+    //    }
+    //    isDeleteAllDK = true;
+    //    $("#txtSLVTDelete").text(` (${selectedRowsToDelete.length})`);
+    //    $("#modalComfimrtDeleteVT").modal("show")
+    //})
+    $("#btnDeleteAllDKVT").hide();
+    $("#modalComfimrtDeleteVT").on("hide.bs.modal", function () {
+        $("#txtSLVTDelete").empty();
+    })
+
+    $("#modalEditDKVT").on("show.bs.modal", function () {
+        if (isShowNgayCapAndGioCap) {
+            $("#colNgayCap").removeClass("d-none")
+            $("#colGioCap").removeClass("d-none")
+
+        } else {
+            $("#colNgayCap").addClass("d-none")
+            $("#colGioCap").addClass("d-none")
+        }
+    })
+    $("#modalEditDKVT").on("hide.bs.modal", function () {
+        isShowNgayCapAndGioCap = false
+    })
+
+    $("#malenh").on("change", async function () {
+        await GetPhieu();
+    })
+
+    $("#modalTimNhanh").on("shown.bs.modal", function () {
+        setTimeout(function () {
+            $("#inputTimKiem").focus();
+        }, 100);
+    });
+
+    $("#modalTimNhanh").on("hide.bs.modal", function () {
+        $("#inputTimKiem").val("").trigger("input")
+    });
+
+    $("#btnTimNhanh").on("click", function () {
+        GetDSPhieuDNTHVT();
+
+        $("#modalTimNhanh").modal('show')
+    })
+
+    // Nút tìm kiếm
+    let searchTimeout;
+    $("#inputTimKiem").on("input", function () {
+        clearTimeout(searchTimeout);
+        const search = $(this).val().trim().toLowerCase();
+
+        searchTimeout = setTimeout(() => {
+            if (search === "") {
+                // Nếu rỗng thì hiện tất cả
+                updateGrid(dxDataPhieuDKVT, lstDSPhieuDKVT);
+            } else {
+                // Lọc dữ liệu
+                const dataFiltered = lstDSPhieuDKVT.filter(item =>
+                    String(item.MaVT).trim().toLowerCase().includes(search) ||
+                    String(item.MauVT).trim().toLowerCase().includes(search)
+                );
+                updateGrid(dxDataPhieuDKVT, dataFiltered);
+            }
+        }, 100); // Delay 300ms sau khi ngừng gõ
+    });
+
+    // check1.1
+    $("#malenhdangkyvattu").on("change", function () {
+        selectedItems = []
+        selectedRowsToDelete = [];
+        phieuDKJoin = []
+        $('#phieuDKXInput').val('');
+        createViewDxDataGridDangKyVatTu([]);
+        GetChiTietLenhThuHoi()
+        //    GetPhieuDangKyXuat();
+    })
+
+    $("#btnNapLai").on("click", function () {
+        GetPhieuMax();
+        GetMaLenhDangKyVatTu();
+        $("#phieuDKXInput").val("")
+        renderList([])
+        selectedItems = []
+        selectedRowsToDelete = [];
+        phieuDKJoin = [];
+        createViewDxDataGridDangKyVatTu([])
+    })
+
+
+    //thiện phước bổ sung 
+    $("#trangThaiDuyet").select2();
+
+    $("#trangThaiDuyet").on("change", function () {
+        filterByTrangThai();
+    });
+
+    pickerTuNgayFilter = new tempusDominus.TempusDominus(
+        document.getElementById('dtpTuNgayFilter'), {
+        display: {
+            components: {
+                calendar: true, date: true, month: true, year: true,
+                clock: false, hours: false, minutes: false, seconds: false
+            }
+        },
+        localization: { format: 'dd/MM/yyyy' }
+    });
+
+    pickerDenNgayFilter = new tempusDominus.TempusDominus(
+        document.getElementById('dtpDenNgayFilter'), {
+        display: {
+            components: {
+                calendar: true, date: true, month: true, year: true,
+                clock: false, hours: false, minutes: false, seconds: false
+            }
+        },
+        localization: { format: 'dd/MM/yyyy' }
+    });
+
+    document.getElementById('dtpTuNgayFilter')
+        .addEventListener(tempusDominus.Namespace.events.change, function () {
+            filterByTrangThai();
+        });
+
+    document.getElementById('dtpDenNgayFilter')
+        .addEventListener(tempusDominus.Namespace.events.change, function () {
+            filterByTrangThai();
+        });
+
+    // Toggle panel tìm kiếm
+    $("#btnDropSearch").on("click", function (e) {
+        e.stopPropagation();
+        const isOpen = $("#panelTimKiem").is(":visible");
+        $("#panelTimKiem").toggle(!isOpen);
+        $("#arrowDropSearch").text(isOpen ? "▼" : "▲");
+    });
+
+    $(document).on("click", function (e) {
+        if (!$(e.target).closest("#btnDropSearch, #panelTimKiem").length) {
+            $("#panelTimKiem").hide();
+            $("#arrowDropSearch").text("▼");
+        }
+    });
+
+    $("#btnXoaTimKiem").on("click", function () {
+        $("#tkMaHang, #tkMaLenh, #tkNguoiLap").val("");
+        $("#tkPhongBan").val("");
+        $("#dotTimKiem").hide();
+        filterByTrangThai();
+    });
+
+    $("#btnApplyTimKiem").on("click", function () {
+        $("#panelTimKiem").hide();
+        $("#arrowDropSearch").text("▼");
+        const hasFilter = $("#tkMaHang").val() || $("#tkMaLenh").val() || $("#tkNguoiLap").val();
+        $("#dotTimKiem").css("display", hasFilter ? "inline-block" : "none");
+        filterByTrangThai();
+    });
+
+    $("#btnNapLaiDanhSach").on("click", async function (e) {
+        e.preventDefault();
+        const $btn = $(this);
+        const $icon = $btn.find("i");
+        if ($btn.prop("disabled")) return;
+
+        $btn.prop("disabled", true);
+        $icon.addClass("fa-spin");
+
+        try {
+            pickerTuNgayFilter.dates.clear();
+            pickerDenNgayFilter.dates.clear();
+            $("#filterTuNgay").val("");
+            $("#filterDenNgay").val("");
+            $("#trangThaiDuyet").val("pending").trigger("change");
+
+            await GetMaLenh2();
+            showToast("success", "Nạp lại thành công");
+        } catch (err) {
+            console.error(err);
+        } finally {
+            $btn.prop("disabled", false);
+            $icon.removeClass("fa-spin");
+        }
+    });
+    $(document).on("change", "#chkXacNhanNhanh", async function () {
+        if (!this.checked) return;
+
+        const fakeStroke = [{ x: 0, y: 0, color: "#000", size: 2 }];
+        signatureHistory.push(fakeStroke);
+
+        const originalToDataURL = canvas.toDataURL.bind(canvas);
+        canvas.toDataURL = () => "checked";
+
+        $("#saveBtn").trigger("click");
+
+        setTimeout(() => {
+            canvas.toDataURL = originalToDataURL;
+            signatureHistory.pop();
+            $("#chkXacNhanNhanh").prop("checked", false);
+        }, 100);
+    });
+    $('#signatureModal').on('shown.bs.modal', function () {
+        $("#chkXacNhanNhanh").prop("checked", false);
+    });
+});
+function filterByTrangThai() {
+    const trangThai = $("#trangThaiDuyet").val();
+    const tuNgayStr = $("#filterTuNgay").val();
+    const denNgayStr = $("#filterDenNgay").val();
+    const maHang = $("#tkMaHang").val().trim().toLowerCase();
+    const maLenh = $("#tkMaLenh").val().trim().toLowerCase();
+    const nguoiLap = $("#tkNguoiLap").val().trim().toLowerCase();
+    const phongBan = $("#tkPhongBan").val();
+
+    function parseDate(str) {
+        if (!str) return null;
+        const [d, m, y] = str.split("/");
+        if (!d || !m || !y) return null;
+        return new Date(y, m - 1, d);
+    }
+
+    const tuNgay = parseDate(tuNgayStr);
+    const denNgay = parseDate(denNgayStr);
+    if (denNgay) denNgay.setHours(23, 59, 59);
+
+    let filtered = [...lstDataDangKyVatTu];
+
+    if (trangThai === "done") {
+        filtered = filtered.filter(item =>
+            item.SignTBPMer && item.SignTBPMer.trim() !== ''
+        );
+    } else if (trangThai === "pending") {
+        filtered = filtered.filter(item =>
+            !item.SignTBPMer || item.SignTBPMer.trim() === ''
+        );
+    }
+
+    if (tuNgay || denNgay) {
+        filtered = filtered.filter(item => {
+            if (!item.NgayTH) return false;
+            const ngayTH = new Date(item.NgayTH);
+            if (tuNgay && ngayTH < tuNgay) return false;
+            if (denNgay && ngayTH > denNgay) return false;
+            return true;
+        });
+    }
+
+    if (maHang || maLenh || nguoiLap || phongBan) {
+        filtered = filtered.filter(item => {
+            const okMaHang = !maHang || String(item.MaDH || "").toLowerCase().includes(maHang);
+            const okMaLenh = !maLenh || String(item.MaLenh || "").toLowerCase().includes(maLenh);
+            const okNguoi = !nguoiLap || String(item.NguoiTH || "").toLowerCase().includes(nguoiLap)
+                || String(item.TenUserNgDK_Ten || "").toLowerCase().includes(nguoiLap);
+            const okPB = !phongBan || String(item.MaPB || "") === phongBan;
+            return okMaHang && okMaLenh && okNguoi && okPB;
+        });
+    }
+
+    updateGrid(dxDataGridDanhSachDangKy, filtered);
+}
+//Xử lý người dùng click nhiều lần khi đang submit dữ liệu (tránh gọi API trùng)
+function setLoadingButton($btn, isLoading, text = "Đang lưu...") {
+    if (isLoading) {
+        $btn.data("original-text", $btn.html());
+        $btn.prop("disabled", true);
+        $btn.css("opacity", "0.6");
+        $btn.html(`<i class="fa fa-spinner fa-spin"></i> ${text}`);
+    } else {
+        $btn.prop("disabled", false);
+        $btn.css("opacity", "1");
+        $btn.html($btn.data("original-text"));
+    }
+}
+
+function handleBack() {
+    // Reset checkbox
+    $('#itemList input[type="checkbox"]').prop('checked', false);
+    $('#checkAll').prop('checked', false);
+    $('#phieuDKXInput').val('');
+    $('#dropdownList').removeClass('show');
+
+    // Reset state
+    selectedItems = [];
+    $("#txtSLVTDelete").empty();
+    // Clear grid
+    if (dxDataGridDangKyVatTu) {
+        updateGrid(dxDataGridDangKyVatTu, []);
+    }
+
+    $("#modalAddPhieu").modal("hide")
+}
+async function SaveDeNghiThuHoi() {
+    const dataSource = dxDataGridDangKyVatTu.option("dataSource");
+
+    if (dataSource == null || dataSource.length === 0) {
+        showToast("warning", "Chưa có thông tin đăng ký");
+        PlayAudioError();
+        return;
+    }
+    const dataToSave = dataSource.filter(item =>
+        selectedRowsToDelete.some(s =>
+            s.MaLenhSanXuat === item.MaLenhSanXuat &&
+            s.MaVT === item.MaVT
+        )
+    );
+
+    if (dataToSave.length === 0) {
+        showToast("warning", "Vui lòng nhập số lượng và chọn ít nhất một dòng để lưu");
+        PlayAudioError();
+        return;
+    }
+
+    const ngayDK = ddmmyyyyToYmd($("#tuNgay").val());
+    const ngayCap = ddmmyyyyToYmd($("#ngayCap").val());
+
+    const arrSave = dataToSave.map(item => ({
+        PhieuTH: '',
+        MaLenhSX: item.MaLenhSanXuat,
+        MaDH: item.MaDH,
+        MaLenh: item.MaLenh,
+        MaNPL: item.MaNPL,
+        SLDK: item.SLDK,
+        GhiChu: item.GhiChu,
+        MaVT: item.MaVT,
+        MauVT: item.MauVT,
+        KhoVai: item.KhoVai,
+        MaDVVT: item.MaDVVT,
+        NgayDK: ngayDK,
+        NgayTH: ngayCap,
+        NgayTao: new Date(),
+        IsNPL: item.NPL ? 1 : 0,
+        NguoiTH: userNameSave,
+        PhieuDK: "",
+        SignNgDK: "",
+        NgayKi: "",
+        SignTBPNgDK: "",
+        NgayKiTBPNgDK: "",
+        SignMer: "",
+        NgaySignMer: "",
+        SignTBPMer: "",
+        NgaySignTBPMer: "",
+        Status: item.Status
+    }));
+    showConfirmModalSign(async function () {
+        if (signatureHistory.length === 0) {
+            alert('Vui lòng ký tên trước khi lưu!');
+            return false;
+        }
+
+        const signatureImage = canvas.toDataURL('image/png');
+        arrSave.forEach(x => {
+            x.SignNgDK = signatureImage;
+        });
+
+        await SavePhieu(arrSave);
+
+        var UserID = userNameSave || userName;
+        var Title = "Phiếu đã duyệt";
+        var MaPhieu = $("#txtPhieu").val();
+        var MaLenhDL = $("#malenhdangkyvattu option:selected").text();
+        var Detail = `Mã phiếu : ${MaPhieu}\nMã lệnh : ${MaLenhDL}`;
+        sendNotify(UserID, "M.48.00.00", Title, Detail, "TBP", "ALL", "1");
+
+        return true;
+    })
+}
+/// DX DataGrid
+function createViewDxDataGridDangKyVatTu(data) {
+    dxDataGridDangKyVatTu = $("#dxDataGridDangKyVatTu").dxDataGrid({
+        dataSource: data,
+        width: '100%',
+        columnAutoWidth: false,
+        allowColumnResizing: false,
+        columnHidingEnabled: false,
+        wordWrapEnabled: true,
+        showRowLines: true,
+        showBorders: true,
+        noDataText: "",
+        scrolling: { mode: 'standard' },
+        filterRow: { visible: true },
+        headerFilter: { visible: false },
+        paging: {
+            enabled: false
+        },
+        renderAsync: false,
+        grouping: { autoExpandAll: true },
+        groupPanel: { visible: false },
+        loadPanel: {
+            enabled: true,
+            text: "Đang tải dữ liệu...",
+            showIndicator: true,
+            showPane: true
+        },
+        columns: [
+            {
+                dataField: "Status",
+                caption: "",
+                width: 120,
+                alignment: "center",
+                allowSorting: false,
+                cellTemplate: function (container, options) {
+                    const isChecked = options.value === 2;
+                    const $checkbox = $(`
+                        <input type="checkbox" 
+                               class="row-checkboxVTLoi" 
+                               data-row-index="${options.rowIndex}"
+                               ${isChecked ? 'checked' : ''}
+                               style="width: 18px; height: 18px; cursor: pointer;" />
+                    `);
+                    $checkbox.on("change", function () {
+                        const checked = $(this).prop("checked");
+                        options.data.Status = checked ? 2 : 1;
+                    });
+                    container.append($checkbox);
+                },
+                headerCellTemplate: function (container) {
+                    const $checkAll = $(`
+                       <div class="flex-column" style="display: flex; align-items: center; gap: 4px;">
+                            <input type="checkbox"
+                                   id="checkAllRowsVTLoi"
+                                   style="width: 18px; height: 18px; cursor: pointer;" />
+                            <span style="font-size: 12px;">Vật tư lỗi</span>
+                        </div>
+                    `);
+                    $checkAll.on("change", function () {
+                        const isChecked = $(this).prop("checked");
+                        const grid = dxDataGridDangKyVatTu;
+                        const dataSource = grid.option("dataSource");
+
+                        dataSource.forEach((item) => {
+                            item.Status = isChecked ? 2 : 1;
+                        });
+
+                        // Update tất cả checkbox trong grid
+                        $('.row-checkboxVTLoi').prop('checked', isChecked);
+                    });
+                    container.append($checkAll);
+                }
+            },
+            { dataField: "MaDH", caption: "Mã ĐH", alignment: "center", minWidth: 120 },
+            { dataField: "MaLenh", caption: "Mã Lệnh", alignment: "center", minWidth: 100 },
+            { dataField: "MaVT", caption: "Item Code", alignment: "center", minWidth: 180 },
+            { dataField: "MaNPL", caption: "Mã NPL", alignment: "center", minWidth: 120, visible: false },
+            { dataField: "MauVT", caption: "Màu VT", alignment: "center", minWidth: 120 },
+            { dataField: "KhoVai", caption: "Khổ/Size", alignment: "center", minWidth: 120 },
+            {
+                dataField: "TenDVVT",
+                caption: "Đơn vị",
+                alignment: "center",
+                minWidth: 80,
+            },
+            {
+                dataField: "CapPhat",
+                caption: "SL Cấp Phát",
+                alignment: "center",
+                minWidth: 80,
+                cellTemplate: function (container, options) {
+                    container.append(formatNumber(options.value))
+                }
+            },
+            {
+                dataField: "SLNhap",
+                caption: "SL Xuất",
+                alignment: "center",
+                minWidth: 120,
+                allowSorting: false,
+                headerCellTemplate: function (header, info) {
+                    const $container = $("<div></div>").css({
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "14px",
+                        padding: "0 8px"
+                    });
+                    const $icon = $("<i></i>")
+                        .addClass("fa-light fa-circle-arrow-right")
+                        .css({
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            flexShrink: "0",
+                            marginRight: "6px",
+                        })
+                        .on("click", function (e) {
+                            e.stopPropagation();
+                            const dataSource = dxDataGridDangKyVatTu.option("dataSource");
+                            dataSource.forEach(item => {
+                                item.SLDK = Math.trunc((item.SLNhap ?? 0) * 10000) / 10000
+                                refresh = true;
+                            });
+
+                            if (refresh) {
+                                // Refresh grid để hiển thị dữ liệu mới
+                                dxDataGridDangKyVatTu.refresh();
+                            }
+                        });
+                    const $text = $("<span></span>")
+                        .text(info.column.caption)
+                        .css({
+                            flexShrink: "0"
+                        });
+                    $container.append($text, $icon);
+                    header.append($container);
+                },
+                cellTemplate: function (container, options) {
+                    let value = options.value;
+                    if (value === null || value === undefined) {
+                        container.text("");
+                        return;
+                    }
+
+                    const $wrapper = $("<div></div>").css({
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px"
+                    });
+
+                    const $text = $("<span></span>").text(formatNumber(value));
+
+                    const $icon = $("<i></i>")
+                        .addClass("fa-light fa-circle-arrow-right")
+                        .css({
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            color: "#2196F3"
+                        })
+                        .on("click", function () {
+                            options.data.SLDK = Math.trunc((value ?? 0) * 10000) / 10000;
+                            dxDataGridDangKyVatTu.refresh();
+                        });
+
+                    $wrapper.append($text, $icon);
+                    container.append($wrapper);
+                }
+            },
+            {
+                dataField: "SLDK",
+                caption: "SL Thu Hồi",
+                alignment: "center",
+                minWidth: 120,
+                allowSorting: false,
+                headerCellTemplate: function (header, info) {
+                    const $container = $("<div></div>").css({
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "14px",
+                        padding: "0 8px"
+                    });
+                    const $icon = $("<i></i>")
+                        .addClass("fa-light fa-rotate")
+                        .css({
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            flexShrink: "0",
+                            marginRight: "6px",
+                        })
+                        .on("click", function (e) {
+                            e.stopPropagation();
+                            const dataSource = dxDataGridDangKyVatTu.option("dataSource");
+                            dataSource.forEach(item => {
+                                item.SLDK = null
+                                refresh = true;
+                            });
+
+                            if (refresh) {
+                                // Refresh grid để hiển thị dữ liệu mới
+                                dxDataGridDangKyVatTu.refresh();
+                            }
+                        });
+                    const $text = $("<span></span>")
+                        .text(info.column.caption)
+                        .css({
+                            flexShrink: "0"
+                        });
+                    $container.append($text, $icon);
+                    header.append($container);
+                },
+                cellTemplate: function (container, options) {
+                    const $input = $(`
+                        <input type="number"
+                                class="form-control inputSLDK"
+                                value="${options.data.SLDK ?? ''}" />
+                    `);
+                    $input.on("input", function () {
+                        let value = this.value;
+
+                        // Không cho số âm
+                        if (Number(value) < 0) {
+                            showToast("warning", "Số lượng đăng ký không được âm");
+                            this.value = "";
+                            options.data.SLDK = null;
+                            updateSummary(dxDataGridDangKyVatTu);
+                            return;
+                        }
+
+                        // Chỉ cho tối đa 4 số thập phân
+                        if (value.includes(".")) {
+                            const [intPart, decPart] = value.split(".");
+                            this.value = intPart + "." + decPart.substring(0, 4);
+                            value = this.value;
+                        }
+
+                        // ✅ THÊM: Kiểm tra không vượt quá CapPhat - TongSLDK
+                        const capPhat = options.data.CapPhat ?? 0;
+                        const tongSLDK = options.data.TongSLDK ?? 0;
+                        const slConLai = Math.round((capPhat - tongSLDK) * 100) / 100;
+
+                        if (slConLai > 0 && Number(value) > slConLai) {
+                            showToast("warning", `SL Thu Hồi vượt quá SL còn lại (${formatNumber(slConLai)}). Cấp phát: ${formatNumber(capPhat)} - Tổng SLDK: ${formatNumber(tongSLDK)}`);
+                            this.value = slConLai;
+                            options.data.SLDK = slConLai;
+                            updateSummary(dxDataGridDangKyVatTu);
+                            return;
+                        }
+
+                        options.data.SLDK = value === "" ? null : Number(value);
+                        updateSummary(dxDataGridDangKyVatTu);
+                        const numValue = options.data.SLDK;
+                        const checked = numValue != null && numValue > 0;
+
+                        if (checked) {
+                            if (!selectedRowsToDelete.some(item =>
+                                item.MaLenhSanXuat === options.data.MaLenhSanXuat &&
+                                item.MaVT === options.data.MaVT)) {
+                                selectedRowsToDelete.push(options.data);
+                            }
+                        } else {
+                            selectedRowsToDelete = selectedRowsToDelete.filter(item =>
+                                !(item.MaLenhSanXuat === options.data.MaLenhSanXuat &&
+                                    item.MaVT === options.data.MaVT)
+                            );
+                        }
+
+                        // tick checkbox tương ứng trên UI
+                        const $row = $input.closest("tr");
+                        const $cb = $row.find('input.row-checkbox').first();
+                        if ($cb.length) {
+                            $cb.prop('checked', checked);
+                        }
+                    });
+
+                    container.append($input);
+                }
+            },
+            {
+                dataField: "GhiChu",
+                caption: "Ghi chú",
+                minWidth: 200,
+                cellTemplate: function (container, options) {
+                    const $input = $(`
+                        <input type="text" class="form-control"
+                               value="${options.data.GhiChu || ''}" />
+                    `);
+
+                    $input.on("input", function () {
+                        options.data.GhiChu = this.value;
+                    });
+
+                    container.append($input);
+                }
+            },
+            // THÊM CỘT CHECKBOX
+            {
+                caption: "Chọn lưu",
+                width: 60,
+                alignment: "center",
+                cellTemplate: function (container, options) {
+                    const isChecked = selectedRowsToDelete.some(item =>
+                        item.MaLenhSanXuat === options.data.MaLenhSanXuat &&
+                        item.MaVT === options.data.MaVT
+                    );
+
+                    const $checkbox = $(`
+            <input type="checkbox" 
+                   class="row-checkbox" 
+                   data-row-index="${options.rowIndex}"
+                   ${isChecked ? 'checked' : ''}
+                   style="width: 18px; height: 18px; cursor: pointer;" />
+        `);
+
+                    $checkbox.on("change", function () {
+                        if (this.checked) {
+                            if (options.data.SLDK == null || options.data.SLDK <= 0) {
+                                showToast("warning", "Vui lòng nhập số lượng thu hồi trước khi chọn");
+                                this.checked = false;
+                                return;
+                            }
+                            if (!selectedRowsToDelete.some(item =>
+                                item.MaLenhSanXuat === options.data.MaLenhSanXuat &&
+                                item.MaVT === options.data.MaVT)) {
+                                selectedRowsToDelete.push(options.data);
+                            }
+                        } else {
+                            selectedRowsToDelete = selectedRowsToDelete.filter(item =>
+                                !(item.MaLenhSanXuat === options.data.MaLenhSanXuat &&
+                                    item.MaVT === options.data.MaVT)
+                            );
+                        }
+                    });
+
+                    container.append($checkbox);
+                },
+                headerCellTemplate: function (container) {
+                    const $checkAll = $(`
+            <input type="checkbox" 
+                   id="checkAllRows" 
+                   style="width: 18px; height: 18px; cursor: pointer;" />
+        `);
+
+                    $checkAll.on("change", function () {
+                        const isChecked = this.checked;
+                        const dataSource = dxDataGridDangKyVatTu.option("dataSource");
+
+                        if (isChecked) {
+                            selectedRowsToDelete = dataSource.filter(item => item.SLDK > 0);
+                            if (selectedRowsToDelete.length < dataSource.length) {
+                                showToast("warning", "Chỉ những dòng đã nhập số lượng mới được tự động chọn");
+                            }
+                        } else {
+                            selectedRowsToDelete = [];
+                        }
+
+                        dxDataGridDangKyVatTu.refresh();
+                    });
+
+                    container.append($checkAll);
+                }
+            },
+            {
+                caption: "Xóa",
+                minWidth: 50,
+                alignment: "center",
+                cellTemplate: function (container, options) {
+                    // Thêm nút
+                    $("<div>")
+                        .css({
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "25px"
+                        })
+                        .append(
+                            $("<i>")
+                                .addClass("fa-solid fa-trash-can")
+                                .css({ fontSize: "15px", color: "red", cursor: "pointer" })
+                                .on("click", function () {
+                                    rowDelete = options.data;
+                                    isDeleteDK = true;
+                                    $("#modalComfimrtDeleteVT").modal("show");
+                                })
+                        )
+                        .appendTo(container);
+                }
+            }
+        ],
+        summary: {
+            totalItems: [
+                {
+                    column: "CapPhat",
+                    summaryType: "sum",
+                    customizeText(e) {
+                        if (e.value == null) return "";
+                        return formatNumber(e.value)
+                    }
+                },
+                {
+                    column: "SLNhap",
+                    summaryType: "sum",
+                    customizeText(e) {
+                        if (e.value == null) return "";
+                        return formatNumber(e.value)
+                    }
+                },
+                {
+                    column: "SLDK",
+                    summaryType: "sum",
+                    customizeText(e) {
+                        if (e.value == null) return "";
+                        return formatNumber(e.value)
+                    }
+                }
+            ]
+        },
+        onCellPrepared: function (e) {
+            if (e.rowType === "header") {
+                $(e.cellElement).addClass("col-header");
+                $(e.cellElement).addClass("text-center");
+                $(e.cellElement).css("vertical-align", "middle");
+            }
+            if (e.rowType === "data") {
+                $(e.cellElement).addClass("text-center");
+                $(e.cellElement).css("vertical-align", "middle");
+            }
+        },
+    }).dxDataGrid("instance");
+}
+//function renderSignCell(container, options, fieldName) {
+
+//    if (!options.data || !options.data.MaLenhSX) return;
+//    const grid = options.component;
+//    const dataSource = grid.option("dataSource") || [];
+
+//    const valueCheck = options.data.MaLenhSX;
+//    const rowIndex = options.rowIndex;
+
+//    let rowspan = 0;
+
+//    if (rowIndex === 0 || dataSource[rowIndex - 1].MaLenhSX !== valueCheck) {
+
+//        for (let i = rowIndex; i < dataSource.length; i++) {
+//            if (dataSource[i].MaLenhSX === valueCheck) {
+//                rowspan++;
+//            } else {
+//                break;
+//            }
+//        }
+
+//        const containerDiv = $("<div>").css({
+//            width: "100%",
+//            height: "40px",
+//            display: "flex",
+//            justifyContent: "center",
+//            alignItems: "center",
+//            gap: "6px"
+//        });
+
+//        //Bổ sung 
+//        if (options.data[fieldName] && options.data[fieldName] !== "checked") {
+//            const tenOnly = options.data[{
+//                SignNgDK: "TenUserNgDK_Ten", SignTBPNgDK: "TenUserTBPNDK_Ten", SignMer: "TenUserMerSoatSet_Ten", SignTBPMer: "TenUserTBPMerSoatSet_Ten"
+//            }[fieldName]] ?? "";
+
+//            const $wrapper = $("<div>").css({ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" });
+//            $("<img>")
+//                .attr("src", `/Images/SignDeNghiThuHoi/${options.data[fieldName]}?${Date.now()}`)
+//                .css({ width: "70px", height: "35px" })
+//                .appendTo($wrapper);
+//            if (tenOnly) $("<span>").text(tenOnly).css({ fontSize: "11px", color: "#333", fontWeight: "bold" }).appendTo($wrapper);
+//            $wrapper.appendTo(containerDiv);
+
+//        } else if (options.data[fieldName] === "checked") {
+
+//            const userField = { SignNgDK: "HoTenNgDK", SignTBPNgDK: "HoTenTBPNDK", SignMer: "HoTenMerSoatSet", SignTBPMer: "HoTenTBPMerSoatSet" }[fieldName] ?? "";
+//            const hinhAnhField = { SignNgDK: "HinhAnhNgDK", SignTBPNgDK: "HinhAnhTBPNDK", SignMer: "HinhAnhMerSoatSet", SignTBPMer: "HinhAnhTBPMerSoatSet" }[fieldName] ?? "";
+//            const tenOnly = options.data[{ SignNgDK: "TenUserNgDK_Ten", SignTBPNgDK: "TenUserTBPNDK_Ten", SignMer: "TenUserMerSoatSet_Ten", SignTBPMer: "TenUserTBPMerSoatSet_Ten" }[fieldName]] ?? "";
+//            const userName = options.data[userField] ?? "";
+//            const hinhAnh = options.data[hinhAnhField] ?? "";
+//            const $wrapper = $("<div>").css({ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" });
+//            if (hinhAnh) {
+//                $("<img>").attr("src", `/Images/NhanVien/${hinhAnh}`)
+//                    .css({ width: "70px", height: "35px", objectFit: "cover", borderRadius: "3px" })
+//                    .on("error", function () { $(this).hide(); })
+//                    .appendTo($wrapper);
+//            }
+//            let displayName = "";
+//            if (hinhAnh) {
+//                displayName = tenOnly || userName;
+//            }
+//            else {
+//                displayName = userName || tenOnly;
+//            }
+//            $("<span>")
+//                .text(displayName)
+//                .css({ fontSize: "11px", color: "#333", fontWeight: "bold" })
+//                .appendTo($wrapper);
+//            $wrapper.appendTo(containerDiv);
+//        }
+
+//        let checkSign = "";
+
+//        const signNgDK = options.data.SignNgDK ?? "";
+//        const signTBPNgDK = options.data.SignTBPNgDK ?? "";
+//        const signMer = options.data.SignMer ?? "";
+//        const signTBPMer = options.data.SignTBPMer ?? "";
+
+//        if (fieldName === "SignNgDK") {
+
+//            checkSign = signNgDK ? "d-none" : "";
+
+//        }
+
+//        else if (fieldName === "SignTBPNgDK") {
+
+//            if (!signNgDK) checkSign = "d-none";
+//            else checkSign = signTBPNgDK ? "d-none" : "";
+
+//        }
+
+//        else if (fieldName === "SignMer") {
+
+//            if (!signTBPNgDK) checkSign = "d-none";
+//            else checkSign = signMer ? "d-none" : "";
+
+//        }
+
+//        else if (fieldName === "SignTBPMer") {
+
+//            if (!signMer) checkSign = "d-none";
+//            else checkSign = signTBPMer ? "d-none" : "";
+
+//        }
+//        $("<input>")
+//            .attr("type", "checkbox")
+//            .addClass(checkSign)
+//            .css({
+//                cursor: "pointer",
+//                left: "4px",
+//                top: "5px",
+//                position: "absolute",
+//                width: "14px",
+//                height: "14px",
+//                accentColor: "#007bff"
+//            })
+//            .on("change", async function () {
+//                const rowData = options.data;
+//                let arrSave = [];
+//                arrSave.push({
+//                    PhieuTH: rowData.PhieuTH,
+//                    MaLenhSX: rowData.MaLenhSX,
+//                    MaDH: rowData.MaDH,
+//                    MaLenh: rowData.MaLenh,
+//                    MaNPL: rowData.MaNPL,
+//                    SLDK: rowData.SLDK,
+//                    GhiChu: rowData.GhiChu,
+//                    MaVT: rowData.MaVT,
+//                    MauVT: rowData.MauVT,
+//                    KhoVai: rowData.KhoVai,
+//                    MaDVVT: rowData.MaDVVT,
+//                    NgayDK: "",
+//                    NgayTH: "",
+//                    NgayTao: "",
+//                    IsNPL: rowData.IsNPL ? 1 : 0,
+//                    NguoiTH: userNameSave,
+//                    PhieuDK: "",
+//                    SignNgDK: "",
+//                    NgayKi: "",
+//                    SignTBPNgDK: fieldName === "SignTBPNgDK" ? "checked" : "",
+//                    NgayKiTBPNgDK: "",
+//                    SignMer: fieldName === "SignMer" ? "checked" : "",
+//                    NgaySignMer: "",
+//                    SignTBPMer: fieldName === "SignTBPMer" ? "checked" : "",
+//                    NgaySignTBPMer: "",
+//                });
+//                await UpdateKiTenPhieu(arrSave);
+//            })
+//            .appendTo(containerDiv);
+
+//        $("<i>")
+//            .addClass(`fa-solid fa-signature ${checkSign}`)
+//            .css({
+//                cursor: "pointer",
+//                color: "#007bff",
+//                fontSize: "14px",
+//                position: "absolute",
+//                top: "2px",
+//                right: "4px"
+//            })
+//            .on("click", function () {
+
+//                const rowData = options.data;
+
+//                showConfirmModalSign(async function () {
+//                    const signatureImage = canvas.toDataURL('image/png');
+
+//                    let arrSave = []
+//                    arrSave.push({
+//                        PhieuTH: rowData.PhieuTH,
+//                        MaLenhSX: rowData.MaLenhSX,
+//                        MaDH: rowData.MaDH,
+//                        MaLenh: rowData.MaLenh,
+//                        MaNPL: rowData.MaNPL,
+//                        SLDK: rowData.SLDK,
+//                        GhiChu: rowData.GhiChu,
+//                        MaVT: rowData.MaVT,
+//                        MauVT: rowData.MauVT,
+//                        KhoVai: rowData.KhoVai,
+//                        MaDVVT: rowData.MaDVVT,
+//                        NgayDK: "",
+//                        NgayTH: "",
+//                        NgayTao: "",
+//                        IsNPL: rowData.IsNPL ? 1 : 0,
+//                        NguoiTH: userNameSave,
+//                        PhieuDK: "",
+//                        SignNgDK: "",
+//                        NgayKi: "",
+//                        SignTBPNgDK: fieldName !== "SignTBPNgDK" ? "" : signatureImage,
+//                        NgayKiTBPNgDK: "",
+//                        SignMer: fieldName !== "SignMer" ? "" : signatureImage,
+//                        NgaySignMer: "",
+//                        SignTBPMer: fieldName !== "SignTBPMer" ? "" : signatureImage,
+//                        NgaySignTBPMer: "",
+
+//                    });
+//                    await UpdateKiTenPhieu(arrSave);
+//                    return true;
+//                })
+//                //openModalSign(rowData, fieldName);
+
+//            })
+//            .appendTo(containerDiv);
+
+//        containerDiv.appendTo(container);
+//        container.addClass("position-relative")
+//        container.attr("rowspan", rowspan);
+
+//    } else {
+
+//        container.addClass("d-none");
+
+//    }
+//}
+
+function renderSignCell(container, options, fieldName) {
+    if (!options.data) return;
+
+    const grid = options.component;
+    const visibleRows = grid.getVisibleRows().filter(r => r.rowType === "data");
+
+    const currentPhieu = options.data.PhieuTH;
+    const currentRowIndex = options.rowIndex;
+    const visibleIndex = visibleRows.findIndex(r => r.rowIndex === currentRowIndex);
+    const isFirst = visibleIndex === 0 || visibleRows[visibleIndex - 1]?.data?.PhieuTH !== currentPhieu;
+
+    if (!isFirst) {
+        container.addClass("d-none");
+        return;
+    }
+
+    let rowspan = 0;
+    for (let i = visibleIndex; i < visibleRows.length; i++) {
+        if (visibleRows[i]?.data?.PhieuTH === currentPhieu) rowspan++;
+        else break;
+    }
+
+    const data = options.data;
+    const containerDiv = $("<div>").css({
+        width: "100%", height: "40px",
+        display: "flex", justifyContent: "center",
+        alignItems: "center", gap: "6px", position: "relative"
+    });
+
+    // === Hiển thị chữ ký ===
+    if (data[fieldName] && data[fieldName] !== "checked") {
+        const tenField = {
+            SignNgDK: "TenUserNgDK_Ten", SignTBPNgDK: "TenUserTBPNDK_Ten",
+            SignMer: "TenUserMerSoatSet_Ten", SignTBPMer: "TenUserTBPMerSoatSet_Ten"
+        }[fieldName] ?? "";
+        const $wrapper = $("<div>").css({ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" });
+        $("<img>").attr("src", `/Images/SignDeNghiThuHoi/${data[fieldName]}?${Date.now()}`)
+            .css({ width: "70px", height: "35px" }).appendTo($wrapper);
+        if (data[tenField]) $("<span>").text(data[tenField])
+            .css({ fontSize: "11px", color: "#333", fontWeight: "bold" }).appendTo($wrapper);
+        $wrapper.appendTo(containerDiv);
+
+    } else if (data[fieldName] === "checked") {
+        const userField = { SignNgDK: "HoTenNgDK", SignTBPNgDK: "HoTenTBPNDK", SignMer: "HoTenMerSoatSet", SignTBPMer: "HoTenTBPMerSoatSet" }[fieldName] ?? "";
+        const hinhAnhField = { SignNgDK: "HinhAnhNgDK", SignTBPNgDK: "HinhAnhTBPNDK", SignMer: "HinhAnhMerSoatSet", SignTBPMer: "HinhAnhTBPMerSoatSet" }[fieldName] ?? "";
+        const tenField = { SignNgDK: "TenUserNgDK_Ten", SignTBPNgDK: "TenUserTBPNDK_Ten", SignMer: "TenUserMerSoatSet_Ten", SignTBPMer: "TenUserTBPMerSoatSet_Ten" }[fieldName] ?? "";
+        const ten = data[userField] || data[tenField] || "";
+        const hinhAnh = data[hinhAnhField] || "";
+
+        if (hinhAnh) {
+            const $wrapper = $("<div>").css({ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" });
+            $("<img>").attr("src", `/Images/NhanVien/${hinhAnh}`)
+                .css({ width: "70px", height: "35px", objectFit: "cover", borderRadius: "3px" })
+                .on("error", function () { $(this).hide(); }).appendTo($wrapper);
+            $("<span>").text(ten).css({ fontSize: "11px", color: "#333", fontWeight: "bold" }).appendTo($wrapper);
+            $wrapper.appendTo(containerDiv);
+        } else {
+            $("<span>").text(ten).css({ fontSize: "12px", color: "#333", fontWeight: "bold" }).appendTo(containerDiv);
+        }
+    }
+
+    // === Kiểm tra có thể ký không ===
+    const signNgDK = data.SignNgDK || "";
+    const signTBPNgDK = data.SignTBPNgDK || "";
+    const signMer = data.SignMer || "";
+    const signTBPMer = data.SignTBPMer || "";
+
+    let canSign = false;
+    if (fieldName === "SignNgDK" && !signNgDK) canSign = true;
+    else if (fieldName === "SignTBPNgDK" && signNgDK && !signTBPNgDK) canSign = true;
+    else if (fieldName === "SignMer" && signTBPNgDK && !signMer) canSign = true;
+    else if (fieldName === "SignTBPMer" && signMer && !signTBPMer) canSign = true;
+
+    // === Hàm kiểm tra quyền ===
+    function checkPermission() {
+        if (isSuperUser()) return true;
+
+        if (fieldName === "SignNgDK") {
+            const nguoiTao = (data.NguoiTH || "").trim();
+            if (nguoiTao && userNameSave.trim() !== nguoiTao) {
+                showToast("warning", "Không có quyền ký — chỉ người lập phiếu mới được ký");
+                return false;
+            }
+        }
+        if (fieldName === "SignTBPNgDK") {
+            if (!currentUserIsTBP) {
+                showToast("warning", "Không có quyền ký — chỉ TBP mới được ký");
+                return false;
+            }
+        }
+        if (fieldName === "SignMer") {
+            if ((currentUserPB || "").trim() !== "PB_2") {
+                showToast("warning", "Không có quyền ký — chỉ nhân viên phòng Kế hoạch mới được ký Mer soát sét");
+                return false;
+            }
+        }
+        if (fieldName === "SignTBPMer") {
+            if (userNameSave.trim() !== TBP_PB2_USERID) {
+                showToast("warning", "Không có quyền ký — chỉ TBP Mer mới được ký");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    if (canSign) {
+        // === Checkbox ký nhanh ===
+        $("<input>").attr("type", "checkbox")
+            .css({
+                cursor: "pointer", left: "4px", top: "5px", position: "absolute",
+                width: "14px", height: "14px", accentColor: "#007bff"
+            })
+            .on("change", async function () {
+                if (!this.checked) return;
+                if (!checkPermission()) { this.checked = false; return; }
+
+                const rowData = data;
+                let arrSave = [{
+                    PhieuTH: rowData.PhieuTH, MaLenhSX: rowData.MaLenhSX,
+                    MaDH: rowData.MaDH, MaLenh: rowData.MaLenh, MaNPL: rowData.MaNPL,
+                    SLDK: rowData.SLDK, GhiChu: rowData.GhiChu, MaVT: rowData.MaVT,
+                    MauVT: rowData.MauVT, KhoVai: rowData.KhoVai, MaDVVT: rowData.MaDVVT,
+                    NgayDK: "", NgayTH: "", NgayTao: "",
+                    IsNPL: rowData.IsNPL ? 1 : 0, NguoiTH: userNameSave,
+                    PhieuDK: "", SignNgDK: "", NgayKi: "",
+                    SignTBPNgDK: fieldName === "SignTBPNgDK" ? "checked" : "",
+                    NgayKiTBPNgDK: "",
+                    SignMer: fieldName === "SignMer" ? "checked" : "",
+                    NgaySignMer: "",
+                    SignTBPMer: fieldName === "SignTBPMer" ? "checked" : "",
+                    NgaySignTBPMer: "",
+                }];
+                await UpdateKiTenPhieu(arrSave);
+                _sendSignNotifyPL(fieldName, rowData.PhieuTH);
+            }).appendTo(containerDiv);
+
+        // === Icon bút ký ===
+        $("<i>").addClass("fa-solid fa-signature")
+            .css({
+                cursor: "pointer", color: "#007bff", fontSize: "14px",
+                position: "absolute", top: "2px", right: "4px"
+            })
+            .on("click", function () {
+                if (!checkPermission()) return;
+
+                const rowData = data;
+                showConfirmModalSign(async function () {
+                    const signatureImage = canvas.toDataURL('image/png');
+                    let arrSave = [{
+                        PhieuTH: rowData.PhieuTH, MaLenhSX: rowData.MaLenhSX,
+                        MaDH: rowData.MaDH, MaLenh: rowData.MaLenh, MaNPL: rowData.MaNPL,
+                        SLDK: rowData.SLDK, GhiChu: rowData.GhiChu, MaVT: rowData.MaVT,
+                        MauVT: rowData.MauVT, KhoVai: rowData.KhoVai, MaDVVT: rowData.MaDVVT,
+                        NgayDK: "", NgayTH: "", NgayTao: "",
+                        IsNPL: rowData.IsNPL ? 1 : 0, NguoiTH: userNameSave,
+                        PhieuDK: "", SignNgDK: "", NgayKi: "",
+                        SignTBPNgDK: fieldName !== "SignTBPNgDK" ? "" : signatureImage,
+                        NgayKiTBPNgDK: "",
+                        SignMer: fieldName !== "SignMer" ? "" : signatureImage,
+                        NgaySignMer: "",
+                        SignTBPMer: fieldName !== "SignTBPMer" ? "" : signatureImage,
+                        NgaySignTBPMer: "",
+                    }];
+                    await UpdateKiTenPhieu(arrSave);
+                    _sendSignNotifyPL(fieldName, rowData.PhieuTH);
+                    return true;
+                });
+            }).appendTo(containerDiv);
+    }
+
+    containerDiv.appendTo(container);
+    container.addClass("position-relative");
+    container.attr("rowspan", rowspan);
+}
+
+// Helper gửi notify phụ liệu
+function _sendSignNotifyPL(fieldName, phieu) {
+    if (fieldName === "SignNgDK") {
+        sendNotify(userNameSave, "M.48.00.00", "Phiếu thu hồi phụ liệu",
+            "Người ĐK đã ký phiếu " + phieu, "TBP", "ALL", 1);
+    } else if (fieldName === "SignTBPNgDK") {
+        sendNotify(userNameSave, "M.48.00.00", "Phiếu thu hồi phụ liệu",
+            "TBP Người ĐK đã ký phiếu " + phieu, "PKH", "ALL", -1);
+    } else if (fieldName === "SignMer") {
+        sendNotify(userNameSave, "M.48.00.00", "Phiếu thu hồi phụ liệu",
+            "Mer soát sét đã ký phiếu " + phieu, "PKH", "ALL", 1);
+    } else if (fieldName === "SignTBPMer") {
+        sendNotify(userNameSave, "M.48.00.00", "Phiếu thu hồi phụ liệu",
+            "TBP Mer soát sét đã ký phiếu " + phieu, "ALL", "ALL", -1);
+    }
+}
+
+function createViewDxDataGridDanhSachDangKy(data) {
+    dxDataGridDanhSachDangKy = $("#dxDataGridDanhSachDangKy").dxDataGrid({
+        dataSource: data,
+        width: '100%',
+        columnAutoWidth: false,
+        allowColumnResizing: false,
+        columnHidingEnabled: false,
+        wordWrapEnabled: true,
+        showRowLines: true,
+        grouping: { autoExpandAll: true },
+        groupPanel: { visible: false },
+        showBorders: true,
+        columnFixing: {
+            enabled: true
+        },
+        noDataText: "",
+        scrolling: { mode: 'standard' },
+        filterRow: { visible: true },
+        headerFilter: { visible: false },
+        paging: {
+            enabled: false
+        },
+        renderAsync: false,
+        grouping: { autoExpandAll: true },
+        groupPanel: { visible: false },
+        loadPanel: {
+            enabled: true,
+            text: "Đang tải dữ liệu...",
+            showIndicator: true,
+            showPane: true
+        },
+        columns: [
+            {
+                dataField: "PhieuTH",
+                caption: "Số Phiếu",
+                alignment: "center",
+                visible: false,
+                minWidth: 160,
+                groupIndex: 0,
+                sortOrder: "desc",
+                groupCellTemplate: function (container, options) {
+                    const items = options.data?.items || options.data?.collapsedItems || [];
+                    const firstItem = items[0] || {};
+                    const maLenh = firstItem.MaLenh || "";
+                    const maHang = firstItem.MaHang || "";
+                    const phieuTH = firstItem.PhieuTH || options.value || "";
+
+                    $("<div>").css({
+                        fontWeight: "400",
+                        color: "#000000",
+                        fontSize: "13px",
+                        padding: "2px 4px",
+                        display: "flex",
+                        gap: "16px",
+                        alignItems: "center"
+                    })
+                        .append(
+                            $("<span>").html(`Số Phiếu: ${phieuTH}`).css("font-weight", "600"),
+                            maLenh ? $("<span>").html(`|  LSX: ${maLenh}`).css("font-weight", "600") : null,
+                            maHang ? $("<span>").html(`| MH: ${maHang}`).css("font-weight", "600") : null,
+                            //ngayTH ? $("<span>").html(`| Ngày: ${ngayTH}`) : null
+                        )
+                        .appendTo(container);
+                }
+            },
+            { dataField: "MaDH", caption: "Mã ĐH", alignment: "center", minWidth: 120, visible: false },
+            { dataField: "MaVT", caption: "Item Code", alignment: "center", minWidth: 130, fixed: true },
+            { dataField: "StatusVT", caption: "Trạng thái", alignment: "center", minWidth: 100, fixed: true},
+            { dataField: "MaNPL", caption: "Mã NPL", alignment: "center", minWidth: 120, visible: false },
+            { dataField: "MauVT", caption: "Màu VT", alignment: "center", minWidth: 100, fixed: true},
+            { dataField: "KhoVai", caption: "Khổ/Size", alignment: "center", minWidth: 100 },
+            {
+                dataField: "TenDVVT",
+                caption: "Đơn vị",
+                alignment: "center",
+                minWidth: 80,
+            },
+            {
+                dataField: "CapPhat",
+                caption: "SL Cấp Phát",
+                alignment: "center",
+                minWidth: 120,
+                cellTemplate: function (container, options) {
+                    let value = options.value;
+
+                    if (value === null || value === undefined) {
+                        container.text("");
+                        return;
+                    }
+
+                    let result = formatNumber(value)
+                    container.text(result);
+                }
+            },
+
+            {
+                dataField: "SLNhap",
+                caption: "SL Xuất",
+                alignment: "center",
+                minWidth: 120,
+                cellTemplate: function (container, options) {
+                    let value = options.value;
+
+                    if (value === null || value === undefined) {
+                        container.text("");
+                        return;
+                    }
+
+                    let result = formatNumber(value)
+                    container.text(result);
+                }
+            },
+            {
+                dataField: "SLDK",
+                caption: "SL ĐN Thu Hồi",
+                alignment: "center",
+                minWidth: 120,
+                cellTemplate: function (container, options) {
+                    let value = options.value;
+
+                    if (value === null || value === undefined) {
+                        container.text("");
+                        return;
+                    }
+
+                    let result = formatNumber(value)
+                    container.text(result);
+                }
+            },
+
+            {
+                dataField: "NgayTH",
+                caption: "Ngày YC Thu Hồi",
+                alignment: "center",
+                minWidth: 150,
+                format: "dd/MM/yyyy",
+                cellTemplate: function (container, options) {
+                    const dateConvert = moment(options.value).format("DD/MM/YYYY")
+                    container.text(dateConvert)
+                }
+
+            },
+
+            {
+                dataField: "GhiChu",
+                caption: "Ghi chú",
+                minWidth: 200,
+            },
+
+            {
+                dataField: "SignNgDK",
+                caption: "Người ĐK",
+                minWidth: 120,
+                cellTemplate(container, options) {
+                    if (options.rowType !== "data") return;
+                    renderSignCell(container, options, "SignNgDK");
+                }
+            },
+            {
+                dataField: "SignTBPNgDK",
+                caption: "TBP người ĐK",
+                minWidth: 120,
+                cellTemplate(container, options) {
+                    if (options.rowType !== "data") return;
+                    renderSignCell(container, options, "SignTBPNgDK");
+                }
+            },
+            {
+                dataField: "SignMer",
+                caption: "Mer soát sét",
+                minWidth: 120,
+                cellTemplate(container, options) {
+                    if (options.rowType !== "data") return;
+                    renderSignCell(container, options, "SignMer");
+                }
+            },
+            {
+                dataField: "SignTBPMer",
+                caption: "TBP Mer soát sét",
+                minWidth: 120,
+                cellTemplate(container, options) {
+                    if (options.rowType !== "data") return;
+                    renderSignCell(container, options, "SignTBPMer");
+                }
+            },
+            {
+                dataField: "NgayKiCuoi",
+                caption: "Thời gian ký TBP Mer",
+                alignment: "center",
+                minWidth: 100,
+                dataType: "datetime",
+                format: "dd/MM/yyyy HH:mm"
+            },
+            {
+                caption: "Xóa",
+                minWidth: 100,
+                alignment: "center",
+                cellTemplate: function (container, options) {
+                    const signTBP = (options.data.SignTBPNgDK || "").trim();
+                    const signMer = (options.data.SignMer || "").trim();
+                    const signTBPMer = (options.data.SignTBPMer || "").trim();
+                    const user = (userNameSave || "").trim();
+                    const userTBP = (options.data.UserTBPNDK || "").trim();
+
+                    if (!isSuperUser()) {
+                        if (signMer || signTBPMer) {
+                            // Mer hoặc TBP Mer đã ký → chỉ SuperUser thấy
+                            return;
+                        }
+                        if (signTBP) {
+                            // TBP đã ký → chỉ TBP đó thấy, và chỉ thấy nút Xóa (không thấy Edit)
+                            if (user !== userTBP) return;
+
+                            const $wrapper = $(`<div></div>`).css({
+                                display: "flex", justifyContent: "center",
+                                height: "25px", gap: "8px"
+                            });
+                            $("<div>").append(
+                                $("<i>").addClass("fa-solid fa-trash")
+                                    .css({ fontSize: "16px", color: "red", cursor: "pointer" })
+                                    .on("click", function () {
+                                        rowDelete = options.data;
+                                        $("#modalComfimrtDeleteVT").modal('show');
+                                    })
+                            ).appendTo($wrapper);
+                            $wrapper.appendTo(container);
+                            return;
+                        }
+                    }
+
+                    // Chưa ai ký hoặc SuperUser → hiện cả Edit + Xóa
+                    const $wrapper = $(`<div></div>`).css({
+                        display: "flex", justifyContent: "center",
+                        height: "25px", gap: "8px"
+                    });
+
+                    $("<div>").append(
+                        $("<i>").addClass("fa-solid fa-pen-to-square")
+                            .css({ fontSize: "16px", color: "red", cursor: "pointer" })
+                            .on("click", function () {
+                                rowEdit = { ...options.data };
+                                dxDataGridEditVatTu.option("dataSource", [rowEdit]);
+                                $("#modalEditDKVT").modal("show");
+                            })
+                    ).appendTo($wrapper);
+
+                    $("<div>").append(
+                        $("<i>").addClass("fa-solid fa-trash")
+                            .css({ fontSize: "16px", color: "red", cursor: "pointer" })
+                            .on("click", function () {
+                                rowDelete = options.data;
+                                $("#modalComfimrtDeleteVT").modal('show');
+                            })
+                    ).appendTo($wrapper);
+
+                    $wrapper.appendTo(container);
+                }
+            }
+        ],
+        summary: {
+            totalItems: [{
+                column: "SLDK",
+                summaryType: "sum",
+                customizeText(e) {
+                    if (e.value == null) return "";
+
+                    let str = e.value.toString();
+                    let intPart = str;
+                    let decPart = "";
+
+                    if (str.includes(".")) {
+                        [intPart, decPart] = str.split(".");
+                        decPart = decPart.substring(0, 4); // cắt, không làm tròn
+                    }
+
+                    const formattedInt = Number(intPart).toLocaleString("en");
+                    return decPart ? `${formattedInt}.${decPart}` : formattedInt;
+                },
+                groupItems: [
+                    {
+                        column: "NgayTH",
+                        summaryType: "max",
+                        name: "maxNgayTH"
+                    }
+                ]
+            },
+            {
+                column: "CapPhat",
+                summaryType: "sum",
+                customizeText(e) {
+                    if (e.value == null) return "";
+
+                    let str = e.value.toString();
+                    let intPart = str;
+                    let decPart = "";
+
+                    if (str.includes(".")) {
+                        [intPart, decPart] = str.split(".");
+                        decPart = decPart.substring(0, 4); // cắt, không làm tròn
+                    }
+
+                    const formattedInt = Number(intPart).toLocaleString("en");
+                    return decPart ? `${formattedInt}.${decPart}` : formattedInt;
+                }
+            },
+            {
+                column: "SLNhap",
+                summaryType: "sum",
+                customizeText(e) {
+                    if (e.value == null) return "";
+
+                    let str = e.value.toString();
+                    let intPart = str;
+                    let decPart = "";
+
+                    if (str.includes(".")) {
+                        [intPart, decPart] = str.split(".");
+                        decPart = decPart.substring(0, 4); // cắt, không làm tròn
+                    }
+
+                    const formattedInt = Number(intPart).toLocaleString("en");
+                    return decPart ? `${formattedInt}.${decPart}` : formattedInt;
+                }
+            }
+            ]
+        },
+        onCellPrepared: function (e) {
+            if (e.column.command == "expand" && !e.column.dataField) {
+                $(e.cellElement).css({
+                    width: "0px", minwidth: "0px", maxwidthh: "0px",
+                    padding: "0px", border: "none", overflow: "hidden"
+                });
+            }
+            if (e.rowType === "header") {
+                $(e.cellElement).addClass("col-header");
+                $(e.cellElement).addClass("text-center");
+                $(e.cellElement).css("vertical-align", "middle");
+            }
+            if (e.rowType === "data") {
+                $(e.cellElement).addClass("text-center");
+                $(e.cellElement).css("vertical-align", "middle");
+            }
+        },
+    }).dxDataGrid("instance");
+
+    $("#Layer_1").click()
+}
+function createViewDxDataGridEditVatTu() {
+    dxDataGridEditVatTu = $("#dxDataGridEditVatTu").dxDataGrid({
+        dataSource: [],
+        width: '100%',
+        columnAutoWidth: false,
+        allowColumnResizing: false,
+        columnHidingEnabled: false,
+        wordWrapEnabled: true,
+        showRowLines: true,
+        showBorders: true,
+        scrolling: { mode: 'standard' },
+        filterRow: { visible: false },
+        headerFilter: { visible: false },
+        paging: {
+            enabled: false
+        },
+        renderAsync: false,
+        grouping: { autoExpandAll: true },
+        groupPanel: { visible: false },
+        columns: [
+            {
+                dataField: "MaDH",
+                caption: "Mã ĐH",
+                alignment: "center",
+                minWidth: 150,
+                allowEditing: false
+            },
+            {
+                dataField: "MaLenh",
+                caption: "Mã Lệnh",
+                alignment: "center",
+                minWidth: 100,
+                allowEditing: false
+            },
+            {
+                dataField: "MaVT",
+                caption: "Item Code",
+                alignment: "center",
+                minWidth: 180,
+                allowEditing: false
+            },
+            {
+                dataField: "MauVT",
+                caption: "Màu VT",
+                alignment: "center",
+                minWidth: 120,
+                allowEditing: false
+            },
+            {
+                dataField: "KhoVai",
+                caption: "Khổ/Size",
+                alignment: "center",
+                minWidth: 100,
+                allowEditing: false
+            },
+            {
+                dataField: "TenDVVT",
+                caption: "Đơn vị",
+                alignment: "center",
+                minWidth: 80,
+                allowEditing: false
+            },
+            {
+                dataField: "CapPhat",
+                caption: "SL Cấp Phát",
+                alignment: "center",
+                minWidth: 120,
+                cellTemplate: function (container, options) {
+                    let value = options.value;
+
+                    if (value === null || value === undefined) {
+                        container.text("");
+                        return;
+                    }
+
+                    let result = formatNumber(value)
+                    container.text(result);
+                }
+            },
+            {
+                dataField: "SLNhap",
+                caption: "SL Xuất",
+                alignment: "center",
+                minWidth: 120,
+                cellTemplate: function (container, options) {
+                    let value = options.value;
+
+                    if (value === null || value === undefined) {
+                        container.text("");
+                        return;
+                    }
+
+                    let result = formatNumber(value)
+                    container.text(result);
+                }
+            },
+            {
+                dataField: "SLDK",
+                caption: "SL Đăng Ký",
+                alignment: "center",
+                minWidth: 120,
+                cellTemplate: function (container, options) {
+                    // CẮT 4 số thập phân – KHÔNG LÀM TRÒN
+                    const truncated = Math.trunc(options.data.SLDK * 10000) / 10000;
+
+                    // Bỏ số 0 dư
+                    truncated.toString();
+
+                    const $input = $(`
+                        <input type="number"
+                               class="form-control inputSLDK"
+                               value="${truncated ?? ''}" />
+                    `);
+
+                    $input.on("input", function () {
+                        let value = this.value;
+
+                        if (Number(value) < 0) {
+                            showToast("warning", "Số lượng đăng ký không được âm");
+                            this.value = "";
+                            options.data.SLDK = null;
+                            updateSummary(dxDataGridDangKyVatTu);
+                            return;
+                        }
+
+                        if (value.includes(".")) {
+                            const [intPart, decPart] = value.split(".");
+                            this.value = intPart + "." + decPart.substring(0, 4);
+                            value = this.value;
+                        }
+
+                        const capPhat = options.data.CapPhat ?? 0;
+                        const tongSLDK = options.data.TongSLDK ?? 0;
+                        const slConLai = Math.round((capPhat - tongSLDK) * 100) / 100;
+
+                        if (slConLai > 0 && Number(value) > slConLai) {
+                            showToast("warning", `SL Thu Hồi vượt quá SL còn lại (${formatNumber(slConLai)}). Cấp phát: ${formatNumber(capPhat)} - Tổng SLDK: ${formatNumber(tongSLDK)}`);
+                            this.value = slConLai;
+                            options.data.SLDK = slConLai;
+                            updateSummary(dxDataGridDangKyVatTu);
+                            return;
+                        }
+
+                        options.data.SLDK = value === "" ? null : Number(value);
+                        updateSummary(dxDataGridDangKyVatTu);
+
+                        const numValue = options.data.SLDK;
+                        if (numValue > 0) {
+                            if (!selectedRowsToDelete.some(item =>
+                                item.MaLenhSanXuat === options.data.MaLenhSanXuat &&
+                                item.MaVT === options.data.MaVT)) {
+                                selectedRowsToDelete.push(options.data);
+                            }
+                        } else {
+                            selectedRowsToDelete = selectedRowsToDelete.filter(item =>
+                                !(item.MaLenhSanXuat === options.data.MaLenhSanXuat &&
+                                    item.MaVT === options.data.MaVT)
+                            );
+                        }
+
+                        const $row = $(dxDataGridDangKyVatTu.getRowElement(options.rowIndex));
+                        const $cb = $row.find('input.row-checkbox').first();
+                        if ($cb.length) {
+                            $cb.prop('checked', numValue > 0);
+                        }
+                    });
+                    container.append($input);
+                }
+            },
+            {
+                dataField: "GhiChu",
+                caption: "Ghi chú",
+                minWidth: 200,
+                cellTemplate: function (container, options) {
+                    const $input = $(`
+                        <input type="text" class="form-control"
+                               value="${options.data.GhiChu || ''}" />
+                    `);
+
+                    $input.on("input", function () {
+                        options.data.GhiChu = this.value;
+                    });
+
+                    container.append($input);
+                }
+            }
+        ],
+        summary: {
+            totalItems: [{
+                column: "SLDK",
+                summaryType: "sum",
+                customizeText(e) {
+                    if (e.value == null) return "";
+
+                    const value = Number(e.value);
+
+                    // CẮT 4 số thập phân – KHÔNG LÀM TRÒN
+                    const truncated = Math.trunc(value * 10000) / 10000;
+
+                    // Bỏ số 0 dư
+                    return truncated.toString();
+                }
+            },
+            {
+                column: "CapPhat",
+                summaryType: "sum",
+                customizeText(e) {
+                    if (e.value == null) return "";
+
+                    let str = e.value.toString();
+                    let intPart = str;
+                    let decPart = "";
+
+                    if (str.includes(".")) {
+                        [intPart, decPart] = str.split(".");
+                        decPart = decPart.substring(0, 4); // cắt, không làm tròn
+                    }
+
+                    const formattedInt = Number(intPart).toLocaleString("en");
+                    return decPart ? `${formattedInt}.${decPart}` : formattedInt;
+                }
+            }
+            ]
+        },
+        onCellPrepared: function (e) {
+            if (e.rowType === "header") {
+                $(e.cellElement).addClass("col-header");
+                $(e.cellElement).addClass("text-center");
+                $(e.cellElement).css("vertical-align", "middle");
+            }
+            if (e.rowType === "data") {
+                $(e.cellElement).addClass("text-center");
+                $(e.cellElement).css("vertical-align", "middle");
+            }
+        }
+    }).dxDataGrid("instance");
+}
+
+function createViewDxGridDanhSachPhieuDKVT() {
+    dxDataPhieuDKVT = $("#dxDataPhieuDKVT").dxDataGrid({
+        dataSource: [],
+        rowAlternationEnabled: true,
+        width: '100%',
+        noDataText: "",
+        columnAutoWidth: false,
+        allowColumnResizing: false,
+        columnHidingEnabled: false,
+        wordWrapEnabled: true,
+        showRowLines: true,
+        showBorders: true,
+        scrolling: { mode: 'standard' },
+        filterRow: { visible: false },
+        headerFilter: { visible: false },
+        paging: {
+            enabled: false
+        },
+        renderAsync: false,
+        grouping: { autoExpandAll: true },
+        groupPanel: { visible: false },
+        columns: [
+            {
+                dataField: "PhieuDK",
+                caption: "Phiếu",
+                minWidth: 100,
+                cellTemplate: function (container, options) {
+                    const $wrapper = $(`<div></div>`).css({
+                        display: "flex",
+                        justifyContent: "center",
+                        height: "25px",
+                        gap: "8px"
+                    })
+
+                    // Text
+                    const $span = $(`<span>${options.data.PhieuDK}</span>`)
+
+                    // Icon
+                    const $btnNext = $(`<i class="fa-solid fa-circle-right"></i>`)
+                        .css({ fontSize: '16px', color: 'green', cursor: 'pointer' })
+                        .on("click", function () {
+                            $("#malenh").val(`${options.data.MaLenhSX}`).trigger("change");
+                            setTimeout(() => {
+                                $("#phieuxuathang").val(`${options.data.PhieuDK}`).trigger("change");
+                            }, 300)
+
+                            $("#modalTimNhanh").modal('hide');
+                            $("#inputTimKiem").val('').trigger('input');
+                            updateGrid(dxDataPhieuDKVT, []);
+                        })
+
+                    $wrapper.append($span, $btnNext).appendTo(container)
+                }
+            },
+            {
+                dataField: "MaLenh",
+                caption: "Mã Lệnh Sản Xuất",
+                width: 400,
+                cellTemplate: function (container, options) {
+                    const $wrapper = $(`<div></div>`).css({ display: "flex", justifyContent: "center", height: "25px", gap: "8px" })
+
+                    // Text
+                    const $span = $(`<span>${options.data.MaLenh}</span>`)
+
+                    // Icon
+                    const $btnNext = $(`<i class="fa-solid fa-circle-right"></i>`)
+                        .css({ fontSize: '16px', color: 'green' })
+                        .on("click", function () {
+                            $("#malenh").val(`${options.data.MaLenhSX}`).trigger("change");
+                            $("#modalTimNhanh").modal('hide');
+                            $("#inputTimKiem").val('').trigger('input');
+                            updateGrid(dxDataPhieuDKVT, []);
+                        })
+
+                    $wrapper.append($span, $btnNext).appendTo(container)
+
+                }
+            },
+            {
+                dataField: "MaVT",
+                caption: "ItemCode",
+                minWidth: 100,
+            },
+            {
+                dataField: "MauVT",
+                caption: "Màu",
+                minWidth: 100,
+            },
+            {
+                dataField: "KhoVai",
+                caption: "Width/Size",
+                minWidth: 100,
+            },
+            {
+                dataField: "TenDVVT",
+                caption: "Đơn Vị",
+                minWidth: 100,
+                width: 100,
+            },
+            {
+                dataField: "SLDK",
+                caption: "SL Yêu Cầu",
+                minWidth: 100,
+            },
+            {
+                dataField: "SLNhap",
+                caption: "Thực xuất",
+                minWidth: 100,
+                cellTemplate: function (container, options) {
+                    const value = parseFloat(parseFloat(options.value || 0).toFixed(2));
+                    $("<div>")
+                        .text(value)
+                        .addClass("thucnhap")
+                        .toggleClass("text-danger", options.data.isCheckVuot === true)
+                        .appendTo(container);
+                }
+            },
+        ],
+
+        onCellPrepared: function (e) {
+            if (e.rowType === "header") {
+                $(e.cellElement).addClass("col-header");
+                $(e.cellElement).addClass("text-center");
+                $(e.cellElement).css("vertical-align", "middle");
+            }
+            if (e.rowType === "data") {
+                $(e.cellElement).addClass("text-center");
+                $(e.cellElement).css("vertical-align", "middle");
+
+                const searchTerm = $("#inputTimKiem").val().trim().toLowerCase();
+                if (searchTerm && (e.column.dataField === "MaVT" || e.column.dataField === "MauVT")) {
+                    const cellValue = String(e.value || "");
+                    const cellValueLower = cellValue.toLowerCase();
+
+                    if (cellValueLower.includes(searchTerm)) {
+                        // Tìm vị trí bắt đầu của text match
+                        const startIndex = cellValueLower.indexOf(searchTerm);
+                        const endIndex = startIndex + searchTerm.length;
+
+                        // Tạo HTML với phần match được highlight
+                        const before = cellValue.substring(0, startIndex);
+                        const match = cellValue.substring(startIndex, endIndex);
+                        const after = cellValue.substring(endIndex);
+
+                        const highlightedHTML = `${before}<mark style="background-color: #ffeb3b; font-weight: 600; padding: 2px 4px; border-radius: 3px;">${match}</mark>${after}`;
+
+                        $(e.cellElement).html(highlightedHTML);
+                    }
+                }
+            }
+        },
+    }).dxDataGrid("instance");
+
+    $("#Layer_1").click()
+}
+function showConfirmModalSign(onConfirm) {
+    $('#saveBtn').off('click').on('click', async function () {
+        if (typeof onConfirm === 'function') {
+            const result = await onConfirm();
+
+            if (result === false) {
+                return; // ❌ KHÔNG đóng modal
+            }
+        }
+
+        // ✅ Chỉ đóng khi hợp lệ
+        $("#signatureModal").modal("hide");
+    });
+
+    $("#signatureModal").modal("show");
+}
+function loadPhongBanOptions() {
+    const $sel = $("#tkPhongBan");
+    const currentVal = $sel.val();
+
+    const pbSet = new Map();
+    lstDataDangKyVatTu.forEach(item => {
+        if (item.MaPB && item.TenPB) {
+            pbSet.set(item.MaPB, item.TenPB);
+        }
+    }); 
+
+    $sel.find("option:not(:first)").remove();
+    pbSet.forEach((tenPB, maPB) => {
+        $sel.append(`<option value="${maPB}">${tenPB}</option>`);
+    });
+
+    if (currentVal) $sel.val(currentVal);
+}
+function sendNotify(UserID, ModuleID, title, detail, sendTo, BoPhan = "ALL", Status = -1) {
+    const url = `/api/SendToNotification/PushNotification?` +
+        `UserIDTao=${encodeURIComponent(UserID)}&` +
+        `ModuleID=${encodeURIComponent(ModuleID)}&` +
+        `Title=${encodeURIComponent(title)}&` +
+        `Detail=${encodeURIComponent(detail)}&` +
+        `SendTo=${encodeURIComponent(sendTo)}&` +
+        `BoPhan=${encodeURIComponent(BoPhan)}&` +
+        `Status=${Status}`;
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            console.log("Gửi thông báo thành công:", result);
+        },
+        error: function (xhr, status, error) {
+            console.error("Lỗi gửi thông báo:", error);
+        }
+    });
+}

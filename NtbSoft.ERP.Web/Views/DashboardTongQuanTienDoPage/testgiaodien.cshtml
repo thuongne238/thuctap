@@ -1,0 +1,147 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Dashboard Chuẩn Bị Sản Xuất";
+    ViewBag.HeaderTitle = "Thống kê chuẩn bị sản xuất";
+    ViewBag.ActiveTab = "chuanbi";
+}
+
+@section css {
+    <!-- DevExtreme CSS -->
+    <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.common.css" onerror="this.onerror=null;this.href='https://cdn3.devexpress.com/jslib/23.2.5/css/dx.common.css';" />
+    <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.light.css" onerror="this.onerror=null;this.href='https://cdn3.devexpress.com/jslib/23.2.5/css/dx.light.css';" />
+
+    <!-- CSS Modules Riêng Của Trang Dashboard -->
+    <link href="~/css/DashboardTongQuanTienDo/production-progress-widget.css" rel="stylesheet" />
+    <link href="~/css/DashboardTongQuanTienDo/dong-bo-giao-dien.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+
+    <!-- DevExtreme CSS -->
+    <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.common.css" />
+    <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.light.css" />
+
+    <!-- CSS của Component Grid -->
+    <link rel="stylesheet" href="~/css/griddevextreme/dx-detail-grid.css" />
+
+    <style>
+        .realtime-date {
+            font-weight: 800 !important;
+            color: #000000 !important;
+            font-size: 12.5px !important;
+        }
+        .col-pcs-unit {
+            font-weight: 800 !important;
+            color: #000000 !important;
+            font-size: 12px !important;
+        }
+    </style>
+}
+
+<!-- =====================================================================
+     NỘI DUNG TAB: TIẾN ĐỘ & CHUẨN BỊ 
+     ===================================================================== -->
+<div id="tab-content-tien-do" class="dashboard-tab-pane active-tab tab-tiendo-wrapper">
+    <!-- SECTION 1: BẢNG ĐƠN HÀNG & THỜI GIAN  -->
+    <section class="octo-card">
+        <div class="card-header-title">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Bảng Đơn Hàng & Kế Hoạch Thời Gian</span>
+        </div>
+
+        <div id="grid-orders-container" class="dx-octo-grid-wrapper"></div>
+    </section>
+
+    <!-- SECTION 2: MIDDLE ROW -->
+    <section class="grid-middle">
+        <div class="octo-card">
+            <div class="card-header-title">
+                <i class="fa-solid fa-boxes-packing"></i>
+                <span>Tình Hình Nguyên Phụ Liệu</span>
+            </div>
+
+            <div id="grid-materials-container" class="dx-octo-grid-wrapper"></div>
+        </div>
+
+        <div class="octo-card">
+            <div class="card-header-title">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Tỷ Lệ Đáp Ứng NPL</span>
+            </div>
+            <!-- Biểu đồ hình tròn -->
+            <div id="chart-pie-npl" style="width: 100%; height: 185px; min-height: 185px;"></div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: THEO DÕI MUA HÀNG -->
+    <section class="octo-card">
+        <div class="card-header-title">
+            <i class="fa-solid fa-truck-ramp-box"></i>
+            <span>Theo Dõi Mua Hàng (Nguyên Phụ Liệu)</span>
+        </div>
+
+        <div class="kpi-stats-grid">
+            <div class="kpi-stat-card kpi-card-blue">
+                <span class="kpi-value text-[#2563EB]" id="stat-da-dat">0</span>
+                <span class="kpi-label">Đã Đặt</span>
+            </div>
+            <div class="kpi-stat-card kpi-card-green">
+                <span class="kpi-value text-[#059669]" id="stat-da-ve">0</span>
+                <span class="kpi-label">Đã Về</span>
+            </div>
+            <div class="kpi-stat-card kpi-card-orange">
+                <span class="kpi-value text-[#EA580C]" id="stat-sap-ve">0</span>
+                <span class="kpi-label">Sắp Về</span>
+            </div>
+            <div class="kpi-stat-card kpi-card-red">
+                <span class="kpi-value text-[#DC2626]" id="stat-tre">0</span>
+                <span class="kpi-label">Trễ</span>
+            </div>
+        </div>
+
+        <!-- Biểu đồ nhiệt / thanh ngang -->
+        <div class="chart-heatmap-wrap">
+            <div id="chart-heatmap-purchase" style="width: 100%; height: 100%; min-height: 175px;"></div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+@section scripts {
+    <!-- Apache ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script>
+        if (typeof echarts === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"><\/script>');
+        }
+    </script>
+
+
+    <!-- DevExtreme Grid Components của 2 Bảng -->
+    <script src="~/Scripts/grid_devextreme/orders-grid-component.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
+    <script src="~/Scripts/grid_devextreme/materials-grid-component.js" charset="utf-8"></script>
+
+    <!-- Script Module của Tab Tiến Độ -->
+    <script src="~/Scripts/DashboardTongQuanTienDo/dongbo-tab-tiendo.js" charset="utf-8"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện thay đổi ngày từ Header (_Layout)
+            $(document).on('dashboard:dateChanged', function (e, data) {
+                if (window.TabTienDoModule) window.TabTienDoModule.reload();
+            });
+
+            // Lắng nghe sự kiện bấm nút Refresh từ Header (_Layout)
+            $(document).on('dashboard:refresh', function () {
+                if (window.TabTienDoModule) window.TabTienDoModule.reload();
+            });
+
+            // 👉 Kích hoạt vẽ 2 biểu đồ ECharts của Tab Tiến Độ ngay khi trang tải xong
+            if (window.TabTienDoModule) {
+                window.TabTienDoModule.activate();
+            }
+        });
+    </script>
+<!--  -->   <script src="~/Scripts/griddevextreme/dx-grid-bundle_0.9.js"></script>  
+}

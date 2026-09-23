@@ -1,0 +1,356 @@
+/**
+ * ==========================================================================
+ * NTBSOFT ERP - HEADER & BASE FRAMEWORK LAYOUT
+ * File CSS chuẩn dùng cho _Layout.cshtml và đồng bộ toàn hệ thống
+ * ==========================================================================
+ */
+
+/* 1. ROOT VARIABLES & THEMES */
+:root {
+    --octo-bg: #F1F5F9;
+    --octo-surface: #FFFFFF;
+    --octo-surface-hover: #F8FAFC;
+    --octo-border: #CBD5E1;
+    --octo-border-hover: #94A3B8;
+
+    --octo-primary: #1D4ED8;
+    --octo-primary-hover: #1E40AF;
+    --octo-secondary: #059669;
+    --octo-secondary-hover: #047857;
+
+    --octo-text-primary: #0F172A;
+    --octo-text-secondary: #1E293B;
+    --octo-text-muted: #64748B;
+    --octo-success: #15803D;
+    --octo-warning: #C2410C;
+    --octo-error: #DC2626;
+
+    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-pill: 9999px;
+
+    --btn-bg: #F1F5F9;
+    --btn-border: 1px solid #CBD5E1;
+    --btn-radius: 9999px;
+    --btn-blur: blur(4px);
+    --btn-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 2. BASE RESET & PAGE LAYOUT */
+* {
+    box-sizing: border-box;
+}
+
+body,
+.tqth-dashboard-page {
+    background-color: var(--octo-bg, #F1F5F9);
+    color: var(--octo-text-primary);
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 13.5px;
+    line-height: 1.5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+.tqth-main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 6px 12px;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.dashboard-main-content {
+    width: 100%;
+    margin-top: 0;
+}
+
+/* 3. HEADER BAR */
+.main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--octo-surface);
+    border: 1px solid var(--octo-border);
+    border-radius: var(--radius-md);
+    padding: 5px 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.header-left h1,
+.header-left .page-title {
+    font-size: 15.5px;
+    font-weight: 800;
+    color: var(--octo-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.header-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #F8FAFC;
+    border: 1px solid var(--octo-border);
+    border-radius: var(--radius-sm);
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--octo-text-primary);
+}
+
+.header-date .icon {
+    width: 14px;
+    height: 14px;
+    color: var(--octo-primary);
+}
+
+.datepicker-input {
+    border: none;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--octo-text-primary);
+    width: 78px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+}
+
+.datepicker-separator {
+    color: var(--octo-text-muted);
+    font-weight: 700;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* REALTIME CLOCK */
+.header-realtime-clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background-color: #F8FAFC;
+    border: 1px solid var(--octo-border);
+    border-radius: var(--radius-sm);
+    padding: 3px 10px;
+    height: 28px;
+    font-size: 12px;
+    color: var(--octo-text-primary);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    transition: all 0.15s ease;
+}
+
+.header-realtime-clock:hover {
+    border-color: var(--octo-border-hover);
+    background-color: #FFFFFF;
+}
+
+.realtime-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #10B981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: realtimeDotPulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    flex-shrink: 0;
+}
+
+@keyframes realtimeDotPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.header-realtime-clock .realtime-icon {
+    font-size: 12px;
+    color: #2563EB;
+}
+
+.realtime-time {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 12.5px;
+    color: #0F172A;
+    letter-spacing: 0.5px;
+}
+
+.realtime-date {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #000000;
+    border-left: 1px solid #CBD5E1;
+    padding-left: 6px;
+    margin-left: 1px;
+}
+
+.col-pcs-unit {
+    font-weight: 800 !important;
+    color: #000000 !important;
+    font-size: 12px !important;
+}
+
+.octo-btn-icon {
+    background-color: #F8FAFC;
+    border: 1px solid var(--octo-border);
+    color: var(--octo-text-secondary);
+    border-radius: var(--radius-sm);
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 12px;
+}
+
+.octo-btn-icon:hover {
+    color: var(--octo-text-primary);
+    border-color: var(--octo-border-hover);
+    background-color: var(--octo-surface-hover);
+}
+
+/* 4. SUBHEADER NAVIGATION */
+.subheader-navigation {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1;
+}
+
+.header-side-nav {
+    display: inline-flex;
+    align-items: center;
+    background-color: #E2E8F0;
+    border: 1px solid #CBD5E1;
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    gap: 4px;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.side-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    background: transparent;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-inter);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    user-select: none;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.side-nav-btn:hover {
+    color: #0F172A;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.side-nav-btn.active {
+    background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #1D4ED8 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35) !important;
+}
+
+.side-nav-btn.active i {
+    color: #FFFFFF !important;
+}
+
+.side-nav-btn i {
+    font-size: 13px;
+    transition: transform 0.2s ease;
+}
+
+.side-nav-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* 5. TAB PANE SWITCHING BASE STYLES */
+.dashboard-tab-pane {
+    display: none;
+    width: 100%;
+    animation: fadeInTab 0.2s ease-in-out;
+}
+
+.dashboard-tab-pane.active-tab {
+    display: block;
+}
+
+@keyframes fadeInTab {
+    from {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 6. TOAST NOTIFICATION */
+.octo-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #0F172A;
+    color: #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+}
+
+.octo-toast.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}

@@ -1,0 +1,1921 @@
+﻿@{
+    Layout = null;
+}
+@{
+    ViewBag.Title = "Biên bản hàng xuất ";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <link href="~/css/TheoDoiHangXuat/fontawesome.pro.6.0.0.css" rel="stylesheet" />
+    <link href="~/css/TheoDoiHangXuat/roboto.css" rel="stylesheet" />
+    <link href="~/Content/plugins/select2/css/select2.css" rel="stylesheet" />
+    <link href="~/css/BienBanHangXuat/BienBanHangXuatV2.css?Ver=1.0" rel="stylesheet" />
+    <link href="~/Scripts/ViTriKho/bootstrap5.3.min.css" rel="stylesheet" />
+    <link href="~/css/TongHopNPL/tempus-dominus.min.css" rel="stylesheet" />
+
+    <style>
+        @@media screen and (min-width: 768px) {
+            .modal-dialog {
+                right: auto;
+                left: 0 !important;
+                width: 80%;
+                padding-top: 30px;
+                padding-bottom: 24px;
+            }
+        }
+
+        .inspection-form {
+            width: calc(100% - 20px) !important;
+            margin: 8px 10px !important;
+            padding: 4px 5px;
+            background: #f8fafc;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, .06);
+        }
+
+            .inspection-form .row {
+                width: 100%;
+                margin: 0;
+            }
+
+        .item .list_item {
+            width: unset !important
+        }
+
+        .inspection-form .list_item {
+            position: relative;
+            margin: 0 !important;
+            padding: 0 6px 12px !important;
+        }
+
+            .inspection-form .list_item p {
+                width: 100%;
+                margin-bottom: 5px;
+                color: #344054;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: 1.25;
+                text-align: left;
+                white-space: normal;
+            }
+
+                .inspection-form .list_item p[style*="color: #4444c7"] {
+                    color: #0d6efd !important;
+                }
+
+                .inspection-form .list_item p em {
+                    position: static !important;
+                    display: inline-block;
+                    margin: 0 0 0 3px !important;
+                    color: #dc3545 !important;
+                    font-size: 16px !important;
+                    line-height: 1;
+                }
+
+        .inspection-form .item_input {
+            position: relative;
+            display: flex;
+            width: 100%;
+            min-height: 36px;
+            align-items: center;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid #ced4da !important;
+            border-radius: 6px;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+            .inspection-form .item_input:focus-within {
+                border-color: #86b7fe !important;
+                box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+            }
+
+            .inspection-form .item_input input,
+            .inspection-form .item_input select,
+            .inspection-form .item_input .select2-container {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+
+            .inspection-form .item_input input,
+            .inspection-form .item_input select {
+                height: 34px !important;
+                padding: 5px 34px 5px 10px;
+                color: #212529;
+                background: transparent;
+                border: 0 !important;
+                outline: 0 !important;
+                font-size: 15px !important;
+            }
+
+        .inspection-form .datetime_Xe {
+            left: 10px;
+            width: calc(100% - 44px);
+            padding-top: 0;
+            color: #212529;
+            font-size: 15px;
+            line-height: 34px;
+            text-align: left;
+            pointer-events: none;
+        }
+
+        .inspection-form .icon_datexe {
+            right: 10px;
+            top: 50%;
+            color: #6c757d;
+            font-size: 16px;
+            transform: translateY(-50%);
+        }
+
+        .inspection-form .icon_tableList {
+            right: 16px;
+            top: 26px;
+            color: #0d6efd;
+            font-size: 15px;
+            z-index: 2;
+        }
+
+        @@media (max-width: 767.98px) {
+            .inspection-form {
+                width: calc(100% - 16px) !important;
+                margin: 10px 8px !important;
+                padding: 10px;
+            }
+
+                .inspection-form .list_item {
+                    padding: 0 0 10px !important;
+                }
+
+                .inspection-form .item_input {
+                    min-height: 38px;
+                }
+
+                    .inspection-form .item_input input,
+                    .inspection-form .item_input select {
+                        height: 36px !important;
+                        font-size: 16px !important;
+                    }
+
+                .inspection-form .datetime_Xe {
+                    font-size: 14px;
+                    line-height: 36px;
+                }
+
+                .inspection-form .icon_tableList {
+                    right: 10px;
+                    top: 29px;
+                }
+        }
+
+        .bb-surface {
+            margin: 10px;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, .06);
+        }
+
+        .bb-inline-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 38px;
+        }
+
+            .bb-inline-field p {
+                width: auto;
+                margin: 0;
+                color: #344054;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            .bb-inline-field input {
+                width: 120px !important;
+                height: 34px !important;
+                padding: 5px 10px;
+                color: #212529;
+                background: #fff;
+                border: 1px solid #ced4da !important;
+                border-radius: 6px;
+                outline: 0;
+                font-size: 15px;
+                text-align: center;
+            }
+
+                .bb-inline-field input:focus {
+                    border-color: #86b7fe !important;
+                    box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+                }
+
+        @@media (max-width: 575.98px) {
+            .bb-surface {
+                margin: 8px;
+                padding: 10px;
+            }
+
+            .bb-inline-field {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+                .bb-inline-field input {
+                    width: 100% !important;
+                    max-width: 180px;
+                }
+        }
+
+        .app-toolbar {
+            display: flex;
+            width: calc(100% - 4px);
+            min-height: 46px;
+            margin: 2px;
+            padding: 6px 10px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: linear-gradient(90deg, #0f6fb7, #4fb3e8);
+            border: 1px solid rgba(255, 255, 255, .35);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, .12);
+            position: unset;
+            top: 2px;
+            z-index: 10;
+        }
+
+        .toolbar-group,
+        .toolbar-actions,
+        .toolbar-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .toolbar-title {
+            justify-content: center;
+            flex: 1;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+            .toolbar-title label,
+            .toolbar-title p {
+                width: auto;
+                margin: 0;
+                color: inherit;
+                font-size: 14px;
+                font-style: normal;
+                text-align: left;
+            }
+
+        .toolbar-name {
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .toolbar-code {
+            padding: 2px 7px;
+            color: #0f172a !important;
+            background: #fff;
+            border-radius: 999px;
+            font-size: 13px !important;
+        }
+
+        .toolbar-icon-btn,
+        .toolbar-btn,
+        .toolbar-action {
+            display: inline-flex;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 10px;
+            border: 1px solid rgba(255, 255, 255, .4);
+            border-radius: 7px;
+            outline: 0;
+            font-family: 'Roboto', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+        }
+
+        .toolbar-icon-btn {
+            width: 36px;
+            padding: 0;
+            color: #0f172a;
+            background: #ffffff;
+        }
+
+        .toolbar-btn-primary {
+            color: #083344;
+            background: #a7f3d0;
+        }
+
+        .toolbar-btn-secondary {
+            color: #172554;
+            background: #bfdbfe;
+        }
+
+        .toolbar-save {
+            min-width: 78px;
+            color: #064e3b;
+            background: #bbf7d0;
+        }
+
+        .toolbar-ktdt {
+            min-width: 78px;
+            color: #fd7e14;
+            background: #ffefe3;
+        }
+
+        .toolbar-delete {
+            color: #fff;
+            background: #dc3545;
+        }
+
+        .toolbar-export {
+            color: #064e3b;
+            background: #d9f99d;
+        }
+
+        .toolbar-icon-btn:hover,
+        .toolbar-btn:hover,
+        .toolbar-action:hover {
+            filter: brightness(.98);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, .18);
+        }
+
+        .toolbar-icon-btn i,
+        .toolbar-btn i,
+        .toolbar-action i,
+        .toolbar-title i {
+            font-size: 15px;
+        }
+
+        .task-item .item-table .table tbody tr input {
+            margin-top: 3px;
+        }
+
+        @@media (max-width: 768px) {
+            .app-toolbar {
+                flex-wrap: wrap;
+                align-items: stretch;
+            }
+
+            .toolbar-group,
+            .toolbar-actions {
+                flex: 1 1 auto;
+                flex-wrap: wrap;
+            }
+
+            .toolbar-title {
+                order: 3;
+                flex: 1 1 100%;
+                justify-content: flex-start;
+                padding-top: 2px;
+            }
+
+            .toolbar-btn,
+            .toolbar-action {
+                flex: 1 1 auto;
+            }
+
+            .task-item .item-table .table thead tr td {
+                font-size: 11px;
+            }
+        }
+
+        .seal-datetime-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 10px;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            justify-content: space-around;
+        }
+
+            .seal-datetime-row .field-group {
+                flex: 1 1 200px;
+                max-width: 280px;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+                .seal-datetime-row .field-group p {
+                    margin: 0;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #dc3545; /* đỏ theo thiết kế gốc */
+                }
+
+                    .seal-datetime-row .field-group p em {
+                        display: inline-block;
+                        margin-left: 3px;
+                        font-size: 16px;
+                        color: #dc3545;
+                        line-height: 1;
+                    }
+
+        .field-input {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-height: 36px;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: border-color .15s, box-shadow .15s;
+        }
+
+            .field-input:focus-within {
+                border-color: #86b7fe;
+                box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+            }
+
+            .field-input input.datetime-hidden {
+                position: absolute;
+                inset: 0;
+                opacity: 0;
+                z-index: 2;
+                cursor: pointer;
+            }
+
+            .field-input .datetime-label {
+                flex: 1;
+                padding: 0 10px;
+                font-size: 14px;
+                color: #212529;
+                pointer-events: none;
+                white-space: nowrap;
+            }
+
+            .field-input .icon-cal {
+                padding: 0 10px;
+                color: #6c757d;
+                font-size: 15px;
+                pointer-events: none;
+            }
+
+        .task-item .item-table .table thead tr td {
+            font-size: 12px;
+        }
+
+        .lookup-input2 > div > div {
+            height: 25px;
+            border: 1px solid #ccc;
+            padding: 0 8px;
+            padding-top: 0px;
+            font-size: 13px;
+        }
+        /* ── Camera buttons ─────────────────────────────── */
+        .camera-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 10px;
+        }
+
+            .camera-bar button,
+            .extra-cam-bar button {
+                height: 34px;
+                padding: 0 16px;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background .15s, opacity .15s;
+            }
+
+        .camera_car {
+            background: #0ea5e9;
+            color: #fff;
+        }
+
+            .camera_car:hover {
+                background: #0284c7;
+            }
+
+        .camera_car_back {
+            background: #f59e0b;
+            color: #fff;
+            display: none;
+        }
+
+            .camera_car_back:hover {
+                background: #d97706;
+            }
+
+        /* ── Image section ───────────────────────────────── */
+        .image_Cont {
+            display: none;
+            margin: 0 10px 10px;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .list_image {
+            margin-bottom: 10px;
+        }
+
+            .list_image:last-child {
+                margin-bottom: 0;
+            }
+
+        .item_image {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+            .item_image [class*="col-"] {
+                flex: 1 1 calc(50% - 10px);
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+
+        @@media (max-width: 575px) {
+            .item_image [class*="col-"] {
+                flex: 1 1 100%;
+            }
+        }
+
+        .item_image p {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .item_image .image {
+            border: 1px dashed #cbd5e1;
+            border-radius: 6px;
+            min-height: 120px;
+            background: #fff;
+            transition: border-color .15s;
+            cursor: pointer;
+        }
+
+            .item_image .image:hover {
+                border-color: #94a3b8;
+                background: #f1f5f9;
+            }
+
+        /* ── Extra cam buttons ───────────────────────────── */
+        .extra-cam-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 10px;
+        }
+
+        .camera_imageOther {
+            background: #0ea5e9;
+            color: #fff;
+        }
+
+            .camera_imageOther:hover {
+                background: #0284c7;
+            }
+
+        .camera_imageOther_back {
+            background: #a96060;
+            color: #fff;
+        }
+
+            .camera_imageOther_back:hover {
+                background: #8f4f4f;
+            }
+
+        .camera_imageOther_View {
+            background: #a96060;
+            color: #fff;
+            display: none;
+        }
+
+            .camera_imageOther_View:hover {
+                background: #8f4f4f;
+            }
+
+        /* ── Add image area ──────────────────────────────── */
+        .item_addImage {
+            margin: 0 10px 10px;
+        }
+
+        .btn-add-row {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 28px;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.35);
+            transition: background .15s, box-shadow .15s, transform .1s;
+            white-space: nowrap;
+        }
+
+            .btn-add-row:hover {
+                background: linear-gradient(135deg, #4f46e5, #7c3aed);
+                box-shadow: 0 4px 10px rgba(99, 102, 241, 0.45);
+                transform: translateY(-52%);
+            }
+
+            .btn-add-row i {
+                font-size: 11px;
+            }
+
+        .inspection-form .item .list_item p {
+            min-height: 16px !important;
+            margin-bottom: 0px !important;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="nav_title app-toolbar">
+        <div class="list_phieu toolbar-group">
+            <button id="home" type="button" class="toolbar-icon-btn" title="Trang chủ">
+                <i class="fa-sharp fa-solid fa-house"></i>
+            </button>
+
+            <button id="creatPhieu" type="button" class="toolbar-btn toolbar-btn-primary">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Tạo phiếu</span>
+            </button>
+
+            <button id="viewPhieu" type="button" class="toolbar-btn toolbar-btn-secondary">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span>Sửa phiếu</span>
+            </button>
+        </div>
+
+        <div class="maPhieu toolbar-title">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <label>Biên bản phiếu</label>
+            <p id="soPhieu" class="toolbar-code" style="display: none;">1</p>
+            <p id="namePhieu" class="toolbar-name"></p>
+        </div>
+
+        <div class="toolbar-actions">
+            <button class="btn_search toolbar-action toolbar-ktdt d-none" id="btnKyTenDT" type="button">
+                <i class="fa-solid fa-file-pen"></i> Ký tên điện tử
+            </button>
+            <button class="btn_search toolbar-action toolbar-save" id="Update" type="button">
+                <i class="fa-sharp fa-solid fa-floppy-disk"></i>
+                <span>Lưu</span>
+            </button>
+
+            <button class="btn_search toolbar-action toolbar-delete" id="delete" type="button" style="display:none">
+                <i class="fa-solid fa-trash-can"></i>
+                <span>Xóa phiếu</span>
+            </button>
+
+            <button class="btn_search toolbar-action toolbar-export" id="xuatEX" type="button" style="display:none">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Xuất EX</span>
+            </button>
+        </div>
+    </section>
+    <section class="search" style="background: rgb(112, 186, 237); margin: 2px; padding: 0px 10px; width: 99.8%; border-radius: 5px; display: none">
+        <div style="margin: 5px; display: none; ">
+            <div class="" style="margin-right:10px">
+                <label style="display: block;" for="from">Từ ngày:</label>
+                <input style="width: 130px; outline: none; border: 1px solid; height: 26px;text-align: center;font-size: 15px;" type="text" id="from" name="from">
+            </div>
+            <div class="">
+                <label style="display: block;" for="to">Đến ngày:</label>
+                <input style="width: 130px;outline: none;border: 1px solid;height: 26px;text-align: center;font-size: 15px;" type="text" id="to" name="to">
+            </div>
+        </div>
+        <div style="margin: 5px; display: flex; justify-content: space-between; width: 100%; ">
+            <div class="lookup-container">
+                <label style="margin-right: 5px; font-size: 15px; font-family: 'Roboto';">Mã PKL</label>
+                <input style="text-align: center;" type="text" class="lookup-input" placeholder="Search...">
+                <div class="ultitle" style="display:flex;justify-content:space-between">
+                    <p class="ultile_p1">Mã Phiếu</p>
+                    <p class="ultile_p1">Số xe</p>
+                    <p class="ultile_p1">Số cont</p>
+                    <p class="ultile_p1">Số rờ móc</p>
+                    <p class="ultile_p1">Số Booking</p>
+                </div>
+                <ul class="lookup-results">
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="title">BIÊN BẢN KIỂM TRA</div>
+        <p> CONTAINER/TRAILER/TRUCK INSPECTION RECORD </p>
+    </section>
+    <section>
+        <div class="row" style="display:flex;margin: 10px;width: 100%;">
+            <div style="display: flex; width: 70%; margin-left: 56px; justify-content: center; align-items: center;">
+                <div style="display:flex;">
+                    <input class="vcCont" type="checkbox" name="name" value="" style="width: 33px; margin-left: 36px; outline: none; border: 1px solid;">
+                    <p class="mb-0"> Container</p>
+                </div>
+                <div style="display:flex">
+                    <input class="vcroMoc" type="checkbox" name="name" value="" style=" width: 35px; margin-left: 36px; outline: none; border: 1px solid;">
+                    <p class="mb-0" style="white-space: nowrap;">Đầu kéo </p>
+                </div>
+                <div style="display:flex">
+                    <input class="vcXetai" type="checkbox" name="name" value="" style=" width: 35px; margin-left: 36px; outline: none; border: 1px solid;">
+                    <p class="mb-0" style="white-space: nowrap;">Xe tải </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="mapkl_cont">
+        <div style="display: flex; padding: 0px 12px;">
+            <div style="position: relative;">
+                <label style="margin-right: 5px; font-size: 15px; font-family: 'Roboto'; white-space: nowrap;">Mã PKL</label>
+
+            </div>
+            <div class="lookup-input2">
+                <div class="item_input2">
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class=" list_item ma_PKL " style="display: flex; justify-content: left; align-items: center;margin-bottom:10px">
+
+            <div class="lookup-container1">
+
+                <div style="position: relative; display: flex; flex-direction: column;">
+
+                    <input style="text-align: center;display:none" type="text" class="lookup-input1" placeholder="Search...">
+                    <div class="hideLi" style="display:none">
+                        <button class="">Ẩn</button>
+                    </div>
+                    <ul class="lookup-results1">
+                    </ul>
+
+
+                </div>
+            </div>
+        </div>
+        @*</div>*@
+    </section>
+    <section class="bb-surface">
+        <div class="row g-2 align-items-center">
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="bb-inline-field">
+                    <p>Loại</p>
+                    <input class="loaiFeest" type="number" value="" />
+                    <p>Feets</p>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="bb-inline-field">
+                    <p>Loại</p>
+                    <input class="loaiTan" type="number" value="" />
+                    <p>Tấn</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="inspection-form" style="margin: 10px 10px;width:98%">
+        <div>
+            <div class="item">
+                <div class="row gap-2">
+                    <div class="list_item col-6 col-md-6 col-xl-3" style="position: relative;">
+                        <p>Số xe <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <i class="fa-regular fa-table icon_tableList listXe"></i>
+                        <div class="item_input">
+                            <input style="text-transform: uppercase;" class="banSo" type="text" value="" />
+                        </div>
+                    </div>
+
+                    <div class="list_item inputcontainer col-6 col-md-6 col-xl-3">
+                        <p>Số container <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="item_input">
+                            <input class="container" type="text" value="" />
+                        </div>
+                    </div>
+
+                    <div class="list_item inputromoc col-6 col-md-6 col-xl-3">
+                        <p>Số rờ móc <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="item_input">
+                            <input class="romoc" type="text" name="name" value="" />
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-3" style="position: relative;">
+                        <p>Tên tài xế <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <i class="fa-regular fa-table icon_tableList listTenTX"></i>
+                        <div class="item_input">
+                            <input style="text-transform: capitalize;" class="nameTX" type="text" value="" />
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-3" style="position: relative;">
+                        <p>CCCD <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <i class="fa-regular fa-table icon_tableList listCMND"></i>
+                        <div class="item_input">
+                            <input class="CMND" type="text" value="" maxlength="12" />
+                        </div>
+                    </div>
+
+                    <div class="list_item item_cty col-6 col-md-6 col-xl-3">
+                        <p>Công ty <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="item_input">
+                            <select class="congty" style="width: 100%; height: 28px; border: 1px solid; outline: none; text-align: center; font-size: 17px;"></select>
+                        </div>
+                    </div>
+
+                    <div class="list_item item_cty1 col-6 col-md-6 col-xl-3" style="display:none">
+                        <p>Công ty <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="item_input">
+                            <input class="congty1" type="text" value="" readonly />
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-3">
+                        <p>Ngày giờ xe đến <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="input-group datetimepicker" id="dp_xeDen" style="position: relative;">
+                            <input type="text" class="form-control dateInput xeDen"
+                                   style="height:36px; font-size:14px; border-radius:5px;" />
+                            <i class="fa-solid fa-calendar-day"
+                               style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-3">
+                        <p>Ngày ETD <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="input-group datetimepicker" id="dp_checkXe" style="position: relative;">
+                            <input type="text" class="form-control dateInput checkXe"
+                                   style="height:36px; font-size:14px; border-radius:5px;" />
+                            <i class="fa-solid fa-calendar-day"
+                               style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-4">
+                        <p style="color: #4444c7;">TG BV kiểm tra từ <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="input-group datetimepicker" id="dp_bvCheckBD" style="position: relative;">
+                            <input type="text" class="form-control dateInput bvcheckbd"
+                                   style="height:36px; font-size:14px; border-radius:5px;" />
+                            <i class="fa-solid fa-calendar-day"
+                               style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-4">
+                        <p style="color: #4444c7;">TG BV kiểm tra đến <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="input-group datetimepicker" id="dp_bvCheckKT" style="position: relative;">
+                            <input type="text" class="form-control dateInput bvcheckkt"
+                                   style="height:36px; font-size:14px; border-radius:5px;" />
+                            <i class="fa-solid fa-calendar-day"
+                               style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-4" style="position: relative;">
+                        <p>Nơi đến</p>
+                        <i class="fa-regular fa-table icon_tableList listCanDen"></i>
+                        <div class="item_input">
+                            <input style="text-transform: uppercase " class="cangden" type="text" value="" />
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-4" style="position: relative;">
+                        <p>Chứng từ</p>
+                        <div class="item_input">
+                            <input style="text-transform: uppercase " class="chungtu" type="text" value="" />
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-4">
+                        <p>Thời gian NV kho kiểm tra từ <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="input-group datetimepicker" id="dp_nvCheckBD" style="position: relative;">
+                            <input type="text" class="form-control dateInput nvcheckbd"
+                                   style="height:36px; font-size:14px; border-radius:5px;" />
+                            <i class="fa-solid fa-calendar-day"
+                               style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+                        </div>
+                    </div>
+
+                    <div class="list_item col-6 col-md-6 col-xl-4">
+                        <p>Thời gian NV kho kiểm tra đến <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                        <div class="input-group datetimepicker" id="dp_nvCheckKT" style="position: relative;">
+                            <input type="text" class="form-control dateInput nvcheckkt"
+                                   style="height:36px; font-size:14px; border-radius:5px;" />
+                            <i class="fa-solid fa-calendar-day"
+                               style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @*<section class="inspection-form" style="margin: 10px 10px;width:98%">
+            <div>
+                <div class="item">
+                    <div class="row gap-2">
+                        <div class="list_item col-6 col-md-6 col-xl-3" style="position: relative;">
+                            <p>Số xe <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <i class="fa-regular fa-table icon_tableList listXe"></i>
+                            <div class="item_input">
+                                <input style="text-transform: uppercase;" class="banSo" type="text" value="" />
+                            </div>
+                        </div>
+
+                        <div class="list_item inputcontainer col-6 col-md-6 col-xl-3">
+                            <p>Số container <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input">
+                                <input class="container" type="text" value="" />
+                            </div>
+                        </div>
+
+                        <div class="list_item inputromoc col-6 col-md-6 col-xl-3">
+                            <p>Số rờ móc <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input">
+                                <input class="romoc" type="text" name="name" value="" />
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-3" style="position: relative;">
+                            <p>Tên tài xế <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <i class="fa-regular fa-table icon_tableList listTenTX"></i>
+                            <div class="item_input">
+                                <input style="text-transform: capitalize;" class="nameTX" type="text" value="" />
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-3" style="position: relative;">
+                            <p>CCCD <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <i class="fa-regular fa-table icon_tableList listCMND"></i>
+                            <div class="item_input">
+                                <input class="CMND" type="text" value="" maxlength="12" />
+                            </div>
+                        </div>
+
+                        <div class="list_item item_cty col-6 col-md-6 col-xl-3">
+                            <p>Công ty <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input">
+                                <select class="congty" style="width: 100%; height: 28px; border: 1px solid; outline: none; text-align: center; font-size: 17px;"></select>
+                            </div>
+                        </div>
+
+                        <div class="list_item item_cty1 col-6 col-md-6 col-xl-3" style="display:none">
+                            <p>Công ty <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input">
+                                <input class="congty1" type="text" value="" readonly />
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-3">
+                            <p>Ngày giờ xe đến <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input" style="position: relative; border: 1px solid;">
+                                <input style="color: transparent; height: 26px; z-index: 2;opacity:0" class="xeDen datetime" type="datetime-local" value="" />
+                                <span id="datetime_xeden" class="datetime_Xe">dd/mm/yyyy --:--</span>
+                                <i class="fa-regular fa-calendar-days icon_datexe"></i>
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-3">
+                            <p>Ngày ETD <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input" style="position: relative; border: 1px solid;">
+                                <input style="color: transparent; height: 26px; z-index: 2;opacity:0" class="checkXe datetime" type="date" value="" />
+                                <span id="datetime_xecheck" class="datetime_Xe">dd/mm/yyyy</span>
+                                <i class="fa-regular fa-calendar-days icon_datexe"></i>
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-4">
+                            <p style="color: #4444c7;">TG BV kiểm tra từ <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input" style="position: relative; border: 1px solid;">
+                                <input style="color: transparent; height: 26px; z-index: 2;opacity:0" class="bvcheckbd datetime" type="datetime-local" value="" />
+                                <span id="datetime_bvcheckbd" class="datetime_Xe">dd/mm/yyyy --:--</span>
+                                <i class="fa-regular fa-calendar-days icon_datexe"></i>
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-4">
+                            <p style="color: #4444c7;">TG BV kiểm tra đến <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input" style="position: relative; border: 1px solid;">
+                                <input style="color: transparent; height: 26px; z-index: 2;opacity:0" class="bvcheckkt datetime" type="datetime-local" value="" />
+                                <span id="datetime_bvcheckkt" class="datetime_Xe">dd/mm/yyyy --:--</span>
+                                <i class="fa-regular fa-calendar-days icon_datexe"></i>
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-4" style="position: relative;">
+                            <p>Nơi đến</p>
+                            <i class="fa-regular fa-table icon_tableList listCanDen"></i>
+                            <div class="item_input">
+                                <input style="text-transform: uppercase " class="cangden" type="text" value="" />
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-4" style="position: relative;">
+                            <p>Chứng từ</p>
+                            <div class="item_input">
+                                <input style="text-transform: uppercase " class="chungtu" type="text" value="" />
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-4">
+                            <p>Thời gian NV kho kiểm tra từ <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input" style="position: relative; border: 1px solid;">
+                                <input style="color: transparent; height: 26px; z-index: 2;opacity:0" class="nvcheckbd datetime" type="datetime-local" value="" />
+                                <span id="datetime_nvcheckbd" class="datetime_Xe">dd/mm/yyyy --:--</span>
+                                <i class="fa-regular fa-calendar-days icon_datexe"></i>
+                            </div>
+                        </div>
+
+                        <div class="list_item col-6 col-md-6 col-xl-4">
+                            <p>Thời gian NV kho kiểm tra đến <em style="color: red; position: absolute; font-size: 25px; margin-top: -5px; margin-left: 5px;">*</em></p>
+                            <div class="item_input" style="position: relative; border: 1px solid;">
+                                <input style="color: transparent; height: 26px; z-index: 2;opacity:0" class="nvcheckkt datetime" type="datetime-local" value="" />
+                                <span id="datetime_nvcheckkt" class="datetime_Xe">dd/mm/yyyy --:--</span>
+                                <i class="fa-regular fa-calendar-days icon_datexe"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>*@
+
+    <section>
+        <div class="main-item">
+            <div class="task-item">
+                <div class="item-table">
+                    <table class="table table2" style="position: relative">
+                        <thead class="thead-list">
+                            <tr id="thead" style="position:relative">
+                                <td rowspan="2">STT</td>
+                                <td rowspan="2">Nội dung </td>
+                                <td colspan="2">Container & Đầu kéo/trailer</td>
+                                <td colspan="2">Xe tải / Truck</td>
+                            </tr>
+                            <tr id="thead" style="position:relative">
+                                <td>An toàn</td>
+                                <td>Không an toàn</td>
+                                <td>An toàn</td>
+                                <td>Không an toàn</td>
+
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            <tr>
+                                <td></td>
+                                <td style="color: #92b1dc; font-size: 18px; padding: 5px 5px;">Kiểm tra an ninh- CTPAT</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Cản trước xe/Bumper</td>
+                                <td><input class="isContT1" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT1" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT1" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT1" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Động cơ xe/Engine</td>
+                                <td><input class="isContT2" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT2" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT2" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT2" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Các bánh xe/Tires(truck & trailer)</td>
+                                <td><input class="isContT3" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT3" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT3" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT3" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Sàn (trong cabin) xe/Floor(inside truck)</td>
+                                <td><input class="isContT4" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT4" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT4" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT4" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Thùng chứa nhiên liệu/Fuel Tanks</td>
+                                <td><input class="isContT5" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT5" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT5" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT5" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Khoan lái (bên trong và ngoài)/ Cab/Storage Compartments</td>
+                                <td><input class="isContT6" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT6" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT6" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT6" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Bình khí nén/Air Tanks</td>
+                                <td><input class="isContT7" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT7" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT7" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT7" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Trục dẫn động/ Drive Shafts</td>
+                                <td><input class="isContT8" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT8" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT8" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT8" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Nơi để bánh dư phòng/khớp nối/Fifth Wheel</td>
+                                <td><input class="isContT9" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT9" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT9" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT9" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Khung gầm romoc và cont/Outside/ Undercarriage</td>
+                                <td><input class="isContT10" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT10" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT10" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT10" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>11 </td>
+                                <td>Sàn bên trong/Floor(inside)</td>
+                                <td><input class="isContT11" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT11" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT11" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT11" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>Bên trong và bên ngoài cánh của <br /> Outside/ Inside Doors</td>
+                                <td><input class="isContT12" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT12" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT12" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT12" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>Hai bên thành cont/thùng xe tải/Side Walls</td>
+                                <td><input class="isContT13" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT13" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT13" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT13" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td>Bên trong trần và mái ngoài cont <br /> /xe tải/Ceiling/Roof</td>
+                                <td><input class="isContT14" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT14" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT14" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT14" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td>Thành trước cont/thùng xe/Front Wall</td>
+                                <td><input class="isContT15" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT15" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT15" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT15" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>16</td>
+                                <td>Hệ thống làm lạnh/Refrigerator Unit (nếu có)</td>
+                                <td><input class="isContT16" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT16" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT16" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT16" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>17</td>
+                                <td>Ống xả khối/ Exhaust</td>
+                                <td><input class="isContT17" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT17" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT17" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT17" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="color: #92b1dc; font-size: 18px; padding: 5px 5px;" colspan="2">Kiểm tra nông nghiệp- Agricultural security</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    Sự nhiễn bẩn:Đất, phân,Côn trùng/Insets,hạt giống/seed,động thực vật <br />gây ô nhiễm/animal and plant matter can cause harm,...
+                                </td>
+                                <td><input class="isContT18" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT18" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT18" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT18" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Biện pháp xử lý (nếu có)</td>
+                                <td><input class="isContT19" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isContKT19" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiT19" type="checkbox" name="name" value="" /></td>
+                                <td><input class="isXeTaiKT19" type="checkbox" name="name" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Kết Luận:</td>
+                                <td style="text-align: left; position: relative;" colspan="2"><input class="isKetLuanT" type="checkbox" name="name" value="" /> <span style="position: absolute; top: 6px;">Được phép đóng hàng</span> </td>
+                                <td style="text-align: left; position: relative;" colspan="2"><input class="isKetLuanKT" type="checkbox" name="name" value="" /> <span style="position: absolute; top: 6px; white-space: nowrap;"> Không được phép đóng hàng</span></td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <div class="seal-datetime-row">
+        <div class="field-group">
+            <p>TG bắt đầu đóng cont <em>*</em></p>
+            <div class="input-group datetimepicker" id="dp_dongHang" style="position: relative;">
+                <input type="text" class="form-control dateInput donghang"
+                       style="height:36px; font-size:14px; border-radius:5px;" />
+                <i class="fa-solid fa-calendar-day"
+                   style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <p>TG kết thúc đóng cont <em>*</em></p>
+            <div class="input-group datetimepicker" id="dp_finishDongHang" style="position: relative;">
+                <input type="text" class="form-control dateInput finishDongHang"
+                       style="height:36px; font-size:14px; border-radius:5px;" />
+                <i class="fa-solid fa-calendar-day"
+                   style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="main-item">
+        <div class="task-item" style="position:relative">
+            <div class="item-table">
+                <div id="xuatHangDetail" style="position: absolute; left: 8px; top: 3px; z-index: 2; ">
+                    <button style="height: 30px; padding: 0 5px; font-size: 12px;" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Chi tiết</button>
+                </div>
+                <table class="table" style="position: relative">
+                    <thead class="thead-list">
+                        <tr id="thead" style="position:relative">
+                            <td>Tên hàng</td>
+                            <td>Mã hàng</td>
+                            <td>Po số</td>
+                            <td> Số lượng  </td>
+                            <td>Thùng</td>
+                            <td>Số Booking</td>
+                            <td>Ghi chú</td>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyMahang">
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="camera-bar">
+        <button class="camera_car">Chụp hình xe Cont</button>
+        <button class="camera_car_back">Chụp hình lại</button>
+    </div>
+
+    <!-- Lưới hình ảnh container -->
+    <section class="image_Cont">
+
+        <div class="list_image">
+            <div class="row item_image">
+                <div class="col-12 col-md-6">
+                    <p>1. Hình ảnh lúc chưa chất hàng</p>
+                    <div class="image"
+                         id="image0"
+                         data-field="image0"
+                         onclick="handleImageClick(this)">
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <p>2. Hình ảnh chất được 25%</p>
+                    <div class="image"
+                         id="image25"
+                         data-field="image25"
+                         onclick="handleImageClick(this)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="list_image">
+            <div class="row item_image">
+                <div class="col-12 col-md-6">
+                    <p>3. Hình ảnh chất được 50%</p>
+                    <div class="image"
+                         id="image50"
+                         data-field="image50"
+                         onclick="handleImageClick(this)">
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <p>4. Hình ảnh chất được 75%</p>
+                    <div class="image"
+                         id="image75"
+                         data-field="image75"
+                         onclick="handleImageClick(this)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="list_image">
+            <div class="row item_image">
+                <div class="col-12 col-md-6">
+                    <p>5. Hình ảnh chất được 100%</p>
+                    <div class="image"
+                         id="image100"
+                         data-field="image100"
+                         onclick="handleImageClick(this)">
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <p>6. Hình khi đã đóng cửa phương tiện</p>
+                    <div class="image"
+                         id="imageDongCua"
+                         data-field="imageDongCua"
+                         onclick="handleImageClick(this)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="list_image tablet">
+            <div class="row item_image">
+                <div class="col-12 col-md-6">
+                    <p>7. Hình kiểm tra seal trước chốt</p>
+                    <div class="image imageTruocChot"
+                         id="imageTruocChot"
+                         data-field="imageTruocChot"
+                         onclick="handleImageClick(this)">
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <p>8. Hình seal đã chốt an toàn</p>
+                    <div class="image imageChotAT"
+                         id="imageChotAT"
+                         data-field="imageChotAT"
+                         onclick="handleImageClick(this)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Chụp thêm hình -->
+    <div class="extra-cam-bar">
+        <button class="camera_imageOther">Chụp thêm hình</button>
+        <button class="camera_imageOther_back">Ẩn hình</button>
+        <button class="camera_imageOther_View">Xem hình</button>
+    </div>
+    <section>
+        <div class="item_addImage"></div>
+    </section>
+    <div class="seal-datetime-row">
+        <div class="field-group">
+            <p>Số seal</p>
+            <div class="field-input inputseal">
+                <input style="max-width: 1000px !important; width: 100%; outline: none; border: none; padding: 0 6px;" class="maSeal" type="text" value="" />
+            </div>
+            <div class="field-input selectseal" style="display:none; border:none;">
+                <select multiple="multiple" class="maSealSelect"></select>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <p>Ngày giờ xe đi <em>*</em></p>
+            <div class="input-group datetimepicker" id="dp_xeDi" style="position: relative;">
+                <input type="text" class="form-control dateInput xeDI"
+                       style="height:36px; font-size:14px; border-radius:5px;" />
+                <i class="fa-solid fa-calendar-day"
+                   style="height:36px; position:absolute; right:14px; top:8px; font-size:14px; cursor:pointer; z-index:10;"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <section>
+        <div class="main-item">
+            <div class="task-item kyten" style="width:70%;position:relative">
+                <i style="position: absolute; top: 2px; left: 5px; font-size: 25px; cursor: pointer;" class="fa-solid fa-signature icon_tablesignature"></i>
+                <div class="item-table list_kyten">
+                    <table class="table">
+                        <thead class="thead-list">
+                            <tr id="thead">
+                                <td>Họ Tên</td>
+                                <td>Bộ phận </td>
+                                <td style="position:relative">
+                                    Kí Tên
+                                    <button class="btn-add-row addRow">
+                                        <i class="fa-solid fa-plus"></i> Thêm dòng
+                                    </button>
+                                </td>
+
+                            </tr>
+                        </thead>
+                        <tbody id="bodyKyTen">
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade image d-none" id="ModalImage" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="width:100%;height:100%">
+        <div class="modal-dialog modal-lg modal-dialog-top" role="document">
+            <div class="modal-content">
+                @*<div class="modal-header" style="background-color:#17A2B8;padding:0.4rem">
+                        <h5 class="modal-title" style="color:white;font-size:1rem"><i class="fas fa-camera"></i>  Chụp ảnh lỗi</h5>
+                        <button type="button" style="color:white" class="close" data-dismiss="modal" aria-label="Close" id="btnCloseModal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>*@
+                <div class="modal-body" style="padding:0rem">
+                    <div style="width:100%;height:100%" id="webcam"></div>
+                </div>
+                <div class="modal-footer" style="padding:0rem">
+                    <button onclick="Capture()" type="button" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#ModalPreviewImage">@*<i class="fas fa-save"></i>*@  Chụp ảnh</button>
+                    <button onclick="CloseCamera()" type="button" class="btn btn-danger" data-dismiss="modal">@*<i class="fas fa-save"></i>*@  Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup1">
+        <div class="list-popup">
+            <div class="tieude">
+                Danh sách
+            </div>
+            <div class="hide_popup">
+                <i class="fa-sharp fa-solid fa-xmark"></i>
+            </div>
+            <div>
+                <input class="search_table" type="text" name="name" value="" placeholder="...Tìm kiếm" autocomplete="off" />
+                <div class="main-item">
+                    <div class="task-itemlist">
+                        <div class="item-tableTong">
+                            <table class="table" style="position: relative">
+                                <thead id="theadList" class="thead-list">
+
+                                </thead>
+                                <tbody id="tbodyList">
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Chi tiết mã PKL</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 100%;">
+                        <div class="list_nav">
+                            <div class="lst_DonHang">
+                                <label class="col-form-label item_lable" style="color: ">Mã PKL-Cont-Số booking</label>
+                                <select class="item_select mapkl_select2">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <section class="lstTotal">
+                        <div class="main-item">
+                            <div class="task-itemTong">
+                                <div class="item-tableTong">
+                                    <table class="table" style="position: relative">
+                                        <thead id="theadTotal" class="thead-list">
+                                        </thead>
+                                        <tbody id="tbodyTotal">
+                                        </tbody>
+                                        <tfoot id="tfootTotal">
+
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal2" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Zoomed Image</h4>
+                </div>
+                <div class="modal-body">
+                    <img id="zoomedImage" src="" alt="Zoomed Image" style="width: 100%; object-fit: fill; height:70dvh;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " id="ModalPreviewImage" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="width:100%;height:100%">
+        <div class="modal-dialog modal-lg modal-dialog-top" role="document">
+            <div class="modal-content">
+
+                <div class="modal-body" style="padding:0rem">
+                    <img style="width:100%;height:80vh" id="PreViewImage">
+                </div>
+                <div class="modal-footer" style="padding:0rem">
+
+                    <button onclick="StartCamera()" type="button" class="btn btn-danger" data-dismiss="modal" data-toggle="modal" data-target="#ModalImage">@*<i class="fas fa-save"></i>*@  Chụp lại</button>
+                    <button style="width: 72px; background: #a9a00f; color: #000; font-weight: bold;" onclick="SavePreImage()" type="button" class="btn btn-primary" data-dismiss="modal">@*<i class="fas fa-save"></i>*@  Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input id="fileInput" type="file" style="display:none;" accept="image/*">
+
+    <div class="modal fade " id="ModaCaptureAgain" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="width:100%;height:100%">
+        <div class="modal-dialog modal-lg modal-dialog-top" role="document">
+            <div class="modal-content">
+                <div class="modal-body" style="padding:0rem">
+                    <div style="width:100%;height:100%" id="webcamA"></div>
+                </div>
+                <div class="modal-footer" style="padding:0rem">
+                    <button onclick="CaptureAgain()" type="button" class="btn btn-primary" data-dismiss="modal">@*<i class="fas fa-save"></i>*@  Lưu</button>
+                    <button onclick="CloseCamera()" type="button" class="btn btn-danger" data-dismiss="modal">@*<i class="fas fa-save"></i>*@  Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup2">
+        <div class="list-popup">
+            <div class="tieude">
+                <i class="fa-sharp fa-solid fa-circle-exclamation icon_warring"></i>
+            </div>
+            <div class="item_text">
+
+            </div>
+            <div class="clear">
+                <div class="clear_item">
+                    <button id="clearButtonDetail">Đồng ý</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="popup3">
+        <div class="list-popup">
+            <div class="tieude">
+                Danh sách
+            </div>
+            <div class="value_popup">
+                <input class="input_popup" type="number" name="name" value="1" autocomplete="off" />
+            </div>
+            <div class="addRow_popup">
+                <i class="fa-solid fa-square-plus"></i>
+            </div>
+            <div class="hide_popuplist">
+                <i class="fa-sharp fa-solid fa-xmark"></i>
+            </div>
+            <div class="item_text">
+                <div class="main-item">
+                    <div class="task-itemlist">
+                        <div class="item-tableTong">
+                            <table class="table" style="position: relative">
+                                <thead id="theadLists" class="thead-lists">
+                                    <tr id="thead" style="position:relative">
+                                        <td style="white-space: nowrap; padding: 4px;">
+                                            Tên tài xế
+                                            <i class="fa-regular fa-table icon_tableListAll  listTenTXAll"></i>
+                                        </td>
+                                        <td style="white-space: nowrap; padding: 4px;">
+                                            CMND
+                                            <i class="fa-regular fa-table  icon_tableListAll listTenTXAll"></i>
+                                        </td>
+                                        <td style="white-space: nowrap; padding: 4px;">Số xe</td>
+                                        <td style="white-space: nowrap; padding: 4px;">Seal</td>
+                                        <td class="theadSoKien" style="white-space: nowrap; padding: 4px;">Thùng</td>
+                                        <td class="theadSL" style="white-space: nowrap; padding: 4px;"> Số lượng  </td>
+
+                                        @*<td>Ghi chú</td>*@
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyLists">
+                                </tbody>
+                                <tfoot id="tfootLists">
+
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="clear">
+                <div class="clear_item">
+                    <button style="background: #954444; color: #fff; " class="clearlistTaxe">Xóa DS</button>
+                </div>
+                <div class="clear_item">
+                    <button class="savelistTaxe">Đồng ý</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="popup4">
+        <div class="list-popup">
+            <div class="tieude">
+                Danh sách
+            </div>
+            <div class="hide_popup1">
+                <i class="fa-sharp fa-solid fa-xmark"></i>
+            </div>
+            <div>
+                <input class="search_table1" type="text" name="name" value="" placeholder="...Tìm kiếm" autocomplete="off" />
+                <div class="main-item">
+                    <div class="task-itemlist">
+                        <div class="item-tableTong">
+                            <table class="table" style="position: relative">
+                                <thead id="theadList1" class="thead-list1">
+
+                                </thead>
+                                <tbody id="tbodyList1">
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup5">
+        <div class="list-popup">
+            <div class="tieude">
+                Danh sách
+            </div>
+            <div class="hide_popup2">
+                <i class="fa-sharp fa-solid fa-xmark"></i>
+            </div>
+            <div>
+                <input class="search_table2" type="text" name="name" value="" placeholder="...Tìm kiếm" autocomplete="off" />
+                <div class="main-item">
+                    <div class="task-itemlist">
+                        <div class="item-tableTong">
+                            <table class="table" style="position: relative">
+                                <thead id="theadList2" class="thead-list2">
+
+                                </thead>
+                                <tbody id="tbodyList2">
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalPhieuXuatKho" tabindex="-1" aria-hidden="true" style="z-index:9999;">
+        <div class="modal-dialog modal-dialog-top modal-xl" style=" padding-top: 8px; margin-top: 0px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">
+                        <i class="fas fa-circle-info me-2"></i>Phiếu Xuất Kho
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:0; height:100vh; min-height: 400px">
+                    <iframe id="ifPhieuXuatKho" src="" style="width:100%; height:100%; border:none;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999">
+        <div id="successToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Thành công</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="successMessage"></div>
+        </div>
+        <div id="errorToast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Lỗi</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="errorMessage"></div>
+        </div>
+        <div id="warningToast" class="toast" role="alert">
+            <div class="toast-header bg-warning text-dark">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong class="me-auto">Cảnh báo</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="warningMessage"></div>
+        </div>
+    </div>
+
+
+    <script src="~/Scripts/TheoDoiHangXuat/WebCam.js"></script>
+    <script src="~/Scripts/TheoDoiHangXuat/jquery.js"></script>
+    <script src="~/Scripts/TheoDoiHangXuat/toastr.min.js"></script>
+    <script src="~/Content/plugins/select2/js/select2.js"></script>
+    <script src="~/Scripts/ThongKeDongThung/jquery-ui.min.js"></script>
+    <script src="~/Scripts/BienBanXuatHang/tvkiten.js"></script>
+    <script src="~/Scripts/ThongKeDongThung/sweetalert2.js"></script>
+    <script src="~/Scripts/ViTriKho/bootstrap5.3.bundle.min.js"></script>
+    @Html.Partial("~/Views/BienBanHangXuat/chupAnhView.cshtml")
+    <script>
+        var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $(document).ready(function () {
+
+            const configDateOnly = {
+                display: {
+                    components: {
+                        calendar: true, date: true, month: true, year: true,
+                        clock: false, hours: false, minutes: false, seconds: false
+                    },
+                    icons: {
+                        time: 'fa-solid fa-clock',
+                        date: 'fa-solid fa-calendar',
+                        up: 'fa-solid fa-arrow-up',
+                        down: 'fa-solid fa-arrow-down',
+                        previous: 'fa-solid fa-chevron-left',
+                        next: 'fa-solid fa-chevron-right',
+                        today: 'fa-solid fa-calendar-check',
+                        clear: 'fa-solid fa-trash',
+                        close: 'fa-solid fa-xmark'
+                    },
+                    buttons: { today: true, clear: true, close: true }
+                },
+                localization: { format: 'dd/MM/yyyy' },
+                defaultDate: new Date()
+            };
+
+            const configDateTime = {
+                display: {
+                    components: {
+                        calendar: true, date: true, month: true, year: true,
+                        clock: true, hours: true, minutes: true, seconds: false
+                    },
+                    icons: {
+                        time: 'fa-solid fa-clock',
+                        date: 'fa-solid fa-calendar',
+                        up: 'fa-solid fa-arrow-up',
+                        down: 'fa-solid fa-arrow-down',
+                        previous: 'fa-solid fa-chevron-left',
+                        next: 'fa-solid fa-chevron-right',
+                        today: 'fa-solid fa-calendar-check',
+                        clear: 'fa-solid fa-trash',
+                        close: 'fa-solid fa-xmark'
+                    },
+                    buttons: { today: true, clear: true, close: true }
+                },
+                localization: { format: 'dd/MM/yyyy HH:mm' },
+                defaultDate: new Date()
+            };
+
+            // Khởi tạo tất cả picker
+            const dpXeDen = new tempusDominus.TempusDominus(document.getElementById('dp_xeDen'), configDateTime);
+            const dpCheckXe = new tempusDominus.TempusDominus(document.getElementById('dp_checkXe'), configDateOnly);
+            const dpBvCheckBD = new tempusDominus.TempusDominus(document.getElementById('dp_bvCheckBD'), configDateTime);
+            const dpBvCheckKT = new tempusDominus.TempusDominus(document.getElementById('dp_bvCheckKT'), configDateTime);
+            const dpNvCheckBD = new tempusDominus.TempusDominus(document.getElementById('dp_nvCheckBD'), configDateTime);
+            const dpNvCheckKT = new tempusDominus.TempusDominus(document.getElementById('dp_nvCheckKT'), configDateTime);
+            const dpDongHang = new tempusDominus.TempusDominus(document.getElementById('dp_dongHang'), configDateTime);
+            const dpFinishDong = new tempusDominus.TempusDominus(document.getElementById('dp_finishDongHang'), configDateTime);
+            const dpXeDi = new tempusDominus.TempusDominus(document.getElementById('dp_xeDi'), configDateTime);
+
+            // Trigger để set giá trị mặc định rồi ẩn picker
+            $('#dp_xeDen input').trigger('click'); dpXeDen.hide();
+            $('#dp_checkXe input').trigger('click'); dpCheckXe.hide();
+            $('#dp_bvCheckBD input').trigger('click'); dpBvCheckBD.hide();
+            $('#dp_bvCheckKT input').trigger('click'); dpBvCheckKT.hide();
+            $('#dp_nvCheckBD input').trigger('click'); dpNvCheckBD.hide();
+            $('#dp_nvCheckKT input').trigger('click'); dpNvCheckKT.hide();
+            $('#dp_dongHang input').trigger('click'); dpDongHang.hide();
+            $('#dp_finishDongHang input').trigger('click'); dpFinishDong.hide();
+            $('#dp_xeDi input').trigger('click'); dpXeDi.hide();
+
+            // Click icon để mở picker
+            $('#dp_xeDen i').on('click', function () { $('#dp_xeDen input').trigger('focus'); });
+            $('#dp_checkXe i').on('click', function () { $('#dp_checkXe input').trigger('focus'); });
+            $('#dp_bvCheckBD i').on('click', function () { $('#dp_bvCheckBD input').trigger('focus'); });
+            $('#dp_bvCheckKT i').on('click', function () { $('#dp_bvCheckKT input').trigger('focus'); });
+            $('#dp_nvCheckBD i').on('click', function () { $('#dp_nvCheckBD input').trigger('focus'); });
+            $('#dp_nvCheckKT i').on('click', function () { $('#dp_nvCheckKT input').trigger('focus'); });
+            $('#dp_dongHang i').on('click', function () { $('#dp_dongHang input').trigger('focus'); });
+            $('#dp_finishDongHang i').on('click', function () { $('#dp_finishDongHang input').trigger('focus'); });
+            $('#dp_xeDi i').on('click', function () { $('#dp_xeDi input').trigger('focus'); });
+
+            // Tắt nhập tay tất cả input trong các datetime picker
+            $('#dp_xeDen input,' +
+                '#dp_checkXe input,' +
+                '#dp_bvCheckBD input,' +
+                '#dp_bvCheckKT input,' +
+                '#dp_nvCheckBD input,' +
+                '#dp_nvCheckKT input,' +
+                '#dp_dongHang input,' +
+                '#dp_finishDongHang input,' +
+                '#dp_xeDi input')
+                .prop('readonly', true);
+        });
+    </script>
+    <script src="~/Scripts/ThongKeDongThung/moment.min.js"></script>
+    <script src="~/Scripts/TongHopNPL/popperjs.js"></script>
+    <script src="~/Scripts/TongHopNPL/tempus-dominus.min.js"></script>
+
+    <script src="~/Scripts/BienBanXuatHang/bienbanxuathangV3.js?ver=1.1"></script>
+
+
+</body>
+</html>
+
+
+

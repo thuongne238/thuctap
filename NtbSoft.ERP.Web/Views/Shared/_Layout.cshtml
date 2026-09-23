@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewBag.Title ?? "Dashboard") </title>
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome Free 6.5.2 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <!-- DateRangePicker CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- Header & Base Framework CSS Chuẩn Toàn Hệ Thống -->
+    <link href="~/css/DashboardTongQuanTienDo/_layout/header.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+
+    <!-- DevExtreme Core CSS Toàn Hệ Thống -->
+    <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.common.css" />
+    <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.light.css" />
+
+    <!-- CSS Component Popup Chi Tiết Dùng Chung Toàn Hệ Thống -->
+    <link rel="stylesheet" href="~/css/grid_devextreme/dx-detail-grid.css" />
+
+    <!-- Khu vực nạp CSS riêng của từng trang con (nếu có) -->
+    @RenderSection("css", required: false)
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body class="tqth-dashboard-page">
+
+    <div class="tqth-main-container">
+
+        <!-- =====================================================================
+             1. HEADER CHUNG TOÀN HỆ THỐNG ĐỒNG BỘ
+             ===================================================================== -->
+        <header class="main-header octo-header">
+            <div class="header-left">
+                <h1 class="page-title">
+                    <i class="fa-solid fa-layer-group" style="color: #2563EB;"></i>
+                    <span>@(ViewBag.HeaderTitle ?? ViewBag.Title ?? "Dashboard")</span>
+                </h1>
+                
+            </div>
+
+            <div class="header-right">
+                <!-- Cụm thời gian Realtime -->
+                <div class="header-realtime-clock" id="header-realtime-clock" title="Thời gian thực hệ thống">
+                    <i class="fa-regular fa-clock realtime-icon"></i>
+                    <span class="realtime-time" id="realtime-clock-time">--:--:--</span>
+                    <span class="realtime-date" id="realtime-clock-date" style="font-weight: 800 !important; color: #000000 !important; font-size: 12.5px !important;">--/--/----</span>
+                </div>
+
+                <div class="header-date" id="header-daterange-picker" title="Chọn khoảng thời gian thống kê">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <input type="text" id="start-date" class="datepicker-input" value="@(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString("dd'/'MM'/'yyyy"))" readonly />
+                    <span class="datepicker-separator">-</span>
+                    <input type="text" id="end-date" class="datepicker-input" value="@(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).ToString("dd'/'MM'/'yyyy"))" readonly />
+                </div>
+                <button type="button" class="octo-btn-icon" id="btn-refresh" title="Làm mới dữ liệu">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- =====================================================================
+             2. SUBHEADER ĐIỀU HƯỚNG TỔNG QUAN
+             ===================================================================== -->
+        @if (IsSectionDefined("subheader"))
+        {
+            @RenderSection("subheader", required: false)
+        }
+        else if (ViewBag.HideSubheader != true)
+        {
+            <div class="subheader-navigation">
+                <div class="header-side-nav inline-flex items-center" id="header-side-nav">
+                    <!-- Tab 1: Tình hình sản xuất -->
+                    <button type="button" class="side-nav-btn @(ViewBag.ActiveTab == null || ViewBag.ActiveTab == "tinh-hinh" ? "active" : "")" id="btn-side-tinh-hinh" data-side="tinh-hinh" data-tab="tinh-hinh" title="Tình hình sản xuất">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Tình hình sản xuất</span>
+                    </button>
+
+                    <!-- Tab 2: Chuẩn bị sản xuất -->
+                    <button type="button" class="side-nav-btn @(ViewBag.ActiveTab == "chuanbi" ? "active" : "")" id="btn-side-tien-do" data-side="tien-do" data-tab="tien-do" title="Tiến độ sản xuất">
+                        <i class="fa-solid fa-chart-gantt"></i>
+                        <span>Tiến độ sản xuất</span>
+                    </button>
+                </div>
+            </div>
+        }
+
+        <!-- =====================================================================
+             3. NỘI DUNG RIÊNG CỦA TỪNG VIEW CON
+             ===================================================================== -->
+        <main role="main" class="dashboard-main-content">
+            @RenderBody()
+        </main>
+
+    </div>
+
+    <!-- Container Toast thông báo góc phải dưới -->
+    <div class="octo-toast" id="octo-toast">
+        <i class="fa-solid fa-circle-info" style="color: #38BDF8;"></i>
+        <span id="toast-message">Đã cập nhật dữ liệu mới nhất</span>
+    </div>
+
+    <!-- =====================================================================
+         4. CORE SCRIPTS & HEADER LOGIC ĐỒNG BỘ
+         ===================================================================== -->
+    <script src="~/Scripts/DashboardTongQuanTienDo/jquery-3.7.0.min.js" charset="utf-8"></script>
+    <script>
+        if (!window.jQuery) {
+            document.write('<script src="https://code.jquery.com/jquery-3.7.1.min.js" charset="utf-8"><\/script>');
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <script>
+        // Hàm Toast hiển thị thông báo dùng chung toàn hệ thống
+        window.showOctoToast = function (msg) {
+            const toast = document.getElementById('octo-toast');
+            const toastMsg = document.getElementById('toast-message');
+            if (!toast || !toastMsg) return;
+            toastMsg.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        };
+
+        // 0. Cụm đồng hồ thời gian thực 
+        (function initRealtimeClock() {
+            function updateClock() {
+                const now = new Date();
+                const hh = String(now.getHours()).padStart(2, '0');
+                const mm = String(now.getMinutes()).padStart(2, '0');
+                const ss = String(now.getSeconds()).padStart(2, '0');
+                const timeStr = `${hh}:${mm}:${ss}`;
+
+                const dd = String(now.getDate()).padStart(2, '0');
+                const MM = String(now.getMonth() + 1).padStart(2, '0');
+                const yyyy = now.getFullYear();
+                const dateStr = `${dd}/${MM}/${yyyy}`;
+
+                const elTime = document.getElementById('realtime-clock-time');
+                const elDate = document.getElementById('realtime-clock-date');
+                if (elTime) elTime.textContent = timeStr;
+                if (elDate) elDate.textContent = dateStr;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        })();
+
+        $(document).ready(function () {
+            // 1. Khởi tạo DateRangePicker đồng bộ trên Header
+            if (typeof $ !== 'undefined' && $.fn.daterangepicker) {
+                $('#header-daterange-picker').daterangepicker({
+                    opens: 'left',
+                    autoUpdateInput: false,
+                    locale: {
+                        format: 'DD/MM/YYYY',
+                        applyLabel: 'Áp dụng',
+                        cancelLabel: 'Hủy'
+                    }
+                }, function (start, end) {
+                    const startStr = start.format('DD/MM/YYYY');
+                    const endStr = end.format('DD/MM/YYYY');
+                    $('#start-date').val(startStr);
+                    $('#end-date').val(endStr);
+                    window.showOctoToast('Khoảng thời gian: ' + startStr + ' - ' + endStr);
+
+                    // Phát sự kiện toàn cục để các view con lắng nghe và cập nhật dữ liệu
+                    $(document).trigger('dashboard:dateChanged', {
+                        startDate: startStr,
+                        endDate: endStr
+                    });
+                });
+            }
+
+            // 2. Nút làm mới: Tải lại toàn bộ trang như lúc mới vào
+            $('#btn-refresh').off('click').on('click', function (e) {
+                e.preventDefault();
+                const icon = $(this).find('i');
+                icon.addClass('fa-spin');
+                window.location.reload();
+            });
+
+            // 3. Cơ chế chuyển Tab đồng bộ: hỗ trợ view dạng đa tab-pane tự động hoặc chuyển trang mượt mà
+            $(document).on('click', '.side-nav-btn[data-tab]', function (e) {
+                const targetTab = $(this).attr('data-tab');
+                const targetPane = $('#tab-content-' + targetTab);
+
+                // Nếu trang hiện tại có tab-pane tương ứng (như view đồng bộ dongbogiaodien)
+                if (targetPane.length > 0) {
+                    e.preventDefault();
+                    $('.side-nav-btn[data-tab]').removeClass('active');
+                    $(this).addClass('active');
+
+                    $('.dashboard-tab-pane').removeClass('active-tab');
+                    targetPane.addClass('active-tab');
+
+                    // Kích hoạt sự kiện toàn cục để các module tab khởi tạo/vẽ lại biểu đồ
+                    $(document).trigger('dashboard:tabChanged', { tab: targetTab });
+                    return;
+                }
+
+                // Nếu trang hiện tại là view riêng (như testgiaodien hoặc TongQuanTinhHinh)
+                // Chuyển hướng sang trang tương ứng
+                if (targetTab === 'tinh-hinh') {
+                    window.location.href = '@Url.Action("TongQuanTinhHinh", "DashboardTongQuanTienDoPage")';
+                } else if (targetTab === 'tien-do') {
+                    window.location.href = '@Url.Action("testgiaodien", "DashboardTongQuanTienDoPage")';
+                }
+            });
+
+            // Tự động mở khóa các ô input toggle nếu có
+            $(".toggle_input input, .toggle_input2 input, .toggle_input1 input")
+                .removeAttr("disabled")
+                .prop("readonly", true);
+        });
+    </script>
+
+    <!-- DevExtreme JS Toàn Hệ Thống -->
+    <script src="~/Content/plugins/DevExtreme/dx.all.js" charset="utf-8"></script>
+
+    <!-- Component Popup Chi Tiết Dùng Chung Toàn Hệ Thống -->
+    <script src="~/Scripts/grid_devextreme/common-detail-popup.js" charset="utf-8"></script>
+
+    <!-- Khu vực nạp Script riêng của từng trang con -->
+    @RenderSection("scripts", required: false)
+</body>
+</html>

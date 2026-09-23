@@ -1,0 +1,1189 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+    <link rel="stylesheet" href="~/Content/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/Content/plugins/select2/css/select2.min.css">
+    <link href="~/css/NguyenPhuLieu/kiemvaiv2.css" rel="stylesheet" />
+    <link href="~/Scripts/ViTriKho/bootstrap5.3.min.css" rel="stylesheet" />
+    <link href="~/css/TheoDoiHangXuat/fontawesome.pro.6.0.0.css" rel="stylesheet" />
+    <link href="~/css/NguyenPhuLieu/other.css" rel="stylesheet" />
+    <link href="~/css/NguyenPhuLieu/kiemvaiv2.css" rel="stylesheet" />
+
+    <style>
+        #previewModal .modal-dialog {
+            width: fit-content;
+            max-width: 80vw !important;
+            margin: 30px auto;
+        }
+
+        #previewModal .modal-content {
+            width: fit-content;
+            max-width: 80vw;
+        }
+
+        #previewModal .modal-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #previewModal .image-preview {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .modal-content {
+            max-width: 100% !important
+        }
+
+        .table-responsive {
+            display: table;
+        }
+
+        .selectedLi {
+            background: #00C6F0 !important;
+            border-radius: 7px;
+        }
+
+        .forecolorSelected {
+            color: white !important;
+        }
+
+        li a:focus {
+            background: #00C6F0;
+        }
+
+        .table-filter-container {
+            text-align: right;
+        }
+
+        table, th, td {
+            border: 1px ridge;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        .custom-table > tbody {
+            display: block;
+            overflow: auto;
+        }
+
+            .custom-table > thead, .custom-table > tbody tr {
+                display: table;
+                width: 100%;
+            }
+
+        .custom-table > thead {
+            width: 100%
+        }
+
+        .custom-table {
+            width: 100%;
+        }
+
+        .button-fix {
+            margin: 0px 10px !important;
+            width: 118px !important;
+            height: 40px !important;
+        }
+
+        .button-table {
+            margin: 0px 20px !important;
+            background-color: transparent !important;
+            height: 40px !important;
+            padding: 2px 5px !important;
+        }
+
+        .nhomloi::-webkit-scrollbar {
+            display: none;
+        }
+
+        .child-nhomloi::-webkit-scrollbar {
+            display: none;
+        }
+
+        .form-group {
+            margin: 0rem 0rem 0.2rem 0rem !important;
+            flex-direction: column;
+            display: flex;
+            justify-content: end;
+            align-items: start;
+        }
+
+        .inputEnLine {
+            text-align: center;
+            font-size: 0.8rem !important;
+            background-color: white !important;
+            height: 1.7rem !important;
+            font-weight: bold !important;
+            padding: 0.125rem !important
+        }
+
+        .labelHeader {
+            color: white;
+            font-size: 0.8rem;
+            margin-bottom: 0.1rem;
+        }
+
+        .textHeader {
+            color: black;
+            font-size: 0.8rem;
+        }
+
+        .card {
+            margin-bottom: 0.4rem !important;
+        }
+
+        .js-width::-webkit-scrollbar {
+            display: none;
+        }
+
+        .canhbaoloi::-webkit-scrollbar {
+            display: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px !important;
+        }
+
+        .set-height {
+            height: calc(100vh - 400px);
+        }
+
+        /**/
+        .sidebar-mini.sidebar-collapse .wrapper .content-wrapper {
+            margin-left: 0 !important;
+        }
+
+        .main-sidebar, .sidebar-collapse .wrapper .main-sidebar::before {
+            margin-left: -250px !important;
+        }
+
+        .sidebar-open .main-sidebar, .sidebar-collapse .wrapper .main-sidebar::before {
+            margin-left: 0 !important;
+        }
+
+        body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper {
+            margin-left: 0 !important;
+        }
+
+        body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
+            margin-left: 0 !important;
+        }
+
+        .sidebar-open #sidebar-overlay {
+            display: block;
+        }
+
+        .sidebar-mini.sidebar-collapse .wrapper .main-footer {
+            margin-left: 0 !important;
+        }
+
+        .check-IsQC.is-none {
+            display: none;
+        }
+
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /*-------------*/
+        .box-error {
+            position: absolute;
+            right: 0;
+            /* width: 100px; */
+            /* display: none; */
+            background: white;
+            top: 40px;
+            transition: 1s;
+            margin-right: 5px;
+        }
+
+            .box-error.is-hide {
+                transform: translateX(100%);
+                margin-right: 0px;
+            }
+
+        .nav-item.nav-item--1 {
+            position: absolute;
+            right: 7px;
+            top: 0;
+            /*background: red;*/
+        }
+
+        .col-cus {
+            padding-right: 2px !important;
+        }
+
+        .btn-CongDoan {
+            width: 48% !important;
+            display: inline !important;
+            margin: 2px;
+            box-sizing: border-box;
+            color: black;
+            background: linear-gradient(to bottom,#ffffff 0,#eeeeee 100%)
+        }
+
+        .btn-group-lg > .btn, .btn-lg {
+            font-size: 1rem !important;
+            padding: 0.2rem 0.1rem !important;
+        }
+
+        .item-MaLoi {
+            min-height: 55px !important;
+            font-weight: bold !important;
+            width: 55px !important;
+            /*background-color: #15979bf0 !important;
+            color: white !important;*/
+            margin: 0px 5px 5px 0px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            cursor: pointer !important
+        }
+
+        .p-motaloi {
+            margin-bottom: 0px !important;
+            font-size: 1rem !important;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        h6 {
+            font-size: 0.75rem !important;
+            margin-bottom: 0.1rem !important;
+        }
+
+        .btn-outline-primary:hover {
+            background: #007bff;
+            color: white !important;
+        }
+        /*.btn-CongDoan:focus{
+            background:red;
+        }*/
+        .btn-outline-primary {
+            color: black !important;
+            /*border-color: #007bff;*/
+        }
+
+        #DSNhomLoi button.is-active {
+            background: #007bff;
+            color: #fff !important;
+        }
+
+        .ErrorImage {
+            height: 35px;
+            width: 35px;
+            margin-right: 2px;
+        }
+
+        .labelHT {
+            margin-right: 5px;
+        }
+
+        .lblValueHT {
+            color: red;
+        }
+
+        .daterangepicker .calendar-table table {
+            display: grid !important;
+        }
+
+        .select2-selection__rendered {
+            line-height: 25px !important;
+            font-size: 12px !important;
+            font-weight: bold !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 100% !important;
+            padding: 0rem 0.15rem !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            margin-top: 0px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 80% !important;
+        }
+
+        #select2-MaHang-results li {
+            font-size: 12px;
+        }
+
+        /* .select2-search__field {
+            display: none;
+        }*/
+
+        .select2-search.select2-search--dropdown [ aria-controls = "select2-MaHang-results"] {
+            display: block;
+        }
+
+        .select2-container--default .select2-results > .select2-results__options {
+            max-height: 60vh !important;
+            overflow-y: auto;
+        }
+
+        .class-PhuLieu, .DiemLoi {
+            height: 20px;
+            width: 20px
+        }
+
+        .classFocusVT {
+            background: #007bff;
+            color: white;
+        }
+
+        .table td {
+            vertical-align: middle !important;
+        }
+
+        .select2-results__option {
+            font-size: 12px !important;
+        }
+
+        .select2-container {
+            height: 27px !important;
+        }
+
+        .input-CheckList {
+            width: 100%;
+            height: 100% !important;
+            text-align: center;
+            border: none;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 2px 6px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+        }
+
+            .input-box:focus {
+                outline: none;
+                border-color: #007bff;
+            }
+
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #007bff;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            margin-top: -2px;
+        }
+
+            .dropdown-list.show {
+                display: block;
+            }
+
+        .dropdown-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+            .dropdown-item:hover {
+                background: #f8f9fa;
+            }
+
+            .dropdown-item:last-child {
+                border-bottom: none;
+            }
+
+            .dropdown-item input[type="checkbox"] {
+                margin-right: 10px;
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+            .dropdown-item label {
+                cursor: pointer;
+                flex: 1;
+                user-select: none;
+                font-weight: unset !important
+            }
+
+        .check-all {
+            background: #f0f0f0;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .search-box {
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+
+            .search-box input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                font-size: 13px;
+            }
+
+                .search-box input:focus {
+                    outline: none;
+                    border-color: #007bff;
+                }
+
+        label {
+            margin-bottom: 0px
+        }
+
+        .label-col {
+            width: auto !important;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .signature-container {
+            padding: 0 5px;
+            background-color: #f8f9fa;
+            margin-bottom: 5px
+        }
+
+        .signature-box {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: white;
+            height: 100%;
+            min-height: 250px;
+        }
+
+            .signature-box h6 {
+                color: #495057;
+                font-weight: 600;
+                margin-bottom: 10px;
+                font-size: 14px;
+            }
+
+            .signature-box p {
+                color: #6c757d;
+                font-size: 13px;
+                margin-bottom: 15px;
+            }
+
+        .signature-image {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            border: 1px dashed #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: white;
+        }
+
+        .date-section {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .unit-box {
+            min-width: 45px !important;
+            padding: 0 3px !important;
+            color: #FF3A00;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .row-flex-nowrap {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            gap: 2px;
+        }
+
+        .input-main {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .image1, .image2, .image3 {
+            object-fit: contain;
+        }
+
+            .image1[src=""], .image2[src=""], .image3[src=""] {
+                display: none;
+            }
+
+        .bc-image-list {
+            display: grid;
+            grid-template-columns: repeat(2, 52px);
+            gap: 4px;
+        }
+
+        .bc-image-item {
+            cursor: pointer;
+        }
+
+            .bc-image-item img {
+                width: 52px;
+                height: 42px;
+                object-fit: cover;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+        .bc-image-note {
+            font-size: 10px;
+            max-width: 52px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preview-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .preview-image-note-view {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #333;
+            text-align: left;
+        }
+
+        .preview-image-note-view {
+            margin-top: 8px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            color: #333;
+            text-align: left;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .bc-image-note {
+            font-size: 10px;
+            width: 52px;
+            min-height: 34px;
+            resize: none;
+            border: 1px solid #ddd;
+            border-radius: 0 0 4px 4px;
+            text-align: left;
+            background: #fff;
+            color: #333;
+            outline: none;
+        }
+
+        @@media(max-width:400px) {
+            .btnKyTuDong {
+                padding: 6px;
+                font-size: 9px;
+            }
+
+            #btnDuyetQC {
+                padding: 6px;
+                font-size: 9px;
+            }
+        }
+
+        @@media(min-width:400px) {
+            .btnKyTuDong {
+                padding: 6px;
+                height: 33px;
+            }
+        }
+
+        .txtSign {
+            display: flex;
+            justify-content: center;
+            margin-top: 4px;
+        }
+
+        .btnKyTuDong {
+            min-width: 100px
+        }
+
+        .form-card {
+            overflow: auto;
+            height: 100vh;
+        }
+    </style>
+    <link rel="stylesheet" href="~/css/NguyenPhuLieu/main.css">
+</head>
+<body>
+    <div class="content-wrapper">
+        <section class="content" style="">
+            <div class="container-fluid">
+                <div class="row js-get-height">
+                    <div class="col-12">
+                        <div class="bg-info" style="margin-bottom: 10px; margin-top: 10px; border-radius: 5px; background-color: #17a2b8 !important; display: flex; width: 100%; align-items: center; justify-content: space-between; padding: 5px;">
+                            <h3 class="card-title" style="height: 30px; display: flex; justify-content: center; align-items: center;">
+                                <a id="home" href="~/Home/DashBoard" style="color:white"><i class="fas fa-home" style="font-size:x-large;margin-right:5px"></i></a>
+                                <span style="margin-top: 3px;">BC Kiểm vải</span>
+                            </h3>
+                            <div class="d-flex gap-2">
+                                <button id="btnExport" onclick="Export()" type="button" class="btn btn-primary btn-export d-flex align-items-center px-2 py-1 " style="height: 33px; ">
+                                    <i class="fas fa-file-export me-2"></i>
+                                    Excel
+                                </button>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-12 QCT">
+                        <div class="card-body" style="background-color: #1b81c9; border-radius: 5px; display: block; padding: 0px 10px 5px 10px; margin: 0px 0px 5px 0px">
+                            <div class="row top_nav">
+                                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 pr-4">
+                                    <div class="row">
+                                        <div class="col-6 col-md-4 col-lg-2 col-xl-2 col-cus">
+                                            <div class="form-group">
+                                                <label class="labelHeader" for="exampleInputPassword1" style="text-align:center; color:White">Lọc</label>
+                                                <select class="sLenhSX form-control inputEnLine" id="changeViTri">
+                                                    <option value="0">PO</option>
+                                                    <option value="1">Vật Tư</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-4 col-lg-3 col-xl-3 col-cus">
+                                            <div class="form-group">
+                                                <label class="labelHeader" for="exampleInputPassword1" style="text-align:center; color:White">PO Mua</label>
+                                                <select class="sLenhSX form-control inputEnLine" onchange="GetMauVai()" id="SoLo"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-4 col-lg-3 col-xl-2 col-cus">
+                                            <div class="form-group">
+                                                <label class="labelHeader" for="exampleInputPassword1" style="text-align:center; color:White">Mã Vật Tư</label>
+                                                <select class="sLenhSX form-control inputEnLine" onchange="GetDot()" id="MauVai"></select>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-6 col-md-4 col-lg-4 col-xl-3 col-cus">
+                                            <div class="form-group">
+                                                <label class="labelHeader" for="exampleInputEmail1" style="text-align:center; color:White">Nhà Cung Cấp</label>
+
+                                                <input type="text" class="form-control float-right inputEnLine" readonly id="nhacungcap">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6 col-md-4 col-lg-2 col-xl-2 col-cus">
+                                            <div class="form-group">
+                                                <label class="labelHeader" for="exampleInputPassword1" style="text-align:center; color:White">K.Hàng</label>
+                                                <input type="text" class="form-control float-right inputEnLine" readonly id="KhachHang">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6 col-md-4 col-lg-2 col-xl-1 col-cus">
+                                            <div class="form-group">
+                                                <label class="labelHeader" for="exampleInputPassword1" style="text-align:center; color:White">Đợt</label>
+                                                <select class="sLenhSX form-control inputEnLine" onchange="GetLanKiem()" id="Dot"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-4 col-lg-2 col-xl-1 col-cus">
+                                            <div class="form-group">
+                                                <label class="labelHeader" for="exampleInputPassword1" style="text-align:center; color:White">Tái kiểm</label>
+                                                <select class="sLenhSX form-control inputEnLine" onchange="GetBatchLot()" id="LanKiem"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-8 col-lg-6 col-xl-3 col-cus">
+                                            <div class="form-group select-container">
+                                                <label class="labelHeader" for="exampleInputPassword1" style="text-align:center; color:White">Số Batch/LOT</label>
+                                                <input type="text"
+                                                       class="input-box"
+                                                       id="batchInput"
+                                                       placeholder=""
+                                                       readonly>
+                                                <div class="dropdown-list" id="dropdownList">
+                                                    <div class="search-box">
+                                                        <input type="text" id="searchInput" placeholder="Tìm kiếm...">
+                                                    </div>
+
+                                                    <div class="dropdown-item check-all">
+                                                        <input type="checkbox" id="checkAll">
+                                                        <label style="font-weight: 400 !important" for="checkAll">Chọn tất cả</label>
+                                                    </div>
+
+                                                    <div id="itemList"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-4 col-lg-2 col-xl-2 col-cus">
+                                            <div class="form-group">
+                                                <label class="labelHeader" style="text-align:center; color:White">Trạng Thái</label>
+                                                <div id="trangThaiDuyet" class="form-control inputEnLine text-center font-weight-bold"></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="minFabricAlert" class="alert alert-warning d-flex align-items-center" role="alert" style="padding: 5px !important; margin-bottom: 5px; display: none !important;">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <div>
+                                <strong>Thông báo:</strong> Vui lòng phải có ít nhất hai cây vải.
+                            </div>
+                            @*<i class="fa-solid fa-x" style="margin-left: auto; cursor: pointer" id="btn-hide"></i>*@
+                        </div>
+
+                        <div id="percentInput" class="alert alert-warning d-flex align-items-center" role="alert" style="padding: 5px !important; margin-bottom: 5px; display: none !important;">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <div>
+                                <strong>Thông báo:</strong> Vui lòng phải có ít nhất hai cây vải.
+                            </div>
+                            @*<i class="fa-solid fa-x" style="margin-left: auto; cursor: pointer" id="btn-hide-1"></i>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 ">
+                    <div class="form-card" style="padding: 0 10px;">
+                        <div class="" style="max-height: 700px; overflow: auto;">
+                            <table class="inspection-table" style="overflow:auto"></table>
+
+
+                        </div>
+                        <div class="divResult d-none" style="padding: 0; height: 700px;">
+
+
+                            <div class="alert alert-info mt-2 " role="alert">
+                                <strong><i class="fa-solid fa-recycle"></i> Kết luận của QC/Conclusion:</strong>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="form-check form-check-inline div-radio">
+                                        <input class="form-check-input no-click" type="radio" name="resultQC" id="resultQC-pass" value="pass">
+                                        <label for="resultQC-pass" class="form-check-label text-success">
+                                            Pass
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline div-radio">
+                                        <input class="form-check-input no-click" type="radio" name="resultQC" id="resultQC-fail" value="fail">
+                                        <label for="resultQC-fail" class="form-check-label text-danger">
+                                            Fail
+                                        </label>
+                                    </div>
+                                    <span class="text-nowrap"> Kết quả giải quyết:</span>  <textarea style="" class="form-control flex-grow-1 text-black text-result" placeholder="" rows="1"></textarea>
+                                </div>
+
+                            </div>
+                            <div class="alert alert-info mt-2" role="alert">
+                                <strong>
+                                    <i class="fa-solid fa-recycle"></i>
+                                    Kết luận Mer/Mer Results:
+                                </strong>
+
+                                <div class="d-flex align-items-center gap-3 flex-wrap mt-2">
+
+                                    <div class="form-check form-check-inline div-radio">
+                                        <input class="form-check-input" type="radio"
+                                               name="resultMer" id="resultMer-pass" value="pass">
+                                        <label for="resultMer-pass" class="form-check-label text-success">
+                                            Pass
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline div-radio">
+                                        <input class="form-check-input" type="radio"
+                                               name="resultMer" id="resultMer-fail" value="fail">
+                                        <label for="resultMer-fail" class="form-check-label text-danger">
+                                            Fail
+                                        </label>
+                                    </div>
+
+                                    <span class="text-nowrap">Note (ghi chú Mer):</span>
+
+                                    <textarea class="form-control flex-grow-1 text-black noteMer-result"
+                                              rows="1"></textarea>
+
+                                    <button type="button"
+                                            class="btn btn-outline-secondary btn-sm"
+                                            id="btnResetMer">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                        Reset
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-success btn-sm"
+                                            id="btnSaveMer">
+                                        <i class="fa-solid fa-floppy-disk"></i>
+                                        Save
+                                    </button>
+
+                                </div>
+                            </div>
+
+                            <div class="signature-container py-2" style=" min-height: 500px;">
+                                <div class="row g-3">
+                                    <div class="col-md-4 m-0 p-0 ">
+                                        <div onclick="CallModal('image1')" class="signature-box">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6>Ngày kiểm tra</h6>
+                                                    <p class="mb-2">Ký tên:</p>
+                                                </div>
+                                                <div>
+                                                    <button style="font-size: 12px" class="btn btn-secondary btn-sm btnKyTuDong" data-target="image1"><i class="fa-solid fa-signature mr-2 "></i>KT tự động</button>
+                                                </div>
+                                            </div>
+
+                                            <img src="" alt="" class="signature-image image1">
+                                            <div class="txtSign sign1"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 m-0 p-0 px-2">
+                                        <div onclick="CallModal('image2')" class="signature-box">
+                                            <div class="d-flex justify-content-between mb-2 mb-sm-0">
+                                                <div>
+                                                    <h6>TPCL xác nhận/QC manager confirm</h6>
+                                                    <p class="mb-2">Ký tên:</p>
+                                                </div>
+                                                <div class="d-flex gap-2" style="flex-wrap: wrap; justify-content: end; margin-bottom: 5px;">
+                                                    <button class="btn btn-secondary btn-sm btnKyTuDong " style=" padding: 0px 4px;font-size:12px" data-target="image2"><i class="fa-solid fa-signature mr-2"></i>KT tự động</button>
+                                                    <button id="btnDuyetQC" onclick="DuyetQC(event)" type="button" class="btn btn-primary btn-export d-flex align-items-center px-2 py-1 btn-sm " style="background: #cf0068; height: 33px; font-size: 12px">
+                                                        <i class="fas fa-stamp me-2"></i>
+                                                        Duyệt QC
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-2 align-items-center mb-2">
+                                                <span style="min-width:60px">Ghi chú: </span>
+                                                <textarea id="ghiChuSign" style="height: 42px" class="text-start form-control flex-grow-1" rows="1"></textarea>
+                                            </div>
+                                            <img src="" alt="" class="signature-image image2">
+                                            <div class="txtSign sign2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 m-0 p-0 ">
+                                        <div onclick="CallModal('image3')" class="signature-box">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h6>Nhận thông tin/Received info</h6>
+                                                    <p class="mb-2">Ký tên:</p>
+                                                </div>
+                                                <div>
+                                                    <button style="font-size: 12px" class="btn btn-secondary btn-sm btnKyTuDong" data-target="image3"><i class="fa-solid fa-signature mr-2"></i>KT tự động</button>
+                                                </div>
+                                            </div>
+
+                                            <img src="" alt="" class="signature-image image3">
+                                            <div class="txtSign sign3"></div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="inputModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #4CAF50; color: white;">
+                    <h5 class="modal-title" id="inputModalLabel">Nhập dữ liệu</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body">
+                    <label id="modalFieldLabel" style=" margin-bottom: 10px; display: block; font-weight: normal;"></label>
+                    <textarea id="modalTextarea" class="form-control text-left" rows="5" style="font-size: 16px; padding: 10px;"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnConfirm">
+                        <i class="fa fa-check"></i> Xác nhận
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signatureModalLabel">
+                        <i class="fas fa-pen-fancy me-2"></i>Ký Tên Điện Tử
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Công cụ -->
+                    <div class="row mb-3 g-2">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Màu bút:</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <input type="color" class="color-picker" id="penColor" value="#000000">
+                                <button class="btn btn-tool btn-outline-dark" onclick="setPenColor('#000000')">
+                                    <i class="fas fa-circle" style="color: #000000;"></i>
+                                </button>
+                                <button class="btn btn-tool btn-outline-primary" onclick="setPenColor('#0d6efd')">
+                                    <i class="fas fa-circle" style="color: #0d6efd;"></i>
+                                </button>
+                                <button class="btn btn-tool btn-outline-danger" onclick="setPenColor('#dc3545')">
+                                    <i class="fas fa-circle" style="color: #dc3545;"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Độ dày bút:</label>
+                            <div class="pen-size-selector">
+                                <div class="pen-size-btn active" onclick="setPenSize(2)" data-size="2">
+                                    <div style="width: 6px; height: 6px; background: #000; border-radius: 50%;"></div>
+                                </div>
+                                <div class="pen-size-btn" onclick="setPenSize(4)" data-size="4">
+                                    <div style="width: 10px; height: 10px; background: #000; border-radius: 50%;"></div>
+                                </div>
+                                <div class="pen-size-btn" onclick="setPenSize(6)" data-size="6">
+                                    <div style="width: 14px; height: 14px; background: #000; border-radius: 50%;"></div>
+                                </div>
+                                <div class="pen-size-btn" onclick="setPenSize(8)" data-size="8">
+                                    <div style="width: 18px; height: 18px; background: #000; border-radius: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canvas vẽ chữ ký -->
+                    <div class="position-relative">
+                        <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                        <small class="text-muted d-block mt-2 text-center">
+                            <i class="fas fa-info-circle"></i> Vẽ chữ ký của bạn vào khung trên
+                        </small>
+                    </div>
+
+                    <!-- Nút hành động -->
+                    <div class="d-flex gap-2 mt-3 flex-wrap justify-content-center">
+                        <button class="btn btn-outline-secondary" onclick="clearSignature()">
+                            <i class="fas fa-eraser me-1"></i> Xóa
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="undoSignature()">
+                            <i class="fas fa-undo me-1"></i> Hoàn tác
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveSignature()">
+                        <i class="fas fa-check me-1"></i> Lưu Chữ Ký
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Toast Container -->
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Thành công</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="successMessage"></div>
+        </div>
+        <div id="errorToast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Lỗi</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="errorMessage"></div>
+        </div>
+        <div id="warningToast" class="toast" role="alert">
+            <div class="toast-header bg-warning text-dark">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong class="me-auto">Cảnh báo</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="warningMessage"></div>
+        </div>
+    </div>
+    <div class="modal fade" id="previewModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
+            <div class="modal-content">
+                <div class="modal-header" style="background:#1e1e2e; color:#fff; border:none;">
+                    <h6 class="modal-title"><i class="fas fa-image"></i> Xem Ảnh</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="background: #1e1e2e; border-radius: 0px 0px 14px 14px">
+
+                    <!-- Toolbar -->
+                    <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; justify-content:center;">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="imgZoomIn()" title="Phóng to">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="imgZoomOut()" title="Thu nhỏ">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="imgResetTransform()" title="Mặc định">
+                            <i class="fas fa-compress-arrows-alt"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="imgRotate(-90)" title="Xoay trái">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="imgRotate(90)" title="Xoay phải">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="imgFlip()" title="Lật dọc">
+                            <i class="fas fa-arrows-alt-v"></i>
+                        </button>
+                    </div>
+
+                    <!-- Viewport ảnh -->
+                    <div id="imgViewport" style="
+                    width:100%; min-height:300px; max-height:65vh;
+                    overflow:hidden; display:flex; align-items:center;
+                    justify-content:center; background:#111;
+                    border-radius:8px; cursor:grab;min-width:350px;min-height:250px">
+                        <img id="previewImage" src="" alt="Preview" style="
+                        max-width:100%; max-height:60vh;
+                        object-fit:contain; user-select:none;
+                        transform-origin:center center;">
+                    </div>
+
+                    <!-- Nav -->
+                    <div class="preview-nav" style="display:flex; align-items:center; justify-content:center; gap:12px; margin-top:8px;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="previewPrevImage()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="previewImageCounter" class="preview-counter" style="color:#ccc; font-weight:600; min-width:60px; text-align:center;">0/0</span>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="previewNextImage()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div id="previewImageNote" class="preview-image-note-view"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="DuyetQCModal" tabindex="-1" role="dialog" aria-labelledby="DuyetQCModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="max-width: 700px; min-height: 300px">
+                <div class="modal-header">
+                    <h3 style="font-size: 1.1rem"><i class="fas fa-stamp"></i> Xác nhận duyệt QC</h3>
+                    <button class="close-modal" data-bs-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column;">
+
+                    <div style="border: 2px solid #0042f4a6; background: #0042f417; padding: 7px; border-radius: 12px;margin-bottom:4px">
+                        <i class="fas fa-circle-info mr-2 text-blue"></i><span>Bạn chắc chắn muốn duyệt itemCode: <strong id="txtItemCode">abcv</strong></span>
+                    </div>
+                    <img id="previewImageDuyetQC" style="max-width: 40%; display: block; margin: 0 auto; " alt="Preview">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnConfirmDuyetQC">
+                        <i class="fa fa-check"></i> Xác nhận
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script src="~/Scripts/jquery.min-3.6.1.js"></script>
+    <script src="~/Content/plugins/moment/moment.min.js"></script>
+    <script src="/Content/js/core/utils.js"></script>
+    <script src="/Content/js/core/common.js"></script>
+    <script src="/Content/js/core/knockout-2.2.1.debug.js"></script>
+    <script src="/Content/js/core/knockout.mapping-2.4.1.debug.js"></script>
+    <script src="/Content/js/core/knockout.bindings.js"></script>
+    <script src="~/Scripts/ViTriKho/bootstrap5.3.bundle.min.js"></script>
+
+    <script src="~/Content/plugins/select2/js/select2.full.min.js"></script>
+    <script src="~/Content/dist/js/adminlte.min.js"></script>
+    <script type="text/javascript">
+
+        var Module = 1;
+    </script>
+    <script>
+        $('.sLenhSX').select2({
+            width: '100%' // để Select2 co giãn theo cha .form-control
+        });
+    </script>
+
+    <script src="~/Scripts/NguyenPhuLieu/BCKiemVaiV2TK_ListImage.js?Ver=2.6"></script>
+    <script>
+        var _soLoID = '@ViewBag.soLoID';
+        var _soLo   = '@ViewBag.soLo';
+        var _maNPL  = '@ViewBag.maNPL';
+        var _Dot = '@ViewBag.Dot';
+        var userName = '@ViewBag.userName';
+        if (window.CefSharp && _soLoID && _soLoID !== '') {
+            var _original_GetSoLoID = GetSoLoID;
+            GetSoLoID = async function () {
+                await _original_GetSoLoID();
+                $('#SoLo').val(_soLoID).trigger('change');
+            };
+
+
+            var _original_GetMauVai = GetMauVai;
+            GetMauVai = async function () {
+                await _original_GetMauVai();
+                if (_maNPL && _maNPL !== '') {
+                    $('#MauVai').val(_maNPL).trigger('change');
+                }
+            };
+
+            var _original_GetDot = GetDot;
+            GetDot = async function () {
+                await _original_GetDot();
+                $('#Dot').val(_Dot).trigger('change');
+            };
+
+        }
+    </script>
+</body>
+</html>

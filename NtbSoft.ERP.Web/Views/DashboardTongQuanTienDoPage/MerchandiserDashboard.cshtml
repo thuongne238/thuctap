@@ -1,0 +1,1176 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi" id="html-root">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Merchandiser Order Management Dashboard</title>
+    <!-- Google Fonts: Inter, Space Grotesk & JetBrains Mono for premium high-precision feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet" />
+    <!-- Font Awesome Free 6.5.2 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <!-- Custom Style Sheet -->
+    <link href="~/css/DashboardTongQuanTienDo/merchandiser-dashboard.css" rel="stylesheet" />
+    <!-- DateRangePicker CSS CDN -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Apache ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <style>
+        /* WIP Detail Modal Enhancements */
+        .wip-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .wip-summary-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+            .wip-summary-card:hover {
+                transform: translateY(-2px);
+                border-color: var(--color-green);
+            }
+
+            .wip-summary-card .card-label {
+                font-size: 0.95rem;
+                color: var(--text-secondary, #a0aec0);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .wip-summary-card .card-value {
+                font-size: 1.6rem;
+                font-weight: 700;
+                color: var(--text-primary, #ffffff);
+                font-family: 'Space Grotesk', sans-serif;
+            }
+
+            .wip-summary-card.green .card-value {
+                color: var(--color-green, #48bb78);
+            }
+
+            .wip-summary-card.blue .card-value {
+                color: var(--color-blue, #4299e1);
+            }
+
+            .wip-summary-card.orange .card-value {
+                color: var(--color-orange, #ed8936);
+            }
+
+        .wip-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            background: var(--bg-subtle);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .wip-search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .wip-search-input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+            .wip-search-input:focus {
+                border-color: var(--color-green);
+            }
+
+        .wip-search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .wip-group-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .wip-select-control {
+            padding: 0.5rem 1.8rem 0.5rem 0.8rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+            .wip-select-control option {
+                background-color: var(--bg-main, #fff);
+                color: var(--text-primary, #000);
+            }
+
+            .wip-select-control:focus {
+                border-color: var(--color-green);
+            }
+
+        /* Collapsible Rows styles */
+        tr.group-row {
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02) !important;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+            tr.group-row:hover {
+                background: rgba(255, 255, 255, 0.05) !important;
+            }
+
+            tr.group-row td {
+                border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+            }
+
+        .expand-toggle {
+            display: inline-block;
+            width: 1.2rem;
+            text-align: center;
+            margin-right: 0.5rem;
+            transition: transform 0.2s;
+            color: var(--color-green);
+            font-size: 1.1rem;
+        }
+
+        tr.group-row.expanded .expand-toggle {
+            transform: rotate(90deg);
+        }
+
+        :root {
+            --bg-child-row: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --bg-child-row: #131b2e;
+        }
+
+        tr.child-row {
+            background: var(--bg-child-row) !important;
+        }
+
+            tr.child-row.hidden {
+                display: none;
+            }
+
+            tr.child-row td {
+                font-size: 1.1rem;
+                color: var(--text-primary) !important;
+                padding: 0.5rem 0.8rem !important;
+                border-bottom: 1px dashed var(--border-color) !important;
+            }
+
+        /* Force details button styling to be transparent and adapt to theme */
+        #btn-wip-progress-details {
+            background: transparent !important;
+            border: none !important;
+            color: var(--text-secondary) !important;
+            box-shadow: none !important;
+            outline: none !important;
+            padding: 0.4rem !important;
+            border-radius: var(--border-radius) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+            #btn-wip-progress-details:hover {
+                background-color: var(--bg-subtle) !important;
+                color: var(--text-primary) !important;
+            }
+
+            #btn-wip-progress-details svg {
+                fill: none !important;
+                stroke: currentColor !important;
+            }
+
+        /* Fix header modal table transparent scroll-through bug */
+        .po-modal-table th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #111b33 !important; /* Đảm bảo màu nền đậm đục che đi nội dung cuộn bên dưới trong nền tối */
+        }
+
+        :root:not([data-theme="dark"]) .po-modal-table th {
+            background: #ffffff !important; /* Màu trắng đục cho nền sáng */
+        }
+
+        :root[data-theme="dark"][data-ui-version="new"] .po-modal-table th {
+            background: #1a1a28 !important; /* Màu xám đen đục cho new dark mode */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <!-- 2. MAIN CONTAINER -->
+        <main class="main-content">
+            <!-- Header bar -->
+            <header class="main-header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                    
+                    <div class="header-date" id="header-daterange-picker">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        <input type="text" id="start-date" class="datepicker-input" value="@(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString("dd'/'MM'/'yyyy"))" readonly />
+                        <span class="datepicker-separator">-</span>
+                        <input type="text" id="end-date" class="datepicker-input" value="@(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).ToString("dd'/'MM'/'yyyy"))" readonly />
+                    </div>
+                    <div class="header-side-nav inline-flex items-center p-1" id="header-side-nav" style="background-color: var(--btn-bg); border: var(--btn-border); border-radius: var(--btn-radius); backdrop-filter: var(--btn-blur); -webkit-backdrop-filter: var(--btn-blur); box-shadow: var(--btn-shadow);">
+                        <!-- Nút đang chọn (Active) -->
+                        <button type="button" class="side-nav-btn active inline-flex items-center gap-[0.6rem] px-[1.2rem] py-[0.6rem] text-[1.1rem] rounded-[calc(var(--btn-radius)-0.2rem)] font-semibold transition-all duration-200 cursor-pointer bg-white text-slate-800 shadow-sm border border-slate-200/60" id="btn-side-tinh-hinh" data-side="tinh-hinh" title="Tình hình sản xuất">
+                            <i class="fa-solid fa-chart-pie text-[1.1rem]"></i>
+                            <span>Tình hình sản xuất</span>
+                            <
+                        </button>
+                        
+                        <!-- Nút bình thường -->
+                        <a href="~/DashboardTongQuanTienDoPage/testgiaodien" class="side-nav-btn inline-flex items-center gap-[0.6rem] px-[1.2rem] py-[0.6rem] text-[1.1rem] rounded-[calc(var(--btn-radius)-0.2rem)] font-medium transition-all duration-200 cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-white/50 no-underline" id="btn-side-tien-do" data-side="tien-do" title="Tiến độ sản xuất">
+                            <i class="fa-solid fa-chart-gantt text-[1.1rem]"></i>
+                            <span>Tiến độ sản xuất</span>
+                        </a>
+                    </div>
+                    <div class="header-select" style="display: none;">
+                        <select id="header-factory-select">
+                            <option value="all">Tất cả nhà máy</option>
+                            <option value="factory-a">Nhà máy Bình Dương</option>
+                            <option value="factory-b">Nhà máy Đồng Nai</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <!-- Switch between mock and sql simulation -->
+                    <div class="data-toggle-wrapper" style="display: none;">
+                        <span class="toggle-label">Real SQL Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="data-source-toggle" checked="checked" />
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="sql-loader" id="sql-loader" style="display: none;">
+                            <span class="spinner"></span>
+                            <span>Đang tải dữ liệu SQL...</span>
+                        </span>
+                    </div>
+
+                    <button class="btn-icon btn-theme-toggle" id="btn-theme-toggle" title="Chuyển Dark/Light Mode">
+                        <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <span class="btn-label" id="theme-toggle-label">Chế độ tối</span>
+                    </button>
+
+                    <button class="btn-icon btn-ui-toggle" id="btn-ui-toggle" title="Chuyển đổi giao diện Cũ/Mới" style="display: none;">
+                        <!-- Icon giao diện Cũ (Glassmorphism / Layers) -->
+                        <svg id="ui-icon-old" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
+                            <line x1="12" y1="2" x2="12" y2="22"></line>
+                        </svg>
+                        <!-- Icon giao diện Mới (Indigo Accent / Tech Layout) -->
+                        <svg id="ui-icon-new" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span class="btn-label" id="ui-toggle-label">Giao diện mới</span>
+                    </button>
+
+                    <button class="btn-icon header-notification" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                        <span class="badge">12</span>
+                        <span class="btn-label">Thông báo</span>
+                    </button>
+                    <button class="btn-export" style="display: none;">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        <span>Xuất báo cáo</span>
+                    </button>
+                </div>
+            </header>
+
+
+
+            <!-- ROW 1: KPI CARDS -->
+            <section class="kpi-grid">
+                <!-- Card 1: Tổng đơn -->
+                <div class="kpi-card border-blue">
+                    <div class="card-meta">
+                        <div class="card-icon bg-light-blue text-blue">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+                        <div class="card-title-group">
+                            <!-- Top: Dữ liệu / kết quả -->
+                            <div class="kpi-value-row">
+                                <span class="card-value" id="kpi-total-orders">128</span>
+                                <!-- Trend Badge Inline -->
+                                <div class="card-trend text-green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="18 15 12 9 6 15" />
+                                    </svg>
+                                    <span>12.5%</span>
+                                </div>
+                            </div>
+                            <!-- Middle: Title chính -->
+                            <span class="card-label">TỔNG ĐƠN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Đơn đang sản xuất -->
+                <div class="kpi-card border-orange">
+                    <div class="card-meta">
+                        <div class="card-icon bg-light-orange text-orange">
+                            <i class="fa-solid fa-wrench"></i>
+                        </div>
+                        <div class="card-title-group">
+                            <!-- Top: Dữ liệu / kết quả -->
+                            <div class="kpi-value-row">
+                                <span class="card-value" id="kpi-prod-orders">95</span>
+                                <!-- Trend Badge Inline -->
+                                <div class="card-trend text-green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="18 15 12 9 6 15" />
+                                    </svg>
+                                    <span>8.2%</span>
+                                </div>
+                            </div>
+                            <!-- Middle: Title chính -->
+                            <span class="card-label">ĐƠN ĐANG SẢN XUẤT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Đơn đã giao -->
+                <div class="kpi-card border-green">
+                    <div class="card-meta">
+                        <div class="card-icon bg-light-green text-green">
+                            <i class="fa-solid fa-truck"></i>
+                        </div>
+                        <div class="card-title-group">
+                            <!-- Top: Dữ liệu / kết quả -->
+                            <div class="kpi-value-row">
+                                <span class="card-value" id="kpi-delivered-orders">85</span>
+                                <!-- Trend Badge Inline -->
+                                <div class="card-trend text-green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="18 15 12 9 6 15" />
+                                    </svg>
+                                    <span>15.6%</span>
+                                </div>
+                            </div>
+                            <!-- Middle: Title chính -->
+                            <span class="card-label">ĐƠN ĐÃ GIAO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Đơn trễ -->
+                <div class="kpi-card border-red">
+                    <div class="card-meta">
+                        <div class="card-icon bg-light-red text-red">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div class="card-title-group">
+                            <!-- Top: Dữ liệu / kết quả -->
+                            <div class="kpi-value-row">
+                                <span class="card-value text-red" id="kpi-late-orders">12</span>
+                                <!-- Trend Badge Inline -->
+                                <div class="card-trend text-red">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                    <span>9.4%</span>
+                                </div>
+                            </div>
+                            <!-- Middle: Title chính -->
+                            <span class="card-label">ĐƠN TRỄ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Doanh thu tháng -->
+                <div class="kpi-card border-teal">
+                    <div class="card-meta">
+                        <div class="card-icon bg-light-teal text-teal">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                        </div>
+                        <div class="card-title-group">
+                            <!-- Top: Dữ liệu / kết quả -->
+                            <div class="kpi-value-row">
+                                <span class="card-value" id="kpi-revenue">18.5</span>
+                                <!-- Trend Badge Inline -->
+                                <div class="card-trend text-green" id="kpi-revenue-trend-container">
+                                    <svg id="kpi-revenue-trend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="18 15 12 9 6 15" />
+                                    </svg>
+                                    <span id="kpi-revenue-trend-val">12.6%</span>
+                                </div>
+                            </div>
+                            <!-- Middle: Title chính -->
+                            <span class="card-label">DOANH THU (<span id="kpi-revenue-unit">USD</span>)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: OTD -->
+                <div class="kpi-card border-cyan">
+                    <div class="card-meta">
+                        <div class="card-icon bg-light-cyan text-cyan">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                        <div class="card-title-group">
+                            <!-- Top: Dữ liệu / kết quả -->
+                            <div class="kpi-value-row">
+                                <span class="card-value" id="kpi-otd">92%</span>
+                                <!-- Trend Badge Inline -->
+                                <div class="card-trend text-green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="18 15 12 9 6 15" />
+                                    </svg>
+                                    <span>5.6%</span>
+                                </div>
+                            </div>
+                            <!-- Middle: Title chính -->
+                            <span class="card-label">GIAO ĐÚNG HẠN</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ROW 2: GANTT VIEW -->
+            <section>
+                <!-- 2.1 DELIVERY PROGRESS (GANTT VIEW) -->
+                <div class="grid-card">
+                    <div class="card-header">
+                        <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 15rem);">
+                            <h2 class="marquee-content" style="margin: 0;">TIẾN ĐỘ GIAO HÀNG</h2>
+                        </div>
+                        <div class="header-actions">
+                            <div class="tab-filters" id="gantt-view-toggle">
+                                <button class="tab-btn">Ngày</button>
+                                <button class="tab-btn active">Tuần</button>
+                                <button class="tab-btn">Tháng</button>
+                            </div>
+                            <button class="btn-zoom" title="Phóng to" aria-label="Phóng to">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body gantt-chart-container-wrapper">
+                        <!-- Left Columns Table Overlay -->
+                        <div class="gantt-overlay-table">
+                            <div class="gantt-overlay-header">
+                                <div class="col-po"><div class="marquee-wrapper"><span class="marquee-content">PO NO.</span></div></div>
+                                <div class="col-cust"><div class="marquee-wrapper"><span class="marquee-content">KHÁCH HÀNG</span></div></div>
+                                <div class="col-qty"><div class="marquee-wrapper"><span class="marquee-content">QTY (PCS)</span></div></div>
+                                <div class="col-ordercode"><div class="marquee-wrapper"><span class="marquee-content">MÃ ĐƠN HÀNG</span></div></div>
+                                <div class="col-etd"><div class="marquee-wrapper"><span class="marquee-content">ETD</span></div></div>
+                            </div>
+                            <div class="gantt-overlay-body" id="gantt-overlay-rows">
+                                <!-- Generated Dynamically -->
+                            </div>
+                        </div>
+                        <!-- ECharts Gantt Canvas -->
+                        <div id="gantt-chart-canvas" style="width: 100%; height: 28rem;"></div>
+                    </div>
+                    <div class="gantt-legend">
+                        <div class="legend-item"><span class="dot bg-blue"></span> Hoàn thành (>=95%)</div>
+                        <div class="legend-item"><span class="dot bg-green"></span> Đạt (80-94%)</div>
+                        <div class="legend-item"><span class="dot bg-orange"></span> Trung bình (50-79%)</div>
+                        <div class="legend-item"><span class="dot bg-red"></span> Chậm (<50%)</div>
+                                <div class="legend-item"><span class="line-today"></span> Hôm nay</div>
+                                <div class="legend-item"><span class="diamond-etd"></span> ETD (Ngày giao hàng)</div>
+                        </div>
+                    </div>
+            </section>
+
+            <!-- ROW 2.5: REVENUES -->
+            <section class="dashboard-grid-2">
+                    <!-- 2.2 MONTHLY REVENUE CHART -->
+                    <div class="grid-card" style="flex: 2;">
+                        <div class="card-header">
+                            <h2>DOANH THU THEO THÁNG (USD)</h2>
+                            <div class="header-actions">
+                                <div class="tab-filters" id="revenue-view-toggle" style="display: none;">
+                                    <button class="tab-btn active">Doanh thu</button>
+                                    <button class="tab-btn">Lũy kế</button>
+                                </div>
+                                <button class="btn-zoom" title="Phóng to" aria-label="Phóng to">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-subheader">
+                            <div class="sub-stat">
+                                <span class="stat-lbl">TỔNG DOANH THU</span>
+                                <span class="stat-val" id="rev-total">18,500,000 USD</span>
+                                <span class="stat-change text-green" id="rev-trend-change">↑ 12.6% hơn tháng trước</span>
+                            </div>
+                            <div class="sub-stat">
+                                <span class="stat-lbl">KẾ HOẠCH</span>
+                                <span class="stat-val" id="rev-plan">17,000,000 USD</span>
+                            </div>
+                            <div class="sub-stat">
+                                <span class="stat-lbl">% HOÀN THÀNH</span>
+                                <span class="stat-val text-blue" id="rev-percent">108.8%</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="revenue-chart" style="width: 100%; height: 24rem;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 4.4 REVENUE BY CUSTOMER -->
+                <div class="grid-card" style="flex: 1;">
+                    <div class="card-header">
+                        <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                            <h2 id="customer-revenue-title" class="marquee-content" style="margin: 0;">DOANH THU THEO KHÁCH HÀNG (USD)</h2>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn-zoom" title="Phóng to" aria-label="Phóng to">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                        <div class="card-body" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <div id="customer-revenue-chart" style="width: 100%; height: 28rem;"></div>
+                            <div class="customer-legend scrollable-y" id="customer-revenue-legend" style="width: 100%; max-height: 15rem; padding-top: 1rem; box-sizing: border-box;">
+                                <!-- Custom legends rendered here -->
+                            </div>
+                        </div>
+                    </div>
+            </section>
+
+            <!-- ROW 3: KANBAN & WIP STATUS -->
+            <section class="dashboard-grid-2">
+                <!-- 3.1 PROGRESS BY STAGE (KANBAN) -->
+                <div class="grid-card" style="flex: 0 0 auto;">
+                    <div class="card-header">
+                        <h2>TIẾN ĐỘ THEO CÔNG ĐOẠN</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="kanban-pipeline-wrapper" style="overflow-x: auto; width: 100%;">
+                            <div class="kanban-pipeline" id="kanban-flow-container">
+                                <!-- Kanban Stages Generated Dynamically -->
+                            </div>
+                        </div>
+                        <div class="kanban-note">
+                            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                            </svg>
+                            <span>% hiển thị là tỷ lệ hoàn thành so với kế hoạch</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3.2 WIP (WORK IN PROCESS) -->
+                <div class="grid-card wip-card" style="flex: 1;">
+                    <div class="card-header">
+                        <h2>WIP (WORK IN PROCESS) - ĐƠN ĐANG SẢN XUẤT</h2>
+                        <div class="header-actions">
+                            <button id="btn-wip-progress-details" class="btn-wip-details-trigger" title="Xem chi tiết tiến độ" aria-label="Xem chi tiết tiến độ">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                    <line x1="3" y1="15" x2="21" y2="15"></line>
+                                    <line x1="12" y1="3" x2="12" y2="21"></line>
+                                </svg>
+                            </button>
+                            <button class="btn-zoom" title="Phóng to" aria-label="Phóng to">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body wiph-layout">
+                        <div class="wip-chart-container">
+                            <div id="wip-chart-canvas" style="width: 100%;"></div>
+                        </div>
+                        <div class="wip-stats-panel" style="display: none;">
+                            <div class="wip-stat-box box-total">
+                                <span class="wip-stat-lbl">TỔNG WIP</span>
+                                <span class="wip-stat-val" id="wip-total-pcs">31,500 pcs</span>
+                            </div>
+                            <div class="wip-grid-sub">
+                                <div class="wip-sub-box">
+                                    <span class="wip-sub-lbl">Đơn đang sản xuất</span>
+                                    <span class="wip-sub-val" id="wip-total-orders">95</span>
+                                </div>
+                                <div class="wip-sub-box">
+                                    <span class="wip-sub-lbl">% hoàn thành bình quân</span>
+                                    <span class="wip-sub-val" id="wip-avg-completion">62%</span>
+                                </div>
+                                <div class="wip-sub-box border-none">
+                                    <span class="wip-sub-lbl">Hơn kỳ trước</span>
+                                    <span class="wip-sub-val text-green" id="wip-trend-compare">↑ 5.2%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ROW 4: DATA TABLES & DONUT CHARTS -->
+            <section class="dashboard-grid-4">
+                <!-- 4.1 MATERIAL STATUS BY TYPE -->
+                <div class="grid-card">
+                    <div class="card-header">
+                        <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                            <h2 class="marquee-content" style="margin: 0;">TÌNH HÌNH NGUYÊN PHỤ LIỆU THEO LOẠI</h2>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn-zoom" id="btn-zoom-materials" title="Phóng to" aria-label="Phóng to">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><div class="marquee-wrapper"><span class="marquee-content">LOẠI NPL</span></div></th>
+                                    <th><div class="marquee-wrapper"><span class="marquee-content">NHU CẦU</span></div></th>
+                                    <th><div class="marquee-wrapper"><span class="marquee-content">ĐÃ CÓ</span></div></th>
+                                    <th><div class="marquee-wrapper"><span class="marquee-content">% ĐỦ</span></div></th>
+                                    <th><div class="marquee-wrapper"><span class="marquee-content">TRẠNG THÁI</span></div></th>
+                                </tr>
+                            </thead>
+                            <tbody id="materials-table-body">
+                                <!-- Generated Dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4.2 PURCHASE TRACKING -->
+                <div class="grid-card purchase-card" style="grid-column: span 3;">
+                    <div class="card-header">
+                        <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                            <h2 class="marquee-content" style="margin: 0;">THEO DÕI MUA HÀNG (NGUYÊN PHỤ LIỆU)</h2>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn-zoom" title="Phóng to" aria-label="Phóng to">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="purchase-kpi-row">
+                        <div class="purchase-kpi-bubble border-blue">
+                            <div class="marquee-wrapper">
+                                <span class="bubble-val text-blue marquee-content" id="purch-ordered">0</span>
+                            </div>
+                            <div class="marquee-wrapper">
+                                <span class="bubble-lbl marquee-content">Đã đặt</span>
+                            </div>
+                        </div>
+                        <div class="purchase-kpi-bubble border-green">
+                            <div class="marquee-wrapper">
+                                <span class="bubble-val text-green marquee-content" id="purch-arrived">0</span>
+                            </div>
+                            <div class="marquee-wrapper">
+                                <span class="bubble-lbl marquee-content">Đã về</span>
+                            </div>
+                        </div>
+                        <div class="purchase-kpi-bubble border-orange">
+                            <div class="marquee-wrapper">
+                                <span class="bubble-val text-orange marquee-content" id="purch-incoming">0</span>
+                            </div>
+                            <div class="marquee-wrapper">
+                                <span class="bubble-lbl marquee-content">Sắp về</span>
+                            </div>
+                        </div>
+                        <div class="purchase-kpi-bubble border-red">
+                            <div class="marquee-wrapper">
+                                <span class="bubble-val text-red marquee-content" id="purch-fail">0</span>
+                            </div>
+                            <div class="marquee-wrapper">
+                                <span class="bubble-lbl marquee-content">Trễ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div id="purchase-tracking-chart" style="width: 100%; height: 18rem;"></div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- PO Details Glassmorphism Modal -->
+    <div class="po-modal-overlay" id="po-details-modal-overlay">
+        <div class="po-modal-container">
+            <div class="po-modal-header">
+                <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                    <h3 class="marquee-content" style="margin: 0;">Chi tiết PO: <span id="modal-po-title">N/A</span></h3>
+                </div>
+                <button class="po-modal-close-btn" id="btn-close-po-modal" aria-label="Đóng">&times;</button>
+            </div>
+            <div class="po-modal-body">
+                <!-- Overall Progress Summary -->
+                <div class="po-modal-summary">
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Mã hàng (Style)</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-po-style">N/A</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Khách hàng</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-po-customer">N/A</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Mã đơn hàng</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-po-ordercode">N/A</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Tổng kế hoạch</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-po-total-plan">0 pcs</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Tổng thực hiện</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-po-total-actual">0 pcs</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Tiến độ</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-po-total-progress">0%</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Details Table -->
+                <div class="po-modal-table-container">
+                    <table class="po-modal-table">
+                        <thead>
+                            <tr>
+                                <th>Màu sắc</th>
+                                <th>Kích cỡ (Size)</th>
+                                <th style="text-align: right;">Kế hoạch (SLKH)</th>
+                                <th style="text-align: right;">Thực hiện (SLTH)</th>
+                                <th style="text-align: right; width: 8rem;">Tỷ lệ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="po-details-table-body">
+                            <!-- Generated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Revenue Details Glassmorphism Modal -->
+    <div class="po-modal-overlay" id="revenue-details-modal-overlay">
+        <div class="po-modal-container">
+            <div class="po-modal-header">
+                <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                    <h3 class="marquee-content" style="margin: 0;">Chi tiết doanh thu tháng: <span id="modal-revenue-month-title">N/A</span></h3>
+                </div>
+                <button class="po-modal-close-btn" id="btn-close-revenue-modal" aria-label="Đóng">&times;</button>
+            </div>
+            <div class="po-modal-body">
+                <!-- Overall Progress Summary -->
+                <div class="po-modal-summary">
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Tháng</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-revenue-month-val">N/A</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Kế hoạch</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-revenue-plan-val">$0</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Tổng thực tế</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-revenue-total-val">$0</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Tỷ lệ hoàn thành</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-revenue-percent-val">0%</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Details Table -->
+                <div class="po-modal-table-container">
+                    <table class="po-modal-table">
+                        <thead>
+                            <tr>
+                                <th>Chuyền</th>
+                                <th style="text-align: right;">Doanh thu kế hoạch</th>
+                                <th style="text-align: right;">Doanh thu thực tế</th>
+                                <th style="text-align: right;">Tỷ lệ đạt</th>
+                                <th style="text-align: right;">Tỷ lệ đóng góp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="revenue-details-table-body">
+                            <!-- Generated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Tracking Details Glassmorphism Modal -->
+    <div class="po-modal-overlay" id="purchase-details-modal-overlay">
+        <div class="po-modal-container">
+            <div class="po-modal-header">
+                <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                    <h3 class="marquee-content" style="margin: 0;">Chi tiết mua hàng: <span id="modal-purch-title">N/A</span></h3>
+                </div>
+                <button class="po-modal-close-btn" id="btn-close-purch-modal" aria-label="Đóng">&times;</button>
+            </div>
+            <div class="po-modal-body">
+                <!-- Overall Summary -->
+                <div class="po-modal-summary">
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Chủng loại</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-purch-category">N/A</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Trạng thái</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-purch-status">N/A</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Tổng số lượng</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-purch-total-qty">0</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Details Table -->
+                <div class="po-modal-table-container">
+                    <table class="po-modal-table">
+                        <thead>
+                            <tr>
+                                <th>Đơn hàng (PO)</th>
+                                <th>Mã hàng (Style)</th>
+                                <th>Vật tư</th>
+                                <th>Khổ vải</th>
+                                <th>Mã màu</th>
+                                <th>Màu</th>
+                                <th>Nhà cung cấp</th>
+                                <th>Khách hàng</th>
+                                <th style="text-align: right;">Số lượng</th>
+                                <th>Đơn vị</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày dự kiến</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchase-details-table-body">
+                            <!-- Generated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Raw Material Status Details Glassmorphism Modal -->
+    <div class="po-modal-overlay" id="material-details-modal-overlay">
+        <div class="po-modal-container">
+            <div class="po-modal-header">
+                <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                    <h3 class="marquee-content" style="margin: 0;">Chi tiết nguyên phụ liệu: <span id="modal-mat-title">N/A</span></h3>
+                </div>
+                <button class="po-modal-close-btn" id="btn-close-mat-modal" aria-label="Đóng">&times;</button>
+            </div>
+            <div class="po-modal-body">
+                <!-- Overall Summary -->
+                <div class="po-modal-summary">
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Loại vật tư</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-mat-category">N/A</span>
+                        </div>
+                    </div>
+                    <div class="po-summary-item">
+                        <span class="po-summary-lbl">Tổng số lượng</span>
+                        <div class="marquee-wrapper">
+                            <span class="po-summary-val marquee-content" id="modal-mat-total-qty">0</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Material Control Toolbar -->
+                <div class="wip-toolbar" style="margin-top: 1rem;">
+                    <div class="wip-search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass wip-search-icon"></i>
+                        <input type="text" id="mat-modal-search" placeholder="Tìm kiếm nhanh Mã lệnh, Mã hàng, ItemCode, Màu..." class="wip-search-input" />
+                    </div>
+                    <div class="wip-group-controls">
+                        <label for="mat-modal-groupby" style="color: var(--text-secondary); font-size: 0.9rem;">Gom nhóm:</label>
+                        <select id="mat-modal-groupby" class="wip-select-control">
+                            <option value="none">Chi tiết (Không gom)</option>
+                            <option value="malenh">Theo Mã Lệnh SX</option>
+                            <option value="mahang">Theo Mã Hàng</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Details Table -->
+                <div class="po-modal-table-container">
+                    <table class="po-modal-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">STT</th>
+                                <th>MÃ HÀNG</th>
+                                <th>MÃ LỆNH SẢN XUẤT</th>
+                                <th>ITEMCODE</th>
+                                <th>MÃ MÀU VT</th>
+                                <th>MÀU</th>
+                                <th>WIDTH/SIZE</th>
+                                <th>ĐƠN VỊ VT</th>
+                                <th>KHÁCH HÀNG</th>
+                                <th style="text-align: right;">SỐ LƯỢNG</th>
+                            </tr>
+                        </thead>
+                        <tbody id="material-details-table-body">
+                            <!-- Generated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WIP Stage Details Modal -->
+    <div class="po-modal-overlay" id="wip-details-modal-overlay">
+        <div class="po-modal-container">
+            <div class="po-modal-header">
+                <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                    <h3 class="marquee-content" style="margin: 0;">
+                        Chi tiết công đoạn: <span id="modal-wip-stage-title" style="color: var(--color-green);">N/A</span>
+                    </h3>
+                </div>
+                <button class="po-modal-close-btn" id="btn-close-wip-modal" aria-label="Đóng">&times;</button>
+            </div>
+            <div class="po-modal-body">
+                <!-- WIP Summary Grid -->
+                <div class="wip-summary-grid">
+                    <div class="wip-summary-card blue">
+                        <span class="card-label">Tổng Kế Hoạch (SLKH)</span>
+                        <span class="card-value" id="wip-summary-slkh">0</span>
+                    </div>
+                    <div class="wip-summary-card green">
+                        <span class="card-label">Tổng Thực Hiện (SLTH)</span>
+                        <span class="card-value" id="wip-summary-slth">0</span>
+                    </div>
+                    <div class="wip-summary-card orange">
+                        <span class="card-label">Tiến Độ Hoàn Thành</span>
+                        <span class="card-value" id="wip-summary-progress">0.0%</span>
+                    </div>
+                    <div class="wip-summary-card">
+                        <span class="card-label">Số Chuyền (LINE)</span>
+                        <span class="card-value" id="wip-summary-lines">0</span>
+                    </div>
+                    <div class="wip-summary-card">
+                        <span class="card-label">Số Mã Lệnh</span>
+                        <span class="card-value" id="wip-summary-jobs">0</span>
+                    </div>
+                </div>
+
+                <!-- WIP Control Toolbar -->
+                <div class="wip-toolbar">
+                    <div class="wip-search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass wip-search-icon"></i>
+                        <input type="text" id="wip-modal-search" placeholder="Tìm kiếm nhanh Mã lệnh, Mã hàng, PO, Chuyền..." class="wip-search-input" />
+                    </div>
+                    <div class="wip-group-controls">
+                        <label for="wip-modal-groupby" style="color: var(--text-secondary); font-size: 0.9rem;">Gom nhóm:</label>
+                        <select id="wip-modal-groupby" class="wip-select-control">
+                            <option value="none">Chi tiết (Không gom)</option>
+                            <option value="chuyen">Theo Chuyền (LINE)</option>
+                            <option value="malenh">Theo Mã Lệnh</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="po-modal-table-container" style="max-height: 500px; overflow-y: auto;">
+                    <table class="po-modal-table" id="wip-detail-table">
+                        <thead>
+                            <tr>
+                                <th>Chuyền</th>
+                                <th>Mã Lệnh</th>
+                                <th>Mã Hàng</th>
+                                <th>PO</th>
+                                <th>Nhóm Size</th>
+                                <th>Màu</th>
+                                <th>Size</th>
+                                <th style="text-align: right;">SLKH</th>
+                                <th style="text-align: right;">SLTH</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wip-detail-table-body">
+                            <!-- Generated Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WIP Progress Details Modal (All Stages) -->
+    <div class="po-modal-overlay" id="wip-progress-details-modal-overlay">
+        <div class="po-modal-container" style="max-width: 100vw; width: 100vw; height: 100vh; max-height: 100vh; border-radius: 0; margin: 0; border: none;">
+            <div class="po-modal-header">
+                <div class="marquee-wrapper" style="flex: 1; max-width: calc(100% - 3rem);">
+                    <h3 class="marquee-content" style="margin: 0;">
+                        Chi Tiết Tiến Độ Đơn Đang Sản Xuất (Theo Từng Lệnh)
+                    </h3>
+                </div>
+                <button class="po-modal-close-btn" id="btn-close-wip-progress-modal" aria-label="Đóng">&times;</button>
+            </div>
+            <div class="po-modal-body" style="display: flex; flex-direction: column; overflow: hidden; height: calc(100% - 70px);">
+                <div class="wip-toolbar" style="margin-bottom: 1rem;">
+                    <div class="wip-search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass wip-search-icon"></i>
+                        <input type="text" id="wip-progress-modal-search" placeholder="Tìm kiếm nhanh Mã lệnh, Mã hàng, PO, Màu..." class="wip-search-input" />
+                    </div>
+                    <div class="wip-group-controls">
+                        <label for="wip-progress-modal-groupby" style="color: var(--text-secondary); font-size: 0.9rem;">Gom nhóm:</label>
+                        <select id="wip-progress-modal-groupby" class="wip-select-control">
+                            <option value="none">Chi tiết (Không gom)</option>
+                            <option value="malenh">Theo Mã Lệnh SX</option>
+                            <option value="mahang">Theo Mã Hàng</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="po-modal-table-container" id="wip-progress-table-container" style="flex: 1; overflow-y: auto; max-height: unset;">
+                    <table class="po-modal-table" id="wip-progress-detail-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="text-align: center; vertical-align: middle; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">STT</th>
+                                <th rowspan="2" style="vertical-align: middle; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Mã Lệnh</th>
+                                <th rowspan="2" style="vertical-align: middle; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Mã Hàng</th>
+                                <th rowspan="2" style="vertical-align: middle; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">PO</th>
+                                <th rowspan="2" style="vertical-align: middle; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Nhóm Size</th>
+                                <th rowspan="2" style="vertical-align: middle; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Màu</th>
+                                <th rowspan="2" style="vertical-align: middle; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Size</th>
+                                <th rowspan="2" style="text-align: right; vertical-align: middle; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">SLKH</th>
+                                <th colspan="2" style="text-align: center; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Ra Chuyền</th>
+                                <th colspan="2" style="text-align: center; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">KCS</th>
+                                <th colspan="2" style="text-align: center; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Nhận TP</th>
+                                <th colspan="2" style="text-align: center; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Đóng Thùng</th>
+                                <th colspan="2" style="text-align: center; position: sticky; top: 0; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">AQL</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Thực hiện</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Lũy kế</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Thực hiện</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Lũy kế</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Thực hiện</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Lũy kế</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Thực hiện</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Lũy kế</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Thực hiện</th>
+                                <th style="text-align: center; position: sticky; top: 29px; z-index: 12; background: var(--bg-main) !important; color: var(--text-secondary);">Lũy kế</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wip-progress-detail-table-body">
+                            <!-- Generated Dynamically -->
+                        </tbody>
+                    </table>
+                    <div id="wip-progress-loading-indicator" style="text-align: center; padding: 1rem; color: var(--text-secondary); display: none;">
+                        <span class="spinner" style="display:inline-block;vertical-align:middle;margin-right:0.8rem;"></span>Đang tải thêm dữ liệu...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Dependencies -->
+    <script src="~/Scripts/DashboardTongQuanTienDo/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <!-- Custom Script References -->
+    <script src="~/Scripts/DashboardTongQuanTienDo/merchandiser-dashboard-data.js"></script>
+    <script src="~/Scripts/DashboardTongQuanTienDo/merchandiser-dashboard.js"></script>
+</body>
+
+</html>

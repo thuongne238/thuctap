@@ -1,0 +1,330 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Dashboard - Tổng Quan & Chuẩn Bị Sản Xuất";
+    ViewBag.HeaderTitle = "Dashboard";
+}
+
+@section css {
+    <!-- DevExtreme CSS -->
+    <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.common.css" onerror="this.onerror=null;this.href='https://cdn3.devexpress.com/jslib/23.2.5/css/dx.common.css';" />
+    <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.light.css" onerror="this.onerror=null;this.href='https://cdn3.devexpress.com/jslib/23.2.5/css/dx.light.css';" />
+
+    <!-- CSS Modules Riêng Của Trang Dashboard -->
+    <link href="~/css/DashboardTongQuanTienDo/production-progress-widget.css" rel="stylesheet" />
+    <link href="~/css/DashboardTongQuanTienDo/dong-bo-giao-dien.css" rel="stylesheet" />
+}
+
+<!-- =====================================================================
+     1. NỘI DUNG TAB 1: TÌNH HÌNH SẢN XUẤT (KHUNG THÔ TỪ TongQuanTinhHinh)
+     ===================================================================== -->
+<div id="tab-content-tinh-hinh" class="dashboard-tab-pane active-tab mt-2">
+    <!-- 1. SUMMARY KPI CARDS (Khung thô: Đã loại bỏ số ảo) -->
+    <section class="tqth-kpi-grid">
+        <!-- Card 1: Tổng đơn -->
+        <div class="tqth-kpi-card kpi-total">
+            <div class="tqth-kpi-info">
+                <span class="tqth-kpi-label">Tổng đơn</span>
+                <div class="tqth-kpi-number-wrap">
+                    <div class="tqth-kpi-number">
+                        <span id="kpi-val-total">0</span>
+                        <span class="tqth-kpi-unit">đơn</span>
+                    </div>
+                    <div class="tqth-kpi-pcs-badge" title="Tổng sản lượng">
+                        <span class="tqth-kpi-pcs-val" id="kpi-pcs-total">0</span>
+                        <span class="tqth-kpi-pcs-unit">pcs</span>
+                    </div>
+                </div>
+                <span class="tqth-kpi-sub">Tổng số đơn trong kỳ</span>
+            </div>
+            <div class="tqth-kpi-icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+        </div>
+
+        <!-- Card 2: Đơn đang sản xuất -->
+        <div class="tqth-kpi-card kpi-producing">
+            <div class="tqth-kpi-info">
+                <span class="tqth-kpi-label">Đơn đang sản xuất</span>
+                <div class="tqth-kpi-number-wrap">
+                    <div class="tqth-kpi-number">
+                        <span id="kpi-val-producing">0</span>
+                        <span class="tqth-kpi-unit">đơn</span>
+                    </div>
+                    <div class="tqth-kpi-pcs-badge" title="Sản lượng đang sản xuất">
+                        <span class="tqth-kpi-pcs-val" id="kpi-pcs-producing">0</span>
+                        <span class="tqth-kpi-pcs-unit">pcs</span>
+                    </div>
+                </div>
+                <span class="tqth-kpi-sub">Đang chạy trên chuyền</span>
+            </div>
+            <div class="tqth-kpi-icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </div>
+        </div>
+
+        <!-- Card 3: Đơn đã giao -->
+        <div class="tqth-kpi-card kpi-delivered">
+            <div class="tqth-kpi-info">
+                <span class="tqth-kpi-label">Đơn đã giao</span>
+                <div class="tqth-kpi-number-wrap">
+                    <div class="tqth-kpi-number">
+                        <span id="kpi-val-delivered">0</span>
+                        <span class="tqth-kpi-unit">đơn</span>
+                    </div>
+                    <div class="tqth-kpi-pcs-badge" title="Sản lượng đã xuất hàng">
+                        <span class="tqth-kpi-pcs-val" id="kpi-pcs-delivered">0</span>
+                        <span class="tqth-kpi-pcs-unit">pcs</span>
+                    </div>
+                </div>
+                <span class="tqth-kpi-sub">Đã hoàn tất xuất hàng</span>
+            </div>
+            <div class="tqth-kpi-icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            </div>
+        </div>
+
+        <!-- Card 4: Đơn trễ -->
+        <div class="tqth-kpi-card kpi-delayed">
+            <div class="tqth-kpi-info">
+                <span class="tqth-kpi-label">Đơn trễ</span>
+                <div class="tqth-kpi-number-wrap">
+                    <div class="tqth-kpi-number" style="color: var(--tqth-red);">
+                        <span id="kpi-val-delayed">0</span>
+                        <span class="tqth-kpi-unit">đơn</span>
+                    </div>
+                    <div class="tqth-kpi-pcs-badge" title="Sản lượng trễ hạn">
+                        <span class="tqth-kpi-pcs-val" id="kpi-pcs-delayed">0</span>
+                        <span class="tqth-kpi-pcs-unit">pcs</span>
+                    </div>
+                </div>
+                <span class="tqth-kpi-sub">Cần ưu tiên xử lý gấp</span>
+            </div>
+            <div class="tqth-kpi-icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. KHỐI GIỮA: TÌNH HÌNH SẢN XUẤT (LƯỚI 5 CỘT & BIỂU ĐỒ TRÒN PO) -->
+    <section id="tqth-production-widget-container"></section>
+
+    <!-- 3. KHỐI DƯỚI: TIẾN ĐỘ THEO CÔNG ĐOẠN (PIPELINE PROCESS FLOW 7 CÔNG ĐOẠN) -->
+    <section class="tqth-stages-block">
+        <div class="tqth-block-header">
+            <h2 class="tqth-block-title">Tiến độ theo công đoạn</h2>
+            <span style="font-size: 0.8rem; color: var(--tqth-muted);">Quy trình sản xuất: NPL &rarr; Cắt &rarr; May &rarr; Hoàn thiện &rarr; Nhập TP &larr; Đóng gói &larr; Kiểm hàng</span>
+        </div>
+
+        <div id="tqth-pipeline-flow"></div>
+    </section>
+</div>
+
+<!-- =====================================================================
+     2. NỘI DUNG TAB 2: TIẾN ĐỘ & CHUẨN BỊ (KHUNG THÔ TỪ testgiaodien)
+     ===================================================================== -->
+<div id="tab-content-tien-do" class="dashboard-tab-pane tab-tiendo-wrapper">
+    <!-- SECTION 1: BẢNG ĐƠN HÀNG & THỜI GIAN (KHUNG THÔ) -->
+    <section class="octo-card">
+        <div class="card-header-title">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Bảng Đơn Hàng & Kế Hoạch Thời Gian</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="octo-table" id="table-orders">
+                <thead>
+                    <tr class="group-header-row">
+                        <th colspan="4" class="grp-don-hang">Đơn hàng</th>
+                        <th colspan="8" class="grp-thoi-gian">Thời gian</th>
+                    </tr>
+                    <tr class="col-header-row">
+                        <th style="min-width: 140px;">
+                            <div class="col-title-wrapper">
+                                <span>1. Mã lệnh sản xuất</span>
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <input type="text" class="table-search-input" placeholder="Lọc mã lệnh..." data-col="0" />
+                        </th>
+                        <th style="min-width: 120px;">
+                            <div class="col-title-wrapper">
+                                <span>2. Style</span>
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <input type="text" class="table-search-input" placeholder="Lọc style..." data-col="1" />
+                        </th>
+                        <th style="min-width: 140px;">
+                            <div class="col-title-wrapper">
+                                <span>3. Chủng loại (Des)</span>
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <input type="text" class="table-search-input" placeholder="Lọc chủng loại..." data-col="2" />
+                        </th>
+                        <th style="min-width: 140px;">
+                            <div class="col-title-wrapper">
+                                <span>4. Số lượng khách hàng</span>
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <input type="text" class="table-search-input" placeholder="Lọc SLKH..." data-col="3" />
+                        </th>
+                        <th style="min-width: 85px; text-align: center;">5. KH Cắt</th>
+                        <th style="min-width: 85px; text-align: center;">6. TT Cắt</th>
+                        <th style="min-width: 100px; text-align: center;">7. KH Lập Trình</th>
+                        <th style="min-width: 100px; text-align: center;">8. TT Lập Trình</th>
+                        <th style="min-width: 85px; text-align: center;">9. KH Máy</th>
+                        <th style="min-width: 85px; text-align: center;">10. TT Máy</th>
+                        <th style="min-width: 110px; text-align: center;">11. KH Thoát chuyền</th>
+                        <th style="min-width: 110px; text-align: center;">12. TT Thoát chuyền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Khung thô: Bỏ dữ liệu ảo -->
+                    <tr class="empty-placeholder-row">
+                        <td colspan="12">
+                            <i class="fa-solid fa-inbox"></i>Khung dữ liệu đơn hàng (Chưa có dữ liệu - Sẵn sàng nhận từ hệ thống)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="table-orders-pagination"></div>
+    </section>
+
+    <!-- SECTION 2: MIDDLE ROW (2 Cards: Tình hình NPL & Biểu đồ Tỷ Lệ NPL) -->
+    <section class="grid-middle">
+        <!-- Left Card: Tình hình nguyên phụ liệu (Khung thô) -->
+        <div class="octo-card">
+            <div class="card-header-title">
+                <i class="fa-solid fa-boxes-packing"></i>
+                <span>Tình Hình Nguyên Phụ Liệu</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="octo-table" id="table-materials">
+                    <thead>
+                        <tr class="col-header-row">
+                            <th style="min-width: 130px;">Loại NPL</th>
+                            <th style="min-width: 90px; text-align: right;">Nhu Cầu</th>
+                            <th style="min-width: 90px; text-align: right;">Đã Có</th>
+                            <th style="min-width: 120px;">% Đủ</th>
+                            <th style="min-width: 100px; text-align: center;">Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Khung thô: Bỏ các dòng cứng -->
+                        <tr class="empty-placeholder-row">
+                            <td colspan="5">
+                                <i class="fa-solid fa-boxes-stacked"></i>Khung dữ liệu nguyên phụ liệu (Chưa có dữ liệu)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="table-materials-pagination"></div>
+        </div>
+
+        <!-- Right Card: Biểu đồ hình tròn (Hiển thị đầy đủ, không bị mất) -->
+        <div class="octo-card">
+            <div class="card-header-title">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Tỷ Lệ Đáp Ứng NPL</span>
+            </div>
+
+            <!-- ECharts Donut Chart Container: Kích thước rõ ràng, gọn gàng -->
+            <div id="chart-pie-npl" style="width: 100%; height: 185px; min-height: 185px;"></div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: THEO DÕI MUA HÀNG (NGUYÊN PHỤ LIỆU) -->
+    <section class="octo-card">
+        <div class="card-header-title">
+            <i class="fa-solid fa-truck-ramp-box"></i>
+            <span>Theo Dõi Mua Hàng (Nguyên Phụ Liệu)</span>
+        </div>
+
+        <!-- 4 KPI Stat Cards: Để số thô 0 -->
+        <div class="kpi-stats-grid">
+            <div class="kpi-stat-card kpi-card-blue">
+                <span class="kpi-value text-[#2563EB]" id="stat-da-dat">0</span>
+                <span class="kpi-label">Đã Đặt</span>
+            </div>
+
+            <div class="kpi-stat-card kpi-card-green">
+                <span class="kpi-value text-[#059669]" id="stat-da-ve">0</span>
+                <span class="kpi-label">Đã Về</span>
+            </div>
+
+            <div class="kpi-stat-card kpi-card-orange">
+                <span class="kpi-value text-[#EA580C]" id="stat-sap-ve">0</span>
+                <span class="kpi-label">Sắp Về</span>
+            </div>
+
+            <div class="kpi-stat-card kpi-card-red">
+                <span class="kpi-value text-[#DC2626]" id="stat-tre">0</span>
+                <span class="kpi-label">Trễ</span>
+            </div>
+        </div>
+
+        <!-- Biểu đồ nhiệt / thanh ngang: Chiều cao vừa khít, không khoảng trắng thừa -->
+        <div class="chart-heatmap-wrap">
+            <div id="chart-heatmap-purchase" style="width: 100%; height: 100%; min-height: 175px;"></div>
+        </div>
+    </section>
+</div>
+
+@section scripts {
+    <!-- Apache ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script>
+        if (typeof echarts === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"><\/script>');
+        }
+    </script>
+
+    <!-- DevExtreme JS -->
+    <script src="~/Scripts/dx.all.js" charset="utf-8"></script>
+    <script>
+        if (typeof DevExpress === 'undefined') {
+            document.write('<script src="https://cdn3.devexpress.com/jslib/23.2.5/js/dx.all.js" charset="utf-8"><\/script>');
+        }
+    </script>
+
+    <!-- Scripts Module của Tình Hình Sản Xuất -->
+    <script src="~/Scripts/DashboardTongQuanTienDo/tinhhinhsanxuat/production-progress-widget.js" charset="utf-8"></script>
+    <script src="~/Scripts/DashboardTongQuanTienDo/tinhhinhsanxuat/tong-quan-tinh-hinh.js" charset="utf-8"></script>
+
+    <!-- 2 File Script Tách Riêng Theo Từng Tab -->
+    <script src="~/Scripts/DashboardTongQuanTienDo/dongbo-tab-tinhhinh.js" charset="utf-8"></script>
+    <script src="~/Scripts/DashboardTongQuanTienDo/dongbo-tab-tiendo.js" charset="utf-8"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện chuyển Tab từ Header đồng bộ (_Layout)
+            $(document).on('dashboard:tabChanged', function (e, data) {
+                if (data.tab === 'tien-do') {
+                    if (window.TabTienDoModule) window.TabTienDoModule.activate();
+                    window.showOctoToast('Đã chuyển sang: Chuẩn bị & Tiến độ sản xuất');
+                } else {
+                    if (window.TabTinhHinhModule) window.TabTinhHinhModule.activate();
+                    window.showOctoToast('Đã chuyển sang: Tình hình sản xuất');
+                }
+            });
+
+            // Lắng nghe sự kiện thay đổi ngày từ DateRangePicker trên Header (_Layout)
+            $(document).on('dashboard:dateChanged', function (e, data) {
+                if (window.TabTinhHinhModule) window.TabTinhHinhModule.reload(data.startDate, data.endDate);
+                if (window.TabTienDoModule) window.TabTienDoModule.reload();
+            });
+
+            // Lắng nghe sự kiện bấm nút Refresh trên Header (_Layout)
+            $(document).on('dashboard:refresh', function () {
+                if (window.TabTinhHinhModule) window.TabTinhHinhModule.reload();
+                if (window.TabTienDoModule) window.TabTienDoModule.reload();
+            });
+
+            // Kích hoạt tab mặc định ban đầu
+            if (window.TabTinhHinhModule) {
+                window.TabTinhHinhModule.activate();
+            }
+        });
+    </script>
+}

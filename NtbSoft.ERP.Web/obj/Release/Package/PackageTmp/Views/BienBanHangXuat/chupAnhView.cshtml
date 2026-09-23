@@ -1,0 +1,1070 @@
+﻿
+<link href="~/Scripts/ViTriKho/bootstrap5.3.min.css" rel="stylesheet" />
+
+<link href="~/Scripts/ViTriKho/SignCss.css" rel="stylesheet" />
+
+
+<style>
+    #optionModal.show {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #optionModal .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+    }
+
+    #optionModal .modal-header {
+        padding: 10px 20px;
+        background: #4CAF50;
+        color: white;
+        border-radius: 7px 7px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #optionModal .close-modal {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s;
+    }
+
+    .camera-container {
+        text-align: center;
+    }
+
+    video {
+        width: 100%;
+        max-width: 640px;
+        border-radius: 8px;
+        background: #000;
+    }
+
+    canvas {
+        display: none;
+    }
+
+    .modal-header {
+        margin-bottom: 0
+    }
+    /* Camera Image Container */
+    .camera-image-container {
+        width: 85px;
+        height: 50px;
+        border: 2px dashed #ccc;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: white;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+        .camera-image-container:hover {
+            border-color: #4CAF50;
+            background: #f0f8f0;
+        }
+
+        .camera-image-container.has-image {
+            border-style: solid;
+            border-color: #4CAF50;
+        }
+
+        .camera-image-container i {
+            color: #999;
+            font-size: 20px;
+        }
+
+        .camera-image-container:hover i {
+            color: #4CAF50;
+        }
+
+        .camera-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+    .camera-image-container {
+        width: 22px;
+        height: 18px;
+        border-radius: 0px
+    }
+
+    .image-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .image-item {
+        position: relative;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #fff;
+        margin-bottom: 2px
+    }
+
+        .image-item img {
+            width: 100%;
+            height: 70px;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+        }
+
+    .image-item-actions {
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+    }
+
+        .image-item-actions button {
+            flex: 1;
+            font-size: 11px;
+            padding: 3px 4px;
+        }
+
+    .camera-image-container i {
+        color: #999;
+        font-size: 11px;
+        position: absolute;
+        top: 1px;
+    }
+
+    .image-note {
+        width: 100%;
+        min-height: 45px;
+        border: none;
+        border-top: 1px solid #ddd;
+        padding: 1px;
+        font-size: 9px;
+        resize: vertical;
+        outline: none;
+        text-align: left;
+    }
+
+        .image-note:focus {
+            border-top-color: #4CAF50;
+            background: #f8fff8;
+        }
+
+    .preview-nav {
+        display: none !important;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 8px;
+    }
+
+    .preview-counter {
+        min-width: 60px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .image-preview {
+        max-width: 100%;
+        max-height: 330px;
+        border-radius: 8px;
+        object-fit: contain;
+    }
+
+    .preview-note-wrap {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .preview-note-label {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .preview-image-note {
+        font-size: 13px;
+        resize: vertical;
+        text-align: left;
+    }
+
+    button {
+        padding: 6px !important
+    }
+
+    #cameraModal .modal-content {
+        max-height: unset !important
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px !important;
+    }
+
+    #previewModal .modal-dialog {
+        width: fit-content;
+        max-width: min(80vw, 900px);
+        margin: 40px auto;
+    }
+
+    #previewModal .modal-content {
+        width: fit-content;
+        max-width: min(80vw, 900px);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        border: none;
+    }
+
+    #previewModal .modal-header {
+        padding: 12px 16px;
+        background: #1e1e2e;
+        color: #fff;
+        border-bottom: none;
+    }
+
+    #previewModal .modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 14px;
+        background: #1e1e2e;
+    }
+
+    #previewModal .image-preview {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 75vh;
+        object-fit: contain;
+        border-radius: 8px;
+        display: block;
+        transition: transform 0.2s ease;
+        transform-origin: center center;
+    }
+
+    #previewModal .preview-nav {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    #previewModal .preview-counter {
+        min-width: 60px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 14px;
+        color: #ccc;
+    }
+
+    #previewModal .preview-note-wrap {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    #previewModal .preview-note-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #aaa;
+        white-space: nowrap;
+    }
+
+    #previewModal .preview-image-note {
+        flex: 1;
+        min-height: 32px;
+        font-size: 13px;
+        resize: vertical;
+        border-radius: 6px;
+        border: 1px solid #444;
+        background: #2a2a3e;
+        color: #fff;
+        padding: 4px 8px;
+        outline: none;
+    }
+
+        #previewModal .preview-image-note:focus {
+            border-color: #4CAF50;
+        }
+
+    .item_addImage .image_other .input_image {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 16px;
+    }
+
+    #imgViewport {
+        width: min(600px, 100%);
+        min-height: clamp(200px, 40vh, 400px);
+        max-height: 65vh;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #111;
+        border-radius: 8px;
+        cursor: grab;
+    }
+
+    /* Tablet */
+    @@media (max-width: 768px) {
+        #imgViewport {
+            width: 100%;
+            min-height: 35vh;
+            max-height: 55vh;
+            border-radius: 6px;
+        }
+    }
+
+    /* Mobile */
+    @@media (max-width: 480px) {
+        #imgViewport {
+            width: 100%;
+            min-height: 30vh;
+            max-height: 50vh;
+            border-radius: 4px;
+        }
+    }
+
+    /* Mobile nhỏ */
+    @@media (max-width: 360px) {
+        #imgViewport {
+            min-height: 25vh;
+            max-height: 45vh;
+        }
+    }
+
+    /* Landscape mobile */
+    @@media (max-width: 768px) and (orientation: landscape) {
+        #imgViewport {
+            min-height: 50vh;
+            max-height: 70vh;
+        }
+    }
+
+    #imgViewport img {
+        will-change: transform;
+        transform-origin: center center;
+        transition: none; /* bỏ transition khi đang drag */
+    }
+
+    .pen-size-btn.active {
+        margin-bottom: 0px !important
+    }
+    /*-------------*/
+</style>
+
+<!-- Camera Modal -->
+<div id="optionModal" class="modal fade" tabindex="-1" style="background:rgb(0.5,0.5,0.5,0.5)">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#4CAF50; color:#fff;">
+                <h6 class="modal-title"><i class="fas fa-images"></i> Chọn Nguồn Ảnh</h6>
+                <button onclick=" closeOptionModal();" type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-column gap-2">
+                    <button class="btn btn-primary w-100" onclick="openCamera()">
+                        <i class="fas fa-camera"></i> Chụp Ảnh Từ Camera
+                    </button>
+                    <button class="btn w-100" style="background:#17a2b8; color:#fff;" onclick="selectFromGallery()">
+                        <i class="fas fa-folder-open"></i> Chọn Từ Thư Viện
+                    </button>
+                    <button class="btn btn-secondary w-100" onclick="openViewImageModal()">
+                        <i class="fas fa-eye"></i> Xem Ảnh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Option Modal -->
+<div id="cameraModal" class="modal fade" tabindex="-1" style="background:rgb(0.5,0.5,0.5,0.5)">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#4CAF50; color:#fff;">
+                <h6 class="modal-title"><i class="fas fa-camera"></i> Chụp Ảnh</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="closeCamera()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="camera-container">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas"></canvas>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="capturePhoto()">
+                            <i class="fas fa-camera"></i> Chụp Ảnh
+                        </button>
+                        <button class="btn btn-info text-white" onclick="switchCamera()">
+                            <i class="fas fa-sync-alt"></i> Xoay Camera
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hidden File Input -->
+<input type="file" id="fileInput" accept="image/*" style="display: none;">
+<div id="previewModal" class="modal fade" tabindex="-1" style="background:rgb(0.5,0.5,0.5,0.5)">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#1e1e2e; color:#fff; border:none;">
+                <h6 class="modal-title"><i class="fas fa-image"></i> Xem Ảnh</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="background:#1e1e2e;">
+
+                <!-- Toolbar zoom + xoay -->
+                <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; justify-content:center;">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="imgZoomIn()"
+                            title="Phóng to">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="imgZoomOut()"
+                            title="Thu nhỏ">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="imgResetTransform()"
+                            title="Reset">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="imgRotate(-90)"
+                            title="Xoay trái">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="imgRotate(90)"
+                            title="Xoay phải">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="imgRotate(180)"
+                            title="Lật ngược">
+                        <i class="fas fa-arrows-alt-v"></i>
+                    </button>
+                </div>
+
+                <!-- Vùng chứa ảnh, overflow hidden để zoom không vỡ layout -->
+                <div id="imgViewport">
+                    <img id="previewImage" class="image-preview" src="" alt="Preview"
+                         style="transform-origin: center center; transition: transform 0.2s;
+                      max-width:100%; max-height:60vh; object-fit:contain; user-select:none;">
+                </div>
+
+                <!-- Nav trái / phải -->
+                <div class="preview-nav">
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            id="btnPreviewPrev" onclick="previewPrevImage()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span id="previewImageCounter" class="preview-counter">0/0</span>
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            id="btnPreviewNext" onclick="previewNextImage()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+
+
+                <!-- Nút xóa -->
+                <div class="option-buttons d-none">
+                    <button class="btn btn-danger btn-sm" onclick="deletePhoto()">
+                        <i class="fas fa-trash"></i> Xóa Ảnh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signatureModalLabel">
+                    <i class="fas fa-pen-fancy me-2"></i>Ký Tên Điện Tử
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Công cụ -->
+                <div class="row mb-3 g-2">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small fw-bold">Màu bút:</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <input type="color" class="color-picker" id="penColor" value="#000000">
+                            <button class="btn btn-tool btn-outline-dark" onclick="setPenColor('#000000')">
+                                <i class="fas fa-circle" style="color: #000000;"></i>
+                            </button>
+                            <button class="btn btn-tool btn-outline-primary" onclick="setPenColor('#0d6efd')">
+                                <i class="fas fa-circle" style="color: #0d6efd;"></i>
+                            </button>
+                            <button class="btn btn-tool btn-outline-danger" onclick="setPenColor('#dc3545')">
+                                <i class="fas fa-circle" style="color: #dc3545;"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small fw-bold">Độ dày bút:</label>
+                        <div class="pen-size-selector">
+                            <div class="pen-size-btn active" onclick="setPenSize(2)" data-size="2">
+                                <div style="width: 6px; height: 6px; background: #000; border-radius: 50%;"></div>
+                            </div>
+                            <div class="pen-size-btn" onclick="setPenSize(4)" data-size="4">
+                                <div style="width: 10px; height: 10px; background: #000; border-radius: 50%;"></div>
+                            </div>
+                            <div class="pen-size-btn" onclick="setPenSize(6)" data-size="6">
+                                <div style="width: 14px; height: 14px; background: #000; border-radius: 50%;"></div>
+                            </div>
+                            <div class="pen-size-btn" onclick="setPenSize(8)" data-size="8">
+                                <div style="width: 18px; height: 18px; background: #000; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas vẽ chữ ký -->
+                <div class="position-relative">
+                    <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                    <small class="text-muted d-block mt-2 text-center">
+                        <i class="fas fa-info-circle"></i> Vẽ chữ ký của bạn vào khung trên
+                    </small>
+                </div>
+
+                <!-- Nút hành động -->
+                <div class="d-flex gap-2 mt-3 flex-wrap justify-content-center">
+                    <button class="btn btn-outline-secondary" onclick="clearSignature()">
+                        <i class="fas fa-eraser me-1"></i> Xóa
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="undoSignature()">
+                        <i class="fas fa-undo me-1"></i> Hoàn tác
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Hủy
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveSignature()">
+                    <i class="fas fa-check me-1"></i> Lưu Chữ Ký
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/ViTriKho/bootstrap5.3.bundle.min.js"></script>
+<script src="~/Scripts/ViTriKho/Sign.js"></script>
+<script>
+    let currentStream = null;
+    let currentContainer = null;
+    let currentFacingMode = 'environment'; // 'environment' (camera sau) hoặc 'user' (camera trước)
+    const imageDataView = {};
+    function validateImageTitle(currentContainer) {
+
+        const $block = $(currentContainer).closest('.image_other');
+        if (!$block.length) return true;
+
+        let isEmpty = false;
+
+        $block.find('.input_image').each(function () {
+            if (!$(this).val() || $(this).val().trim() === "") {
+                isEmpty = true;
+                $(this).focus();
+                $(this).css("border", "1px solid red");
+                return false; // break
+            } else {
+                $(this).css("border", "");
+            }
+        });
+
+        if (isEmpty) {
+            showToast('warning', 'Vui lòng nhập tiêu đề cho hình');
+            return false;
+        }
+
+        return true;
+    }
+    function handleImageClick(container) {
+        currentContainer = container;
+        if (!validateImageTitle(container)) return;
+
+        showOptionModal();
+    }
+    function showOptionModal() {
+        $("#optionModal").show()
+        const modal = document.getElementById('optionModal');
+        modal.classList.add('show');
+    }
+
+    function closeOptionModal() {
+        $("#optionModal").hide()
+        const modal = document.getElementById('optionModal');
+        modal.classList.remove('show');
+    }
+
+    async function openCamera() {
+        closeOptionModal();
+        moduleAnh = 1
+        const video = document.getElementById('video');
+
+        try {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            const constraints = isMobile ? {
+                video: {
+                    facingMode: { exact: currentFacingMode },
+                    width: { min: 640, ideal: 1280, max: 1920 },
+                    height: { min: 480, ideal: 960, max: 1920 }
+                }
+            } : {
+                video: {
+                    facingMode: currentFacingMode,
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+
+            currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+            video.srcObject = currentStream;
+
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('cameraModal')).show();
+
+        } catch (err) {
+            // exact facingMode có thể throw nếu không có camera sau
+            // fallback không dùng exact
+            try {
+                currentStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = currentStream;
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('cameraModal')).show();
+            } catch (err2) {
+                alert('Không thể truy cập camera: ' + err2.message);
+            }
+        }
+    }
+
+    async function switchCamera() {
+        // Đổi giữa camera trước và sau
+        currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+
+        // Mở lại camera với chế độ mới
+        await openCamera();
+    }
+
+    function selectFromGallery() {
+        closeOptionModal();
+        moduleAnh = 2
+        const fileInput = document.getElementById('fileInput');
+
+        fileInput.onchange = function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const imageUrl = event.target.result;
+                    const field = currentContainer.getAttribute('data-field');
+
+                    addImageToField(field, imageUrl);
+                };
+                reader.readAsDataURL(file);
+            }
+            // Reset input để có thể chọn lại cùng file
+            fileInput.value = '';
+        };
+
+        fileInput.click();
+    }
+
+    function capturePhoto() {
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0);
+
+        const imageUrl = canvas.toDataURL('image/jpeg', 0.8);
+        const field = currentContainer.getAttribute('data-field');
+
+
+
+        // Hiển thị ảnh trong container
+        addImageToField(field, imageUrl);
+
+        // Đóng camera
+        closeCamera();
+    }
+
+    function updateImageContainer(container, imageUrl) {
+        container.innerHTML = `<img src="${imageUrl}" alt="Captured">`;
+        container.classList.add('has-image');
+    }
+
+    function closeCamera() {
+        bootstrap.Modal.getInstance(document.getElementById('cameraModal'))?.hide();
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+        }
+    }
+
+    function showPreview(field) {
+        const images = imageDataView[field];
+        if (!images || images.length === 0) return;
+
+        currentPreviewField = field;
+        currentPreviewIndex = 0;
+        updatePreviewImage();
+
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('previewModal')).show();
+    }
+
+    function closePreview() {
+        $("#previewModal").removeClass('show')
+    }
+
+    function retakePhoto() {
+        closePreview();
+        showOptionModal();
+    }
+    var fieldDelete
+
+
+    // Đóng modal khi click bên ngoài
+    window.onclick = function (event) {
+        const cameraModal = document.getElementById('cameraModal');
+        const previewModal = document.getElementById('previewModal');
+        const optionModal = document.getElementById('optionModal');
+
+        if (event.target === cameraModal) {
+            closeCamera();
+        }
+        if (event.target === previewModal) {
+            closePreview();
+        }
+        if (event.target === optionModal) {
+            closeOptionModal();
+        }
+    }
+
+    function addImageToField(field, imageUrl) {
+        // Chỉ cho phép 1 ảnh mỗi field — ghi đè nếu đã có
+        imageDataView[field] = [{
+            url: imageUrl,
+            note: ""
+        }];
+
+        renderImageList(field);
+    }
+
+    function renderImageList(field) {
+        const images = imageDataView[field] || [];
+
+        const $container = $(`#${field}`);
+        if (!$container.length) return;
+
+        $container.empty();
+
+        for (let i = 0; i < images.length; i++) {
+            const img = images[i];
+
+            let src = "";
+
+            if (img.url) {
+                src = img.url;
+            }
+
+            const $img = $('<img>', {
+                src: src,
+                class: 'img-thumb',
+                'data-name': 10 // hoặc img.name
+            });
+            $img.on('click', function () {
+                previewListImage(field, i);
+            });
+
+            $container.append($img);
+        }
+    }
+
+    let currentPreviewField = null;
+    let currentPreviewIndex = null;
+
+    function previewListImage(field, index) {
+        currentPreviewField = field;
+        currentPreviewIndex = index;
+
+        updatePreviewImage();
+        document.getElementById('previewModal').classList.add('show');
+    }
+
+    function deletePhoto() {
+        if (currentPreviewField == null || currentPreviewIndex == null) {
+            showToast('warning', 'Vui lòng chọn hình cần xóa.');
+            return;
+        }
+
+        $("#modalDelete").modal("show");
+    }
+
+    async function ConfirmDelete() {
+        if (!currentPreviewField || !imageDataView[currentPreviewField]) {
+            $("#modalDelete").modal("hide");
+            return;
+        }
+
+        const imageItem = imageDataView[currentPreviewField][currentPreviewIndex];
+        const imageName = imageItem.imageName || "";
+
+        imageDataView[currentPreviewField].splice(currentPreviewIndex, 1);
+
+        renderImageList(currentPreviewField);
+
+        if (imageDataView[currentPreviewField].length === 0) {
+            currentPreviewField = null;
+            currentPreviewIndex = 0;
+            closePreview();
+        } else {
+            if (currentPreviewIndex >= imageDataView[currentPreviewField].length) {
+                currentPreviewIndex = imageDataView[currentPreviewField].length - 1;
+            }
+
+            updatePreviewImage();
+        }
+
+        if (imageName && !isBase64(imageName)) {
+            await DeleteImageList(imageName);
+        }
+
+
+        $("#modalDelete").modal("hide");
+    }
+
+    function updateImageNote(field, index, value) {
+        if (!imageDataView[field] || !imageDataView[field][index]) return;
+
+        imageDataView[field][index].note = value;
+    }
+    function previewPrevImage() {
+        currentPreviewIndex--;
+        updatePreviewImage();
+    }
+
+    function previewNextImage() {
+        currentPreviewIndex++;
+        updatePreviewImage();
+    }
+    function updatePreviewImage() {
+        if (!currentPreviewField || !imageDataView[currentPreviewField]) return;
+
+        const images = imageDataView[currentPreviewField];
+        if (!images.length) {
+            closePreview();
+            return;
+        }
+
+        if (currentPreviewIndex < 0) {
+            currentPreviewIndex = images.length - 1;
+        }
+
+        if (currentPreviewIndex >= images.length) {
+            currentPreviewIndex = 0;
+        }
+
+        const currentImage = images[currentPreviewIndex];
+
+
+
+        $("#previewImage").attr("src", currentImage.url);
+        imgResetTransform();
+    }
+
+
+    let imgScale = 1;
+    let imgRotation = 0;
+
+    function applyImgTransform() {
+        const img = document.getElementById('previewImage');
+        if (!img) return;
+        img.style.transform =
+            `scale(${imgScale}) rotate(${imgRotation}deg)`;
+    }
+
+    function imgZoomIn() {
+        imgScale = Math.min(imgScale + 0.25, 5);
+        applyImgTransform();
+    }
+
+    function imgZoomOut() {
+        imgScale = Math.max(imgScale - 0.25, 0.25);
+        applyImgTransform();
+    }
+
+    function imgRotate(deg) {
+        imgRotation = (imgRotation + deg) % 360;
+        applyImgTransform();
+    }
+
+    function imgResetTransform() {
+        imgScale = 1;
+        imgRotation = 0;
+        applyImgTransform();
+    }
+
+
+
+    // Nút "Xem Ảnh" trong optionModal gọi hàm này
+    function openViewImageModal() {
+        closeOptionModal();
+        // Lấy field từ container đang được chọn
+        const field = currentContainer?.getAttribute('data-field');
+
+        if (!field || !imageDataView[field] || imageDataView[field].length === 0) {
+            showToast('warning', 'Chưa có ảnh nào để xem.');
+            return;
+        }
+
+        currentPreviewField = field;
+        currentPreviewIndex = 0;
+        updatePreviewImage();
+
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('previewModal')).show();
+    }
+
+    // Zoom bằng scroll chuột — dùng DOMContentLoaded để chắc element đã có
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('imgViewport')
+            ?.addEventListener('wheel', function (e) {
+                e.preventDefault();
+                if (e.deltaY < 0) imgZoomIn();
+                else imgZoomOut();
+            }, { passive: false });
+    });
+    // ============ DRAG TO PAN ============
+    let isDragging = false;
+    let dragStartX = 0, dragStartY = 0;
+    let panX = 0, panY = 0;
+    let rafId = null; // requestAnimationFrame id
+
+    function applyImgTransform() {
+        const img = document.getElementById('previewImage');
+        if (!img) return;
+        img.style.transform = `translate(${panX}px, ${panY}px) scale(${imgScale}) rotate(${imgRotation}deg)`;
+    }
+
+    // Dùng RAF để render mượt
+    function applyImgTransformRAF() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(applyImgTransform);
+    }
+
+    function imgResetTransform() {
+        imgScale = 1;
+        imgRotation = 0;
+        panX = 0;
+        panY = 0;
+        applyImgTransform();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const viewport = document.getElementById('imgViewport');
+        if (!viewport) return;
+
+        // ---- Scroll để zoom ----
+        viewport.addEventListener('wheel', function (e) {
+            e.preventDefault();
+            if (e.deltaY < 0) imgZoomIn();
+            else imgZoomOut();
+        }, { passive: false });
+
+        // ---- Mouse drag ----
+        viewport.addEventListener('mousedown', function (e) {
+            if (e.button !== 0) return; // chỉ chuột trái
+            isDragging = true;
+            dragStartX = e.clientX - panX;
+            dragStartY = e.clientY - panY;
+            viewport.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', function (e) {
+            if (!isDragging) return;
+            panX = e.clientX - dragStartX;
+            panY = e.clientY - dragStartY;
+            applyImgTransformRAF(); // dùng RAF thay vì gọi thẳng
+        });
+
+        document.addEventListener('mouseup', function () {
+            if (!isDragging) return;
+            isDragging = false;
+            viewport.style.cursor = 'grab';
+        });
+
+        // ---- Touch drag (mobile) ----
+        let lastTouchDist = null;
+        let lastTouchX = 0, lastTouchY = 0;
+
+        viewport.addEventListener('touchstart', function (e) {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+                dragStartX = e.touches[0].clientX - panX;
+                dragStartY = e.touches[0].clientY - panY;
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                lastTouchDist = getTouchDist(e.touches);
+            }
+            e.preventDefault();
+        }, { passive: false });
+
+        viewport.addEventListener('touchmove', function (e) {
+            if (e.touches.length === 1 && isDragging) {
+                panX = e.touches[0].clientX - dragStartX;
+                panY = e.touches[0].clientY - dragStartY;
+                applyImgTransformRAF();
+            } else if (e.touches.length === 2) {
+                const dist = getTouchDist(e.touches);
+                if (lastTouchDist) {
+                    const delta = dist - lastTouchDist;
+                    imgScale = Math.min(Math.max(imgScale + delta * 0.01, 0.25), 5);
+                    applyImgTransformRAF();
+                }
+                lastTouchDist = dist;
+            }
+            e.preventDefault();
+        }, { passive: false });
+
+        viewport.addEventListener('touchend', function () {
+            isDragging = false;
+            lastTouchDist = null;
+        });
+    });
+
+    function getTouchDist(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+</script>
