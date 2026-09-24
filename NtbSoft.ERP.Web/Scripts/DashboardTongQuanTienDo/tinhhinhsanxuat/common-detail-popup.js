@@ -375,26 +375,121 @@
             });
         },
 
+        showOrder: function (item) {
+            if (!item) return;
+
+            const code = item.code || item.orderCode || 'LSX';
+            const style = item.style || item.po || 'STYLE';
+            const slkh = item.slkh || item.qty || '0';
+            const chungLoai = item.des || item.customer || 'Chủng loại';
+
+            // Dữ liệu chi tiết từng công đoạn của đơn hàng
+            const details = this.generateOrderStagesDetails(item);
+
+            this.show({
+                title: `Chi tiết tiến độ đơn hàng: ${code} - ${style}`,
+                kpiCards: [
+                    { label: 'LỆNH SẢN XUẤT & STYLE', value: `${code} (${style})` },
+                    { label: 'SỐ LƯỢNG KẾ HOẠCH', value: `${slkh.toLocaleString('en-US')} pcs`, color: '#1D4ED8' },
+                    { label: 'CHỦNG LOẠI', value: chungLoai, color: '#059669' }
+                ],
+                searchPlaceholder: 'Tìm kiếm nhanh công đoạn, chuyền may, trạng thái...',
+                groupOptions: [
+                    { label: 'Gom theo Chuyền / Phân xưởng', value: 'toChuyen' },
+                    { label: 'Gom theo Trạng thái', value: 'trangThai' }
+                ],
+                columns: [
+                    { dataField: 'stt', caption: 'STT', width: 55, alignment: 'center' },
+                    { dataField: 'congDoan', caption: 'CÔNG ĐOẠN SẢN XUẤT', minWidth: 160, cssClass: 'font-weight-bold' },
+                    { dataField: 'toChuyen', caption: 'TỔ / PHÂN XƯỞNG', minWidth: 130 },
+                    { dataField: 'khNgay', caption: 'KẾ HOẠCH', minWidth: 95, alignment: 'center' },
+                    { dataField: 'ttNgay', caption: 'THỰC TẾ', minWidth: 95, alignment: 'center' },
+                    {
+                        dataField: 'slKeHoach',
+                        caption: 'SL KẾ HOẠCH',
+                        minWidth: 115,
+                        alignment: 'right',
+                        cssClass: 'font-mono'
+                    },
+                    {
+                        dataField: 'slThucTe',
+                        caption: 'SL ĐÃ LÀM',
+                        minWidth: 115,
+                        alignment: 'right',
+                        cssClass: 'font-mono font-weight-bold'
+                    },
+                    {
+                        dataField: 'tienDo',
+                        caption: 'TIẾN ĐỘ',
+                        minWidth: 130,
+                        cellTemplate: function (cellElement, cellInfo) {
+                            const rate = cellInfo.value || 0;
+                            const isDone = rate >= 100;
+                            const color = isDone ? '#10B981' : (rate >= 60 ? '#3B82F6' : '#EF4444');
+                            $('<div>')
+                                .css({ display: 'flex', alignItems: 'center', gap: '8px' })
+                                .html(`
+                                    <div style="flex: 1; height: 6px; background-color: #E2E8F0; border-radius: 9999px; overflow: hidden;">
+                                        <div style="width: ${Math.min(rate, 100)}%; height: 100%; border-radius: 9999px; background-color: ${color};"></div>
+                                    </div>
+                                    <span style="font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; width: 34px; text-align: right;">${rate}%</span>
+                                `)
+                                .appendTo(cellElement);
+                        }
+                    },
+                    {
+                        dataField: 'trangThai',
+                        caption: 'TRẠNG THÁI',
+                        minWidth: 110,
+                        alignment: 'center',
+                        cellTemplate: function (cellElement, cellInfo) {
+                            const val = cellInfo.value || '';
+                            let chip = 'chip-blue';
+                            if (val.includes('Hoàn thành') || val.includes('Đúng hạn')) chip = 'chip-green';
+                            else if (val.includes('Trễ')) chip = 'chip-red';
+                            else if (val.includes('Đang')) chip = 'chip-blue';
+                            $('<span>')
+                                .addClass('octo-chip ' + chip)
+                                .text(val)
+                                .appendTo(cellElement);
+                        }
+                    }
+                ],
+                dataSource: details
+            });
+        },
+
         /**
-         * Sinh dữ liệu chi tiết công đoạn cho 1 đơn hàng (Demo hoặc API fallback)
+         * Sinh dữ liệu chi tiết công đoạn cho 1 đơn hàng (Sử dụng dữ liệu thật từ API)
          */
         generateOrderStagesDetails: function (orderItem) {
             if (!orderItem) return [];
-            const cleanQty = parseFloat(String(orderItem.slkh || '5000').replace(/[^0-9.]/g, '')) || 5000;
+            const cleanQty = parseFloat(String(orderItem.qty || orderItem.slkh || '0').replace(/[^0-9.]/g, '')) || 0;
+
+            const nplQty = Math.round(cleanQty * 0.95); 
+            const cutQty = parseInt(orderItem.cutQty || 0, 10) || 0;
+            const sewQty = parseInt(orderItem.sewQty || 0, 10) || 0;
+            // Chia đều cho May 1 và May 2
+            const may1Qty = Math.round(sewQty / 2);
+            const may2Qty = sewQty - may1Qty;
+            const kcsQty = parseInt(orderItem.kcsQty || 0, 10) || 0;
+            const packQty = parseInt(orderItem.packQty || 0, 10) || 0;
+
+            const getPct = (val) => cleanQty > 0 ? Math.min(100, Math.round((val / cleanQty) * 100)) : 0;
+            const getStatus = (pct) => pct >= 100 ? 'Hoàn thành đúng hạn' : (pct > 0 ? 'Đang sản xuất' : 'Chờ bắt đầu');
 
             const stages = [
-                { cd: '1. Chuẩn bị NPL & Phụ liệu', to: 'Kho Nguyên Liệu', kh: orderItem.khCat, tt: orderItem.ttCat, pct: 100, status: 'Hoàn thành đúng hạn' },
-                { cd: '2. Giác sơ đồ & Cắt tự động', to: 'Phân Xưởng Cắt', kh: orderItem.khCat, tt: orderItem.ttCat, pct: 100, status: 'Hoàn thành đúng hạn' },
-                { cd: '3. Lập trình máy rập & Cữ gá', to: 'Tổ Kỹ Thuật May', kh: orderItem.khLapTrinh, tt: orderItem.ttLapTrinh, pct: 100, status: 'Hoàn thành đúng hạn' },
-                { cd: '4. Ép keo & Bán thành phẩm', to: 'Tổ Ép Keo BTP', kh: orderItem.khLapTrinh, tt: orderItem.ttLapTrinh, pct: 100, status: 'Hoàn thành đúng hạn' },
-                { cd: '5. May Chuyền 01 (Lắp ráp thân)', to: 'Chuyền May 01', kh: orderItem.khMay, tt: orderItem.ttMay, pct: 75, status: 'Đang may chuyền' },
-                { cd: '6. May Chuyền 02 (Hoàn thiện áo)', to: 'Chuyền May 02', kh: orderItem.khMay, tt: orderItem.ttMay, pct: 60, status: 'Đang may chuyền' },
-                { cd: '7. KCS / Kiểm phẩm chuyền may', to: 'Bộ Phận QC/QA', kh: orderItem.khThoatChuyen, tt: orderItem.ttThoatChuyen, pct: 40, status: 'Đang kiểm phẩm' },
-                { cd: '8. Là ủi & Hoàn thiện đóng gói', to: 'Tổ Đóng Gói Hoàn Thiện', kh: orderItem.khThoatChuyen, tt: orderItem.ttThoatChuyen, pct: 0, status: 'Chờ thoát chuyền' }
+                { cd: '1. Chuẩn bị NPL & Phụ liệu', to: 'Kho Nguyên Liệu', kh: orderItem.khCat, tt: orderItem.ttCat, pct: getPct(nplQty), actual: nplQty, status: getStatus(getPct(nplQty)) },
+                { cd: '2. Giác sơ đồ & Cắt tự động', to: 'Phân Xưởng Cắt', kh: orderItem.khCat, tt: orderItem.ttCat, pct: getPct(cutQty), actual: cutQty, status: getStatus(getPct(cutQty)) },
+                { cd: '3. Lập trình máy rập & Cữ gá', to: 'Tổ Kỹ Thuật May', kh: orderItem.khLapTrinh, tt: orderItem.ttLapTrinh, pct: getPct(cutQty), actual: cutQty, status: getStatus(getPct(cutQty)) },
+                { cd: '4. Ép keo & Bán thành phẩm', to: 'Tổ Ép Keo BTP', kh: orderItem.khLapTrinh, tt: orderItem.ttLapTrinh, pct: getPct(cutQty), actual: cutQty, status: getStatus(getPct(cutQty)) },
+                { cd: '5. May Chuyền 01 (Lắp ráp thân)', to: 'Chuyền May 01', kh: orderItem.khMay, tt: orderItem.ttMay, pct: getPct(may1Qty), actual: may1Qty, status: getStatus(getPct(may1Qty)) },
+                { cd: '6. May Chuyền 02 (Hoàn thiện áo)', to: 'Chuyền May 02', kh: orderItem.khMay, tt: orderItem.ttMay, pct: getPct(may2Qty), actual: may2Qty, status: getStatus(getPct(may2Qty)) },
+                { cd: '7. KCS / Kiểm phẩm chuyền may', to: 'Bộ Phận QC/QA', kh: orderItem.khThoatChuyen, tt: orderItem.ttThoatChuyen, pct: getPct(kcsQty), actual: kcsQty, status: getStatus(getPct(kcsQty)) },
+                { cd: '8. Là ủi & Hoàn thiện đóng gói', to: 'Tổ Đóng Gói Hoàn Thiện', kh: orderItem.khThoatChuyen, tt: orderItem.ttThoatChuyen, pct: getPct(packQty), actual: packQty, status: getStatus(getPct(packQty)) }
             ];
 
             return stages.map((stg, i) => {
-                const slDone = Math.round(cleanQty * (stg.pct / 100));
                 return {
                     stt: i + 1,
                     congDoan: stg.cd,
@@ -402,7 +497,7 @@
                     khNgay: stg.kh || '--',
                     ttNgay: stg.tt || '--',
                     slKeHoach: cleanQty.toLocaleString('en-US') + ' pcs',
-                    slThucTe: slDone.toLocaleString('en-US') + ' pcs',
+                    slThucTe: stg.actual.toLocaleString('en-US') + ' pcs',
                     tienDo: stg.pct,
                     trangThai: stg.status
                 };
@@ -467,5 +562,6 @@
     window.CommonDetailPopup = CommonDetailPopup;
     window.showMaterialDetailPopup = function (item) { CommonDetailPopup.showMaterial(item); };
     window.showOrderDetailPopup = function (item) { CommonDetailPopup.showOrder(item); };
+    window.showProductionStatusPopup = function (item) { CommonDetailPopup.showProductionStatus(item); };
 
 })(window, window.jQuery || window.$);

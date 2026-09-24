@@ -26,6 +26,9 @@
     <!-- CSS Component Popup Chi Tiết Dùng Chung Toàn Hệ Thống -->
     <link rel="stylesheet" href="~/css/griddevextreme/dx-detail-grid.css" />
 
+    <!-- CSS Component Loading Vòng Tròn Dùng Chung Toàn Hệ Thống -->
+    <link href="~/css/DashboardTongQuanTienDo/dashboard-loader.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+
     <!-- Khu vực nạp CSS riêng của từng trang con (nếu có) -->
     @RenderSection("css", required: false)
 
@@ -233,8 +236,11 @@
     <!-- DevExtreme JS Toàn Hệ Thống -->
     <script src="~/Content/plugins/DevExtreme/dx.all.js" charset="utf-8"></script>
 
+    <!-- Component Loading Vòng Tròn Dùng Chung Toàn Hệ Thống -->
+    <script src="~/Scripts/DashboardTongQuanTienDo/dashboard-loader.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
+
     <!-- Component Popup Chi Tiết Dùng Chung Toàn Hệ Thống -->
-    <script src="~/Scripts/griddevextreme/common-detail-popup.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
+    <script src="~/Scripts/griddevextreme/chuanbisanxuat/common-detail-popup.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
 
     <!-- Khu vực nạp Script riêng của từng trang con -->
     @RenderSection("scripts", required: false)

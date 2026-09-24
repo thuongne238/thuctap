@@ -879,7 +879,9 @@
     <Content Include="css\DashboardKhoDesktop\dashboard-kho-desktop.css" />
     <Content Include="css\DashboardKhoDesktop\flatpickr-custom.css" />
     <Content Include="css\DashboardKhoDesktop\fontawesome-custom.css" />
+    <Content Include="css\DashboardTongQuanTienDo\dong-bo-giao-dien.css" />
     <Content Include="css\DashboardTongQuanTienDo\merchandiser-dashboard.css" />
+    <Content Include="css\DashboardTongQuanTienDo\chuanbisanxuat\production-progress-widget.css" />
     <Content Include="css\DashboardTongQuanTienDo\production-progress-widget.css" />
     <Content Include="css\DashboardTongQuanTienDo\tinhhinhsanxuat.css" />
     <Content Include="css\DashboardTongQuanTienDo\tong-quan-tinh-hinh.css" />
@@ -3330,6 +3332,8 @@
     <Content Include="Scripts\DongThung\dongthungV2.js" />
     <Content Include="Scripts\DongThung\nhapkho.js" />
     <Content Include="Scripts\DongThung\nhapkhoV2.js" />
+    <Content Include="Scripts\griddevextreme\tinhhinhsanxuat\common-detail-popup.js" />
+    <Content Include="Scripts\griddevextreme\tinhhinhsanxuat\production-progress-widget.js" />
     <Content Include="Scripts\Highcharts-4.0.1\js\adapters\standalone-framework.js" />
     <Content Include="Scripts\Highcharts-4.0.1\js\adapters\standalone-framework.src.js" />
     <Content Include="Scripts\Highcharts-4.0.1\js\highcharts-3d.js" />
@@ -3697,7 +3701,6 @@
     <Content Include="Views\Shared\_LayoutBCTH.cshtml" />
     <Content Include="Views\DashboardTongQuanTienDoPage\testgiaodien.cshtml" />
     <Content Include="Views\DashboardTongQuanTienDoPage\TongQuanTinhHinh.cshtml" />
-    <Content Include="Views\DashboardTongQuanTienDoPage\dongbogiaodien.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NtbSoft.ERP.Entity\NtbSoft.ERP.Entity.csproj">

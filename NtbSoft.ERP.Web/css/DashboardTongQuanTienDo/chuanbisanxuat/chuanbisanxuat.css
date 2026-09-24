@@ -1,0 +1,158 @@
+.realtime-date {
+    font-weight: 800 !important;
+    color: #000000 !important;
+    font-size: 12.5px !important;
+}
+
+.col-pcs-unit {
+    font-weight: 800 !important;
+    color: #000000 !important;
+    font-size: 12px !important;
+}
+
+/* PhĂ¢n cĂ¡ch rĂµ rĂ ng pháº§n ÄÆ N HĂ€NG cá»‘ Ä‘á»‹nh bĂªn trĂ¡i */
+#grid-orders-container .dx-datagrid-content-fixed {
+    border-right: 2px solid #64748B !important;
+}
+
+/* TiĂªu Ä‘á» cĂ¡c cá»™t hiá»ƒn thá»‹ Ä‘áº§y Ä‘á»§, khĂ´ng bá»‹ cáº¯t dáº¥u ... vĂ  CÄ‚N GIá»®A, viá»n rĂµ rĂ ng */
+#grid-orders-container .dx-datagrid-headers .dx-header-row>td {
+    white-space: nowrap !important;
+    text-align: center !important;
+    border-right: 1px solid #94A3B8 !important;
+    border-bottom: 1px solid #94A3B8 !important;
+}
+
+#grid-orders-container .dx-datagrid-headers .dx-header-row>td .dx-datagrid-text-content {
+    white-space: nowrap !important;
+    text-overflow: clip !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Biáº¿n mĂ u cho cĂ¡c cá»™t */
+:root {
+    --col-dh-bg: #CBD5E1;
+    --col-dh-text: #0F172A;
+    --col-tg-bg: #CBD5E1;
+    --col-tg-text: #0F172A;
+}
+
+/* NhĂ³m ÄÆ N HĂ€NG (Cá»‘ Ä‘á»‹nh bĂªn trĂ¡i) */
+#grid-orders-container .dx-datagrid-headers .dx-datagrid-content-fixed td,
+#grid-orders-container .dx-grp-don-hang,
+#grid-orders-container td.dx-grp-don-hang {
+    background-color: var(--col-dh-bg, #CBD5E1) !important;
+    color: var(--col-dh-text, #0F172A) !important;
+    border-right: 1px solid #94A3B8 !important;
+    border-bottom: 1px solid #94A3B8 !important;
+}
+
+/* NhĂ³m THá»œI GIAN (BĂªn pháº£i) */
+#grid-orders-container .dx-datagrid-headers .dx-datagrid-scrollable-simulated td,
+#grid-orders-container .dx-datagrid-headers .dx-header-row>td:not(.dx-col-fixed),
+#grid-orders-container .dx-grp-thoi-gian,
+#grid-orders-container td.dx-grp-thoi-gian {
+    background-color: var(--col-tg-bg, #CBD5E1) !important;
+    color: var(--col-tg-text, #0F172A) !important;
+    border-right: 1px solid #94A3B8 !important;
+    border-bottom: 1px solid #94A3B8 !important;
+}
+
+/* ÄÆ°á»ng viá»n cho dĂ²ng dá»¯ liá»‡u cá»§a báº£ng */
+#grid-orders-container .dx-datagrid-rowsview .dx-data-row>td {
+    border-right: 1px solid #CBD5E1 !important;
+    border-bottom: 1px solid #CBD5E1 !important;
+}
+
+
+
+/* PhĂ¢n trang: CĂ¡c nĂºt tĂ¡ch rá»i hoĂ n toĂ n, khĂ´ng dĂ­nh liá»n */
+#grid-orders-container .dx-datagrid-pager .dx-pages,
+#grid-orders-container .dx-datagrid-pager .dx-page-indexes {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+#grid-orders-container .dx-datagrid-pager .dx-page,
+#grid-orders-container .dx-datagrid-pager .dx-page-indexes .dx-page {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 !important;
+    margin: 0 3px !important;
+    border-radius: 8px !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+#grid-orders-container .dx-datagrid-pager .dx-navigate-button {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 !important;
+    margin: 0 3px !important;
+    border-radius: 8px !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Khoáº£ng cĂ¡ch giá»¯a cĂ¡c session báº±ng khoáº£ng cĂ¡ch giá»¯a 2 tháº» NPL (14px) */
+.tab-tiendo-wrapper,
+.dashboard-tab-pane.active-tab.tab-tiendo-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+.tab-tiendo-wrapper .grid-middle {
+    display: grid !important;
+    grid-template-columns: 1.4fr 1fr !important;
+    gap: 14px !important;
+}
+
+/* Chiá»u cao tá»«ng item (dĂ²ng) cá»§a báº£ng Ä‘Æ¡n hĂ ng thoĂ¡ng Ä‘áº¹p, khĂ´ng bá»‹ thanh cuá»™n che */
+#grid-orders-container .dx-data-row {
+    height: 40px !important;
+}
+
+#grid-orders-container .dx-data-row>td {
+    padding: 7px 8px !important;
+    vertical-align: middle !important;
+}
+
+/* TÆ°Æ¡ng tĂ¡c báº¥m má»Ÿ chi tiáº¿t cho Biá»ƒu Ä‘á»“ vĂ  Tháº» KPI */
+#chart-pie-npl,
+#chart-heatmap-purchase {
+    cursor: pointer;
+}
+
+.kpi-stat-card {
+    cursor: pointer !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease !important;
+    user-select: none;
+}
+
+.kpi-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.1) !important;
+    border-color: #94A3B8 !important;
+}
+
+.kpi-stat-card:active {
+    transform: translateY(0);
+}
+
+/* Fix chiều cao cố định cho các bảng để không bị co lại khi đang load hoặc không có dữ liệu */
+#grid-orders-container {
+    min-height: 310px !important;
+}
+
+#grid-materials-container {
+    min-height: 265px !important;
+}

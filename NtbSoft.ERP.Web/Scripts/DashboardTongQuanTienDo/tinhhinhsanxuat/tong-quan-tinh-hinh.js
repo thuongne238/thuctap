@@ -79,9 +79,7 @@
         if (eDate) this.endDate = eDate;
 
         this.loadKpiStats();
-        if (this.widgetInstance) {
-            this.widgetInstance.loadData();
-        }
+        this.loadWidgetData();
         this.loadStagesData();
     };
 
@@ -91,6 +89,19 @@
     TongQuanTinhHinhApp.prototype.loadKpiStats = function () {
         const self = this;
         const url = '/DashboardTongQuanTienDo/GetDashboardStats';
+        const cacheKey = 'tqth_kpi_' + this.startDate + '_' + this.endDate;
+
+        // Ưu tiên load từ cache để UI hiển thị nhanh
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+            try {
+                const res = JSON.parse(cachedData);
+                if (res && res.success) {
+                    this._renderKpiStatsFromRes(res);
+                    return; // Trả về luôn nếu đã có cache
+                }
+            } catch (e) { }
+        }
 
         $.ajax({
             url: url,
@@ -99,27 +110,8 @@
             dataType: 'json'
         }).done(function (res) {
             if (res && res.success) {
-                const totalOrders = res.totalOrders || 290;
-                const prodOrders = res.prodOrders || 248;
-                const deliveredOrders = Math.max(0, totalOrders - prodOrders);
-                const delayedOrders = res.delayedOrders || 5;
-
-                // Tính pcs tương ứng nếu backend chưa trả về riêng
-                const totalPcs = res.totalPcs || (totalOrders * 5000);
-                const producingPcs = res.prodPcs || (prodOrders * 5000);
-                const deliveredPcs = res.deliveredPcs || (deliveredOrders * 5000);
-                const delayedPcs = res.delayedPcs || (delayedOrders * 5000);
-
-                self.renderKpiStats({
-                    totalOrders: totalOrders,
-                    producingOrders: prodOrders,
-                    deliveredOrders: deliveredOrders,
-                    delayedOrders: delayedOrders,
-                    totalPcs: totalPcs,
-                    producingPcs: producingPcs,
-                    deliveredPcs: deliveredPcs,
-                    delayedPcs: delayedPcs
-                });
+                sessionStorage.setItem(cacheKey, JSON.stringify(res));
+                self._renderKpiStatsFromRes(res);
             } else {
                 self.renderDefaultKpiStats();
             }
@@ -128,16 +120,40 @@
         });
     };
 
+    TongQuanTinhHinhApp.prototype._renderKpiStatsFromRes = function (res) {
+        const totalOrders = res.totalOrders || 290;
+        const prodOrders = res.prodOrders || 248;
+        const deliveredOrders = Math.max(0, totalOrders - prodOrders);
+        const delayedOrders = res.delayedOrders || 5;
+
+        const totalPcs = res.totalPcs || (totalOrders * 5000);
+        const producingPcs = res.prodPcs || (prodOrders * 5000);
+        const deliveredPcs = res.deliveredPcs || (deliveredOrders * 5000);
+        const delayedPcs = res.delayedPcs || (delayedOrders * 5000);
+
+        this.renderKpiStats({
+            totalOrders: totalOrders,
+            producingOrders: prodOrders,
+            deliveredOrders: deliveredOrders,
+            delayedOrders: delayedOrders,
+            totalPcs: totalPcs,
+            producingPcs: producingPcs,
+            deliveredPcs: deliveredPcs,
+            delayedPcs: delayedPcs
+        });
+    };
+
+
     TongQuanTinhHinhApp.prototype.renderDefaultKpiStats = function () {
         this.renderKpiStats({
-            totalOrders: 290,
-            producingOrders: 248,
-            deliveredOrders: 42,
-            delayedOrders: 5,
-            totalPcs: 1450000,
-            producingPcs: 1240000,
-            deliveredPcs: 210000,
-            delayedPcs: 25000
+            totalOrders: 0,
+            producingOrders: 0,
+            deliveredOrders: 0,
+            delayedOrders: 0,
+            totalPcs: 0,
+            producingPcs: 0,
+            deliveredPcs: 0,
+            delayedPcs: 0
         });
     };
 
@@ -171,11 +187,64 @@
                 title: 'TÌNH HÌNH SẢN XUẤT',
                 timePeriod: 'week',
                 theme: $('body').hasClass('tqth-theme-dark') ? 'dark' : 'light',
+                dataSource: [], // Initialize with empty array so no fake data shows
                 onPOSelect: function (po) {
                     console.log('[TongQuanTinhHinh] Đã chọn PO:', po.po, 'Tiến độ:', po.progress + '%');
+                    if (window.CommonDetailPopup) {
+                        window.CommonDetailPopup.showOrder(po);
+                    } else if (typeof window.showOrderDetailPopup === 'function') {
+                        window.showOrderDetailPopup(po);
+                    }
                 }
             });
+            this.loadWidgetData();
         }
+    };
+
+    TongQuanTinhHinhApp.prototype.loadWidgetData = function () {
+        const self = this;
+        const cacheKey = 'tqth_widget_' + this.startDate + '_' + this.endDate;
+
+        // Ưu tiên load từ cache
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+            try {
+                const res = JSON.parse(cachedData);
+                if (res && res.success && res.data && res.data.length > 0) {
+                    self.widgetInstance.options.dataSource = res.data;
+                } else {
+                    self.widgetInstance.options.dataSource = [];
+                }
+                self.widgetInstance.loadData();
+                return;
+            } catch (e) { }
+        }
+
+        if (window.DashboardLoader) {
+            window.DashboardLoader.show('#tqth-production-widget-container');
+        }
+
+        $.ajax({
+            url: '/DashboardTongQuanTienDo/GetGanttData',
+            type: 'GET',
+            data: { startDate: this.startDate, endDate: this.endDate },
+            dataType: 'json'
+        }).done(function (res) {
+            if (res && res.success && res.data && res.data.length > 0) {
+                sessionStorage.setItem(cacheKey, JSON.stringify(res));
+                self.widgetInstance.options.dataSource = res.data;
+            } else {
+                self.widgetInstance.options.dataSource = [];
+            }
+            self.widgetInstance.loadData();
+        }).fail(function () {
+            self.widgetInstance.options.dataSource = [];
+            self.widgetInstance.loadData();
+        }).always(function () {
+            if (window.DashboardLoader) {
+                window.DashboardLoader.hide('#tqth-production-widget-container');
+            }
+        });
     };
 
     // =========================================================================
@@ -185,6 +254,26 @@
     TongQuanTinhHinhApp.prototype.loadStagesData = function () {
         const self = this;
         const url = '/DashboardTongQuanTienDo/GetWipData';
+        const cacheKey = 'tqth_stages_' + this.startDate + '_' + this.endDate;
+
+        // Ưu tiên load từ cache
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+            try {
+                const res = JSON.parse(cachedData);
+                if (res && res.success) {
+                    self.renderStagesPipeline(res);
+                    return;
+                }
+            } catch (e) { }
+        }
+
+        if (window.DashboardLoader) {
+            window.DashboardLoader.show('#stages-pipeline-container', {
+                text: 'Đang tải tiến độ công đoạn...',
+                size: 'sm'
+            });
+        }
 
         $.ajax({
             url: url,
@@ -193,12 +282,17 @@
             dataType: 'json'
         }).done(function (res) {
             if (res && res.success) {
+                sessionStorage.setItem(cacheKey, JSON.stringify(res));
                 self.renderStagesPipeline(res);
             } else {
                 self.renderDefaultStagesPipeline();
             }
         }).fail(function () {
             self.renderDefaultStagesPipeline();
+        }).always(function () {
+            if (window.DashboardLoader) {
+                window.DashboardLoader.hide('#stages-pipeline-container');
+            }
         });
     };
 
@@ -214,27 +308,36 @@
         };
 
         const stages = [
-            { id: 1, name: '1. NPL', pct: 95, actual: 24225, total: 25500, color: '#10b981', bgLight: '#ecfdf5', icon: stageIcons.npl, desc: 'Đáp ứng kho vải & phụ liệu' },
-            { id: 2, name: '2. Cắt', pct: 88, actual: 22440, total: 25500, color: '#10b981', bgLight: '#ecfdf5', icon: stageIcons.cat, desc: 'Cắt bán thành phẩm' },
-            { id: 3, name: '3. May', pct: 72, actual: 18360, total: 25500, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.may, desc: 'May & ra chuyền sản xuất' },
-            { id: 4, name: '4. Hoàn thiện', pct: 65, actual: 16575, total: 25500, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.hoanthien, desc: 'KCS & ủi ép hoàn thiện' },
-            { id: 5, name: '5. Nhập TP', pct: 58, actual: 14790, total: 25500, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.nhaptp, desc: 'Nhập kho thành phẩm' },
-            { id: 6, name: '6. Đóng gói', pct: 52, actual: 13260, total: 25500, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.donggoi, desc: 'Đóng thùng & dán barcode' },
-            { id: 7, name: '7. Kiểm hàng', pct: 48, actual: 12240, total: 25500, color: '#ef4444', bgLight: '#fef2f2', icon: stageIcons.kiemhang, desc: 'Kiểm AQL & xuất hàng' }
+            { id: 1, name: '1. NPL', pct: 0, actual: 0, total: 0, color: '#94a3b8', bgLight: '#f1f5f9', icon: stageIcons.npl, desc: 'Đáp ứng kho vải & phụ liệu' },
+            { id: 2, name: '2. Cắt', pct: 0, actual: 0, total: 0, color: '#94a3b8', bgLight: '#f1f5f9', icon: stageIcons.cat, desc: 'Cắt bán thành phẩm' },
+            { id: 3, name: '3. May', pct: 0, actual: 0, total: 0, color: '#94a3b8', bgLight: '#f1f5f9', icon: stageIcons.may, desc: 'May & ra chuyền sản xuất' },
+            { id: 4, name: '4. Hoàn thiện', pct: 0, actual: 0, total: 0, color: '#94a3b8', bgLight: '#f1f5f9', icon: stageIcons.hoanthien, desc: 'KCS & ủi ép hoàn thiện' },
+            { id: 5, name: '5. Nhập TP', pct: 0, actual: 0, total: 0, color: '#94a3b8', bgLight: '#f1f5f9', icon: stageIcons.nhaptp, desc: 'Nhập kho thành phẩm' },
+            { id: 6, name: '6. Đóng gói', pct: 0, actual: 0, total: 0, color: '#94a3b8', bgLight: '#f1f5f9', icon: stageIcons.donggoi, desc: 'Đóng thùng & dán barcode' },
+            { id: 7, name: '7. Kiểm hàng', pct: 0, actual: 0, total: 0, color: '#94a3b8', bgLight: '#f1f5f9', icon: stageIcons.kiemhang, desc: 'Kiểm AQL & xuất hàng' }
         ];
 
         this.drawStagesHtml(stages);
     };
 
     TongQuanTinhHinhApp.prototype.renderStagesPipeline = function (res) {
-        const totalQty = res.sumAmount || 25500;
-        const nplPct = Math.round(res.pctNpl || 95);
-        const cutQty = res.cutQty || Math.round(totalQty * 0.88);
-        const sewQty = res.sewQty || Math.round(totalQty * 0.72);
-        const endlineQty = res.endlineQty || Math.round(totalQty * 0.65);
-        const tpQty = res.finishedIn || Math.round(totalQty * 0.58);
-        const packQty = res.packQty || Math.round(totalQty * 0.52);
-        const aqlQty = res.aqlQty || Math.round(totalQty * 0.48);
+        const data = res.data || {};
+        const totalQty = data.totalAmount || 0;
+
+        // Tránh chia cho 0
+        const getPct = (val) => totalQty > 0 ? Math.min(100, Math.round((val / totalQty) * 100)) : 0;
+
+        const nplPct = typeof data.pctNpl !== 'undefined' ? Math.round(data.pctNpl) : 0;
+        const nplActual = totalQty > 0 ? Math.round(totalQty * (nplPct / 100)) : 0;
+
+        const cutPct = typeof data.pctCut !== 'undefined' ? Math.round(data.pctCut) : 0;
+        const cutQty = totalQty > 0 ? Math.round(totalQty * (cutPct / 100)) : 0;
+
+        const sewQty = data.totalRaChuyenLK || 0;
+        const endlineQty = data.totalKcsLK || 0;
+        const tpQty = data.totalFinishedIn || 0;
+        const packQty = data.totalDongThungLK || 0;
+        const aqlQty = data.totalAqlLK || 0;
 
         const stageIcons = {
             npl: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>',
@@ -247,13 +350,13 @@
         };
 
         const stages = [
-            { id: 1, name: '1. NPL', pct: nplPct, actual: Math.round(totalQty * (nplPct / 100)), total: totalQty, color: nplPct >= 80 ? '#10b981' : '#d97706', bgLight: '#ecfdf5', icon: stageIcons.npl, desc: 'Nguyên phụ liệu' },
-            { id: 2, name: '2. Cắt', pct: Math.min(100, Math.round((cutQty / totalQty) * 100)), actual: cutQty, total: totalQty, color: '#10b981', bgLight: '#ecfdf5', icon: stageIcons.cat, desc: 'Cắt BTP' },
-            { id: 3, name: '3. May', pct: Math.min(100, Math.round((sewQty / totalQty) * 100)), actual: sewQty, total: totalQty, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.may, desc: 'May / Ra chuyền' },
-            { id: 4, name: '4. Hoàn thiện', pct: Math.min(100, Math.round((endlineQty / totalQty) * 100)), actual: endlineQty, total: totalQty, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.hoanthien, desc: 'KCS hoàn thiện' },
-            { id: 5, name: '5. Nhập TP', pct: Math.min(100, Math.round((tpQty / totalQty) * 100)), actual: tpQty, total: totalQty, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.nhaptp, desc: 'Nhập kho thành phẩm' },
-            { id: 6, name: '6. Đóng gói', pct: Math.min(100, Math.round((packQty / totalQty) * 100)), actual: packQty, total: totalQty, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.donggoi, desc: 'Đóng gói thùng' },
-            { id: 7, name: '7. Kiểm hàng', pct: Math.min(100, Math.round((aqlQty / totalQty) * 100)), actual: aqlQty, total: totalQty, color: '#ef4444', bgLight: '#fef2f2', icon: stageIcons.kiemhang, desc: 'Kiểm AQL / Xuất' }
+            { id: 1, name: '1. NPL', pct: nplPct, actual: nplActual, total: totalQty, color: nplPct >= 80 ? '#10b981' : '#d97706', bgLight: '#ecfdf5', icon: stageIcons.npl, desc: 'Nguyên phụ liệu' },
+            { id: 2, name: '2. Cắt', pct: getPct(cutQty), actual: cutQty, total: totalQty, color: '#10b981', bgLight: '#ecfdf5', icon: stageIcons.cat, desc: 'Cắt BTP' },
+            { id: 3, name: '3. May', pct: getPct(sewQty), actual: sewQty, total: totalQty, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.may, desc: 'May / Ra chuyền' },
+            { id: 4, name: '4. Hoàn thiện', pct: getPct(endlineQty), actual: endlineQty, total: totalQty, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.hoanthien, desc: 'KCS hoàn thiện' },
+            { id: 5, name: '5. Nhập TP', pct: getPct(tpQty), actual: tpQty, total: totalQty, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.nhaptp, desc: 'Nhập kho thành phẩm' },
+            { id: 6, name: '6. Đóng gói', pct: getPct(packQty), actual: packQty, total: totalQty, color: '#d97706', bgLight: '#fffbeb', icon: stageIcons.donggoi, desc: 'Đóng gói thùng' },
+            { id: 7, name: '7. Kiểm hàng', pct: getPct(aqlQty), actual: aqlQty, total: totalQty, color: '#ef4444', bgLight: '#fef2f2', icon: stageIcons.kiemhang, desc: 'Kiểm AQL / Xuất' }
         ];
 
         this.drawStagesHtml(stages);

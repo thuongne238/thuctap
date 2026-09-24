@@ -1,0 +1,157 @@
+/**
+ * Dashboard Loader Component - Stylesheet
+ * Hiệu ứng vòng xoay loading hiện đại, tinh gọn chuẩn ERP
+ */
+
+/* Container giữ vị trí relative để overlay bám sát */
+.dash-loader-relative {
+    position: relative !important;
+}
+
+/* Lớp phủ mờ (Backdrop overlay) */
+.dash-loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 120px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(2.5px);
+    -webkit-backdrop-filter: blur(2.5px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: all;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.dash-loader-overlay.active {
+    opacity: 1;
+}
+
+/* Hộp chứa Spinner & Chữ */
+.dash-loader-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.65rem;
+    animation: dash-loader-pop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dash-loader-pop {
+    0% {
+        transform: scale(0.92);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Vòng xoay Spinner */
+.dash-loader-spinner {
+    position: relative;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+
+/* Size SM */
+.dash-loader-spinner.size-sm {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-right-color: #60a5fa;
+    animation: dash-spinner-spin 0.75s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+}
+
+/* Size MD (Mặc định) */
+.dash-loader-spinner.size-md {
+    width: 42px;
+    height: 42px;
+    border: 3.5px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-right-color: #3b82f6;
+    animation: dash-spinner-spin 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+}
+
+/* Size LG */
+.dash-loader-spinner.size-lg {
+    width: 56px;
+    height: 56px;
+    border: 4.5px solid #e2e8f0;
+    border-top-color: #1d4ed8;
+    border-right-color: #3b82f6;
+    animation: dash-spinner-spin 0.85s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+}
+
+@keyframes dash-spinner-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Chữ tiêu đề loading */
+.dash-loader-text {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
+.size-sm + .dash-loader-text {
+    font-size: 0.78rem;
+}
+
+.size-lg + .dash-loader-text {
+    font-size: 0.95rem;
+}
+
+/* Dòng giải thích phụ (Subtext) */
+.dash-loader-subtext {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #64748b;
+    margin-top: -0.3rem;
+}
+
+/* Dark theme nếu có */
+.tqth-theme-dark .dash-loader-overlay,
+.dark .dash-loader-overlay {
+    background: rgba(15, 23, 42, 0.85);
+}
+
+.tqth-theme-dark .dash-loader-spinner,
+.dark .dash-loader-spinner {
+    border-color: #334155;
+    border-top-color: #38bdf8;
+    border-right-color: #0ea5e9;
+}
+
+.tqth-theme-dark .dash-loader-text,
+.dark .dash-loader-text {
+    color: #f1f5f9;
+}
+
+.tqth-theme-dark .dash-loader-subtext,
+.dark .dash-loader-subtext {
+    color: #94a3b8;
+}

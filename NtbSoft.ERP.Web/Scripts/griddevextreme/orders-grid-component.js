@@ -31,7 +31,7 @@
 
             const gridOptions = Object.assign({
                 dataSource: dataSource || [],
-                height: 'auto',
+                height: 310,
                 showBorders: true,
                 showColumnLines: true,
                 showRowLines: true,
