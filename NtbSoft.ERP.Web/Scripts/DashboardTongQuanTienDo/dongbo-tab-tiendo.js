@@ -24,7 +24,7 @@
         {
             code: 'LSX-2024-0891',
             style: 'POLO-SLIM-01',
-            des: 'Nguyễn Công Thương',
+            des: 'Áo Polo Nam',
             slkh: '5200',
             khCat: '10/09',
             ttCat: '10/09',
@@ -294,8 +294,10 @@
             let du100 = 0, tren80 = 0, thieu = 0, tre = 0;
             let listDu100 = [], listTren80 = [], listThieu = [], listTre = [];
 
+            let sumRate = 0;
             data.forEach(item => {
                 const rate = typeof item.rate === 'number' ? item.rate : parseFloat(item.rate) || 0;
+                sumRate += rate;
                 if (rate >= 100) {
                     du100++;
                     listDu100.push(`${item.name} (${rate}%)`);
@@ -312,6 +314,7 @@
             });
 
             const total = data.length || 1;
+            const avgRate = Math.round(sumRate / total);
             const seriesData = [];
 
             if (du100 > 0) {
@@ -351,56 +354,98 @@
                 });
             }
 
-            // Cấu hình biểu đồ tròn với Tooltip tương tác hiển thị rõ từng loại NPL
+            // Cấu hình biểu đồ tròn to hơn, hiển thị rõ ràng thông tin bên trong và bên ngoài
             const pieOption = {
                 backgroundColor: 'transparent',
                 tooltip: {
                     trigger: 'item',
                     backgroundColor: '#FFFFFF',
-                    borderColor: '#E2E8F0',
+                    borderColor: '#CBD5E1',
                     borderWidth: 1,
+                    padding: [8, 12],
                     textStyle: { color: '#0F172A', fontFamily: 'Inter', fontSize: 12 },
                     formatter: function (params) {
                         const d = params.data;
-                        let tip = `<div style="font-weight: 700; margin-bottom: 4px; color: ${d.itemStyle.color};">${d.name}: ${d.value}/${total} loại NPL (${params.percent}%)</div>`;
+                        let tip = `<div style="font-weight: 800; font-size: 13px; margin-bottom: 4px; color: ${d.itemStyle.color};">${d.name}: ${d.value}/${total} loại NPL (${params.percent}%)</div>`;
                         if (d.items && d.items.length) {
-                            tip += '<div style="font-size: 11px; color: #475569; line-height: 1.4;">' + d.items.map(it => '&bull; ' + it).join('<br/>') + '</div>';
+                            tip += '<div style="font-size: 11.5px; color: #475569; line-height: 1.5;">' + d.items.map(it => '&bull; ' + it).join('<br/>') + '</div>';
                         }
                         return tip;
                     }
                 },
                 legend: {
                     orient: 'horizontal',
-                    bottom: '2px',
+                    bottom: '0px',
                     left: 'center',
-                    textStyle: { color: '#334155', fontSize: 11, fontFamily: 'Inter', fontWeight: '600' },
-                    itemWidth: 10,
-                    itemHeight: 10,
-                    itemGap: 12
+                    textStyle: { color: '#334155', fontSize: 12, fontFamily: 'Inter', fontWeight: '600' },
+                    itemWidth: 12,
+                    itemHeight: 12,
+                    itemGap: 14
                 },
+                graphic: [
+                    {
+                        type: 'text',
+                        left: 'center',
+                        top: '39%',
+                        style: {
+                            text: avgRate + '%',
+                            fill: '#0F172A',
+                            fontSize: 26,
+                            fontWeight: '800',
+                            fontFamily: 'Inter',
+                            textAlign: 'center'
+                        }
+                    },
+                    {
+                        type: 'text',
+                        left: 'center',
+                        top: '52%',
+                        style: {
+                            text: 'Đáp ứng TB',
+                            fill: '#64748B',
+                            fontSize: 11.5,
+                            fontWeight: '600',
+                            fontFamily: 'Inter',
+                            textAlign: 'center'
+                        }
+                    }
+                ],
                 series: [
                     {
                         name: 'Tỷ Lệ Đáp Ứng NPL',
                         type: 'pie',
-                        radius: ['45%', '72%'],
-                        center: ['50%', '42%'],
-                        avoidLabelOverlap: false,
+                        radius: ['50%', '76%'],
+                        center: ['50%', '46%'],
+                        avoidLabelOverlap: true,
                         itemStyle: {
-                            borderRadius: 4,
+                            borderRadius: 6,
                             borderColor: '#FFFFFF',
                             borderWidth: 2
                         },
-                        label: { show: false, position: 'center' },
+                        label: {
+                            show: true,
+                            position: 'outside',
+                            formatter: '{b}\n{d}% ({c} loại)',
+                            fontSize: 11.5,
+                            fontWeight: '700',
+                            color: '#1E293B',
+                            lineHeight: 15
+                        },
+                        labelLine: {
+                            show: true,
+                            smooth: 0.2,
+                            length: 10,
+                            length2: 12
+                        },
                         emphasis: {
-                            label: {
-                                show: true,
-                                fontSize: 13,
-                                fontWeight: 'bold',
-                                color: '#0F172A',
-                                fontFamily: 'Inter'
+                            scale: true,
+                            scaleSize: 6,
+                            itemStyle: {
+                                shadowBlur: 12,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.25)'
                             }
                         },
-                        labelLine: { show: false },
                         data: seriesData
                     }
                 ]

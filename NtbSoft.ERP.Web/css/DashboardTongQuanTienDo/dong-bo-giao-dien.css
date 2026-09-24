@@ -750,22 +750,22 @@ body.tqth-theme-dark .tqth-stage-progress-track {
 
 /* Banded Group Header: ĐƠN HÀNG */
 .dx-octo-grid-wrapper .dx-grp-don-hang,
-.dx-octo-grid-wrapper td.dx-grp-don-hang {
-    background-color: #F1F5F9 !important;
-    color: #0F172A !important;
+.dx-octo-grid-wrapper td.dx-grp-don-hang,
+.dx-octo-grid-wrapper .dx-datagrid-headers .dx-datagrid-content-fixed td {
+    background-color: var(--col-dh-bg, #f580e4) !important;
+    color: var(--col-dh-text, #0F172A) !important;
     font-weight: 800 !important;
     font-size: 12.5px !important;
     text-transform: uppercase !important;
     letter-spacing: 0.04em !important;
     text-align: center !important;
-    border-right: 2px solid var(--octo-border) !important;
 }
 
 /* Banded Group Header: THỜI GIAN */
 .dx-octo-grid-wrapper .dx-grp-thoi-gian,
 .dx-octo-grid-wrapper td.dx-grp-thoi-gian {
-    background-color: #ECFDF5 !important;
-    color: #065F46 !important;
+    background-color: var(--col-tg-bg, #f580e4) !important;
+    color: var(--col-tg-text, #0F172A) !important;
     font-weight: 800 !important;
     font-size: 12.5px !important;
     text-transform: uppercase !important;
@@ -775,12 +775,46 @@ body.tqth-theme-dark .tqth-stage-progress-track {
 
 /* Header Columns */
 .dx-octo-grid-wrapper .dx-datagrid-headers .dx-header-row>td {
-    background-color: #f580e4 !important;
-    color: #0F172A !important;
+    background-color: var(--col-tg-bg, #f580e4) !important;
+    color: var(--col-tg-text, #0F172A) !important;
     font-weight: 700 !important;
     font-size: 12px !important;
     padding: 6px 8px !important;
     border-bottom: 1px solid var(--octo-border) !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+}
+
+.dx-octo-grid-wrapper .dx-datagrid-headers .dx-header-row>td .dx-datagrid-text-content {
+    white-space: nowrap !important;
+    text-overflow: clip !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Đường viền ngăn cách phần cố định ĐƠN HÀNG và phần cuộn THỜI GIAN */
+.dx-octo-grid-wrapper .dx-datagrid-content-fixed {
+    border-right: 2px solid #CBD5E1 !important;
+}
+
+/* Thanh cuộn ngang DevExtreme hiển thị rõ ràng */
+.dx-octo-grid-wrapper .dx-scrollbar-horizontal {
+    height: 10px !important;
+    background-color: #F8FAFC !important;
+    border-top: 1px solid #E2E8F0 !important;
+}
+
+.dx-octo-grid-wrapper .dx-scrollbar-horizontal .dx-scrollable-scrollbar-thumb {
+    background-color: #94A3B8 !important;
+    border-radius: 5px !important;
+    height: 8px !important;
+}
+
+.dx-octo-grid-wrapper .dx-scrollbar-horizontal .dx-scrollable-scrollbar-thumb:hover {
+    background-color: #64748B !important;
 }
 
 /* Filter Row */
@@ -804,11 +838,11 @@ body.tqth-theme-dark .tqth-stage-progress-track {
 
 /* Dòng dữ liệu */
 .dx-octo-grid-wrapper .dx-data-row {
-    height: 35px !important;
+    height: 40px !important;
 }
 
 .dx-octo-grid-wrapper .dx-data-row>td {
-    padding: 5px 8px !important;
+    padding: 7px 8px !important;
     font-size: 12.5px !important;
     color: #0F172A;
     vertical-align: middle !important;
@@ -820,30 +854,13 @@ body.tqth-theme-dark .tqth-stage-progress-track {
 
 /* Pager DevExtreme đồng bộ */
 .dx-octo-grid-wrapper .dx-datagrid-pager {
-    padding: 3px 6px !important;
+    padding: 6px 12px !important;
     margin-top: 0 !important;
     border-top: 1px solid var(--octo-border) !important;
     background-color: transparent !important;
     border-bottom: none !important;
     border-left: none !important;
     border-right: none !important;
-}
-
-.dx-octo-grid-wrapper .dx-page {
-    padding: 3px 9px !important;
-    border-radius: var(--radius-sm) !important;
-    border: 1px solid var(--octo-border) !important;
-    background-color: #FFFFFF !important;
-    color: #0F172A !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    margin: 0 2px !important;
-}
-
-.dx-octo-grid-wrapper .dx-page.dx-selection {
-    background-color: #1D4ED8 !important;
-    border-color: #1D4ED8 !important;
-    color: #FFFFFF !important;
 }
 
 .dx-octo-grid-wrapper .dx-info-text {
@@ -1054,10 +1071,11 @@ body.tqth-theme-dark .tqth-stage-progress-track {
     }
 }
 
-/* Tab Tiến độ / Chuẩn bị: giãn cách các section vừa vặn, không bị dính sát */
+/* Tab Tiến độ / Chuẩn bị: giãn cách các section vừa vặn, bằng khoảng cách giữa 2 thẻ NPL (14px) */
+.dashboard-tab-pane.active-tab.tab-tiendo-wrapper,
 .tab-tiendo-wrapper {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 14px !important;
     width: 100%;
     margin-top: 8px !important;
@@ -1069,8 +1087,8 @@ body.tqth-theme-dark .tqth-stage-progress-track {
 }
 
 .tab-tiendo-wrapper .grid-middle {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    display: grid !important;
+    grid-template-columns: 1.4fr 1fr !important;
     gap: 14px !important;
 }
 
@@ -1322,24 +1340,35 @@ body.tqth-theme-dark .octo-page-number:hover:not(.active) {
 .dx-pager .dx-pages {
     display: inline-flex !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 6px !important;
     margin: 0 !important;
     padding: 0 !important;
 }
 
-/* Các ô số trang: 1, 2, 3... */
-.dx-pager .dx-pages .dx-page {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
-    padding: 0 !important;
+/* Khung chứa các nút số trang: dùng flex và gap để tách rời các nút */
+.dx-pager .dx-pages .dx-page-indexes {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
     margin: 0 !important;
-    border-radius: 6px !important;
+    padding: 0 !important;
+}
+
+/* Các ô số trang: 1, 2, 3... - Tách rời hoàn toàn, không dính liền */
+.dx-pager .dx-pages .dx-page-indexes .dx-page,
+.dx-pager .dx-pages .dx-page,
+.dx-octo-grid-wrapper .dx-page {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 !important;
+    margin: 0 3px !important;
+    border-radius: 8px !important;
     border: 1px solid #CBD5E1 !important;
     background-color: #FFFFFF !important;
     color: #334155 !important;
     font-family: var(--font-inter, 'Inter', sans-serif) !important;
-    font-size: 12.5px !important;
+    font-size: 13px !important;
     font-weight: 600 !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -1349,29 +1378,39 @@ body.tqth-theme-dark .octo-page-number:hover:not(.active) {
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
 }
 
-.dx-pager .dx-pages .dx-page:hover {
+.dx-pager .dx-pages .dx-page-indexes .dx-page:first-child,
+.dx-pager .dx-pages .dx-page-indexes .dx-page:last-child {
+    border-radius: 8px !important;
+    margin: 0 3px !important;
+}
+
+.dx-pager .dx-pages .dx-page:hover,
+.dx-octo-grid-wrapper .dx-page:hover {
     background-color: #F8FAFC !important;
     border-color: #94A3B8 !important;
     color: #1D4ED8 !important;
+    transform: translateY(-1px);
 }
 
 /* Nút trang hiện tại đang Active */
-.dx-pager .dx-pages .dx-page.dx-selection {
-    background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%) !important;
+.dx-pager .dx-pages .dx-page.dx-selection,
+.dx-octo-grid-wrapper .dx-page.dx-selection {
+    background: #1D4ED8 !important;
     border-color: #1D4ED8 !important;
     color: #FFFFFF !important;
     font-weight: 700 !important;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35) !important;
+    box-shadow: 0 2px 6px rgba(29, 78, 216, 0.35) !important;
 }
 
 /* Nút điều hướng Previous (<) và Next (>) */
-.dx-pager .dx-pages .dx-navigate-button {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
+.dx-pager .dx-pages .dx-navigate-button,
+.dx-octo-grid-wrapper .dx-navigate-button {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
     padding: 0 !important;
-    margin: 0 !important;
-    border-radius: 6px !important;
+    margin: 0 3px !important;
+    border-radius: 8px !important;
     border: 1px solid #CBD5E1 !important;
     background-color: #FFFFFF !important;
     color: #475569 !important;
@@ -1383,17 +1422,21 @@ body.tqth-theme-dark .octo-page-number:hover:not(.active) {
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
 }
 
-.dx-pager .dx-pages .dx-navigate-button:hover:not(.dx-button-disable) {
+.dx-pager .dx-pages .dx-navigate-button:hover:not(.dx-button-disable),
+.dx-octo-grid-wrapper .dx-navigate-button:hover:not(.dx-button-disable) {
     background-color: #F8FAFC !important;
     border-color: #94A3B8 !important;
     color: #1D4ED8 !important;
+    transform: translateY(-1px);
 }
 
-.dx-pager .dx-pages .dx-navigate-button.dx-button-disable {
+.dx-pager .dx-pages .dx-navigate-button.dx-button-disable,
+.dx-octo-grid-wrapper .dx-navigate-button.dx-button-disable {
     opacity: 0.35 !important;
     cursor: not-allowed !important;
     background-color: #F8FAFC !important;
     border-color: #E2E8F0 !important;
     color: #94A3B8 !important;
     box-shadow: none !important;
+    transform: none !important;
 }

@@ -2,7 +2,7 @@
  * ==========================================================================
  * NTBSOFT ERP - COMPONENT DÙNG CHUNG: POPUP CHI TIẾT ĐA NĂNG (DEVEXTREME)
  * File: common-detail-popup.js
- * Thư mục: Scripts/grid_devextreme/
+ * Thư mục: Scripts/griddevextreme/
  * 
  * Áp dụng cho TẤT CẢ các bảng trong toàn hệ thống:
  * - Khi click vào bất kỳ item nào ở bất kỳ bảng nào, gọi:
@@ -264,7 +264,7 @@
                 groupOptions: [
                     { label: 'Gom theo Mã hàng', value: 'maHang' },
                     { label: 'Gom theo Mã lệnh SX', value: 'maLenh' },
-                    { label: 'Gom theo Khách hàng', value: 'khachHang' }
+                    { label: 'Gom theo Chủng loại', value: 'chungLoai' }
                 ],
                 columns: [
                     { dataField: 'stt', caption: 'STT', width: 55, alignment: 'center' },
@@ -275,7 +275,7 @@
                     { dataField: 'mau', caption: 'MÀU', minWidth: 100 },
                     { dataField: 'widthSize', caption: 'WIDTH/SIZE', minWidth: 100 },
                     { dataField: 'donViVT', caption: 'ĐƠN VỊ VT', minWidth: 90, alignment: 'center' },
-                    { dataField: 'khachHang', caption: 'KHÁCH HÀNG', minWidth: 140 },
+                    { dataField: 'chungLoai', caption: 'CHỦNG LOẠI', minWidth: 140 },
                     {
                         dataField: 'soLuong',
                         caption: 'SỐ LƯỢNG',
@@ -297,7 +297,7 @@
             const code = item.code || 'LSX';
             const style = item.style || 'STYLE';
             const slkh = item.slkh || '0';
-            const customer = item.des || 'Khách hàng';
+            const chungLoai = item.des || 'Chủng loại';
 
             // Dữ liệu chi tiết từng công đoạn của đơn hàng
             const details = this.generateOrderStagesDetails(item);
@@ -307,7 +307,7 @@
                 kpiCards: [
                     { label: 'LỆNH SẢN XUẤT & STYLE', value: `${code} (${style})` },
                     { label: 'SỐ LƯỢNG KẾ HOẠCH', value: `${slkh} pcs`, color: '#1D4ED8' },
-                    { label: 'KHÁCH HÀNG / CHỦNG LOẠI', value: customer, color: '#059669' }
+                    { label: 'CHỦNG LOẠI', value: chungLoai, color: '#059669' }
                 ],
                 searchPlaceholder: 'Tìm kiếm nhanh công đoạn, chuyền may, trạng thái...',
                 groupOptions: [
@@ -428,7 +428,7 @@
             else if (lower.includes('kg')) unit = 'KG';
 
             const ordersList = [
-                { style: 'POLO-SLIM-01', code: 'LSX-2024-0891', des: 'Nguyễn Công Thương' },
+                { style: 'POLO-SLIM-01', code: 'LSX-2024-0891', des: 'Áo Polo Thể Thao' },
                 { style: 'JKT-WIND-04', code: 'LSX-2024-0912', des: 'Áo Khoác Gió 2 Lớp' },
                 { style: 'TSHIRT-OVR-02', code: 'LSX-2024-0935', des: 'Áo Thun Cổ Tròn' },
                 { style: 'HOODIE-FLC-09', code: 'LSX-2024-0960', des: 'Áo Nỉ Hoodie' },
@@ -456,7 +456,7 @@
                     mau: (i % 2 === 0 ? 'NAVY BLUE' : 'SOLID BLACK'),
                     widthSize: (i % 2 === 0 ? '150CM' : '142CM'),
                     donViVT: unit,
-                    khachHang: ord.des,
+                    chungLoai: ord.des,
                     soLuong: qty.toLocaleString('vi-VN', { maximumFractionDigits: 1 })
                 };
             });

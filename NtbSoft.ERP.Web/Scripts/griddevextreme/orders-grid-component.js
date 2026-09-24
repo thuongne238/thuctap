@@ -31,14 +31,24 @@
 
             const gridOptions = Object.assign({
                 dataSource: dataSource || [],
-                height: 280,
+                height: 'auto',
                 showBorders: true,
                 showColumnLines: true,
                 showRowLines: true,
                 rowAlternationEnabled: false,
                 hoverStateEnabled: true,
                 wordWrapEnabled: false,
-                scrolling: { mode: 'standard' },
+                columnAutoWidth: false,
+                allowColumnResizing: true,
+                columnResizingMode: 'widget',
+                columnFixing: {
+                    enabled: true
+                },
+                scrolling: {
+                    mode: 'standard',
+                    useNative: 'auto',
+                    showScrollbar: 'always'
+                },
                 paging: {
                     pageSize: 5
                 },
@@ -55,11 +65,18 @@
                     {
                         caption: 'ĐƠN HÀNG',
                         cssClass: 'dx-grp-don-hang',
+                        alignment: 'center',
+                        fixed: true,
+                        fixedPosition: 'left',
                         columns: [
                             {
                                 dataField: 'code',
                                 caption: '1. Mã lệnh sản xuất',
-                                minWidth: 135,
+                                alignment: 'center',
+                                width: 145,
+                                minWidth: 140,
+                                fixed: true,
+                                fixedPosition: 'left',
                                 cellTemplate: function (cellElement, cellInfo) {
                                     $('<span>')
                                         .css({ fontWeight: '700', color: '#1D4ED8', fontFamily: 'var(--font-mono)' })
@@ -70,7 +87,11 @@
                             {
                                 dataField: 'style',
                                 caption: '2. Style',
-                                minWidth: 120,
+                                alignment: 'center',
+                                width: 135,
+                                minWidth: 125,
+                                fixed: true,
+                                fixedPosition: 'left',
                                 cellTemplate: function (cellElement, cellInfo) {
                                     $('<span>')
                                         .css({ fontWeight: '600', fontFamily: 'var(--font-inter)' })
@@ -81,13 +102,20 @@
                             {
                                 dataField: 'des',
                                 caption: '3. Chủng loại (Des)',
-                                minWidth: 140,
+                                alignment: 'center',
+                                width: 185,
+                                minWidth: 170,
+                                fixed: true,
+                                fixedPosition: 'left',
                                 cssClass: 'cell-text'
                             },
                             {
                                 dataField: 'slkh',
                                 caption: '4. Số lượng KH',
+                                width: 135,
                                 minWidth: 125,
+                                fixed: true,
+                                fixedPosition: 'left',
                                 alignment: 'center',
                                 calculateSortValue: function (data) {
                                     if (!data || data.slkh == null) return 0;
@@ -118,11 +146,12 @@
                         caption: 'THỜI GIAN',
                         cssClass: 'dx-grp-thoi-gian',
                         columns: [
-                            { dataField: 'khCat', caption: '5. KH Cắt', minWidth: 80, alignment: 'center' },
+                            { dataField: 'khCat', caption: '5. KH Cắt', width: 100, minWidth: 95, alignment: 'center' },
                             {
                                 dataField: 'ttCat',
                                 caption: '6. TT Cắt',
-                                minWidth: 80,
+                                width: 100,
+                                minWidth: 95,
                                 alignment: 'center',
                                 cellTemplate: function (cellElement, cellInfo) {
                                     const row = cellInfo.data;
@@ -133,11 +162,12 @@
                                         .appendTo(cellElement);
                                 }
                             },
-                            { dataField: 'khLapTrinh', caption: '7. KH Lập Trình', minWidth: 95, alignment: 'center' },
+                            { dataField: 'khLapTrinh', caption: '7. KH Lập Trình', width: 125, minWidth: 115, alignment: 'center' },
                             {
                                 dataField: 'ttLapTrinh',
                                 caption: '8. TT Lập Trình',
-                                minWidth: 95,
+                                width: 125,
+                                minWidth: 115,
                                 alignment: 'center',
                                 cellTemplate: function (cellElement, cellInfo) {
                                     const row = cellInfo.data;
@@ -148,11 +178,12 @@
                                         .appendTo(cellElement);
                                 }
                             },
-                            { dataField: 'khMay', caption: '9. KH Máy', minWidth: 80, alignment: 'center' },
+                            { dataField: 'khMay', caption: '9. KH Máy', width: 100, minWidth: 95, alignment: 'center' },
                             {
                                 dataField: 'ttMay',
                                 caption: '10. TT Máy',
-                                minWidth: 80,
+                                width: 100,
+                                minWidth: 95,
                                 alignment: 'center',
                                 cellTemplate: function (cellElement, cellInfo) {
                                     const row = cellInfo.data;
@@ -163,11 +194,12 @@
                                         .appendTo(cellElement);
                                 }
                             },
-                            { dataField: 'khThoatChuyen', caption: '11. KH Thoát chuyền', minWidth: 105, alignment: 'center' },
+                            { dataField: 'khThoatChuyen', caption: '11. KH Thoát chuyền', width: 155, minWidth: 145, alignment: 'center' },
                             {
                                 dataField: 'ttThoatChuyen',
                                 caption: '12. TT Thoát chuyền',
-                                minWidth: 105,
+                                width: 155,
+                                minWidth: 145,
                                 alignment: 'center',
                                 cellTemplate: function (cellElement, cellInfo) {
                                     const row = cellInfo.data;

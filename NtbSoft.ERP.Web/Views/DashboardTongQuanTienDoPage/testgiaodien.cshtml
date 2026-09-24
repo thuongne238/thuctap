@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.light.css" />
 
     <!-- CSS của Component Grid -->
-    <link rel="stylesheet" href="~/css/griddevextreme/dx-detail-grid.css" />
+    <link rel="stylesheet" href="~/css/griddevextreme/dx-detail-grid.css?v=@DateTime.Now.Ticks" />
 
     <style>
         .realtime-date {
@@ -32,6 +32,262 @@
             color: #000000 !important;
             font-size: 12px !important;
         }
+
+        /* Phân cách rõ ràng phần ĐƠN HÀNG cố định bên trái */
+        #grid-orders-container .dx-datagrid-content-fixed {
+            border-right: 2px solid #CBD5E1 !important;
+        }
+
+        /* Tiêu đề các cột hiển thị đầy đủ, không bị cắt dấu ... và CĂN GIỮA */
+        #grid-orders-container .dx-datagrid-headers .dx-header-row > td {
+            white-space: nowrap !important;
+            text-align: center !important;
+        }
+        #grid-orders-container .dx-datagrid-headers .dx-header-row > td .dx-datagrid-text-content {
+            white-space: nowrap !important;
+            text-overflow: clip !important;
+            display: inline-flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            text-align: center !important;
+            width: 100% !important;
+        }
+
+        /* Biến màu động cho các cột */
+        :root {
+            --col-dh-bg: #f580e4;
+            --col-dh-text: #0F172A;
+            --col-tg-bg: #f580e4;
+            --col-tg-text: #0F172A;
+        }
+
+        /* Nhóm ĐƠN HÀNG (Cố định bên trái) */
+        #grid-orders-container .dx-datagrid-headers .dx-datagrid-content-fixed td,
+        #grid-orders-container .dx-grp-don-hang,
+        #grid-orders-container td.dx-grp-don-hang {
+            background-color: var(--col-dh-bg, #f580e4) !important;
+            color: var(--col-dh-text, #0F172A) !important;
+        }
+
+        /* Nhóm THỜI GIAN (Bên phải) */
+        #grid-orders-container .dx-datagrid-headers .dx-datagrid-scrollable-simulated td,
+        #grid-orders-container .dx-datagrid-headers .dx-header-row > td:not(.dx-col-fixed),
+        #grid-orders-container .dx-grp-thoi-gian,
+        #grid-orders-container td.dx-grp-thoi-gian {
+            background-color: var(--col-tg-bg, #f580e4) !important;
+            color: var(--col-tg-text, #0F172A) !important;
+        }
+
+        /* Nút Chỉnh màu cột */
+        .btn-color-palette {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+            background-color: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        }
+        .btn-color-palette:hover {
+            background-color: #F8FAFC;
+            color: #1D4ED8;
+            border-color: #94A3B8;
+        }
+
+        /* Popover Bảng Màu */
+        .col-color-popover {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            width: 290px;
+            background-color: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+            z-index: 9999;
+            padding: 12px;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        .popover-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #0F172A;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #F1F5F9;
+            margin-bottom: 10px;
+        }
+        .popover-close-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #94A3B8;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .popover-close-btn:hover { color: #0F172A; }
+        .color-group-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748B;
+            margin-bottom: 6px;
+        }
+        .theme-presets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .theme-chip-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 8px;
+            border-radius: 6px;
+            border: 1px solid #E2E8F0;
+            background-color: #F8FAFC;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .theme-chip-btn:hover {
+            background-color: #F1F5F9;
+            border-color: #CBD5E1;
+            color: #1D4ED8;
+        }
+        .theme-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .color-picker-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .picker-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11.5px;
+            color: #334155;
+        }
+        .picker-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .picker-box input[type="color"] {
+            -webkit-appearance: none;
+            border: 1px solid #CBD5E1;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+        .picker-box input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        .picker-box input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
+        .picker-box span { font-family: monospace; font-size: 11px; color: #64748B; }
+        .popover-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #F1F5F9;
+        }
+        .btn-popover-secondary {
+            padding: 4px 8px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #64748B;
+            background: transparent;
+            border: 1px solid #CBD5E1;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-popover-secondary:hover { background-color: #F1F5F9; color: #0F172A; }
+        .btn-popover-primary {
+            padding: 4px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #FFFFFF;
+            background-color: #1D4ED8;
+            border: 1px solid #1D4ED8;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-popover-primary:hover { background-color: #1E40AF; }
+
+        /* Phân trang: Các nút tách rời hoàn toàn, không dính liền */
+        #grid-orders-container .dx-datagrid-pager .dx-pages,
+        #grid-orders-container .dx-datagrid-pager .dx-page-indexes {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+        #grid-orders-container .dx-datagrid-pager .dx-page,
+        #grid-orders-container .dx-datagrid-pager .dx-page-indexes .dx-page {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            padding: 0 !important;
+            margin: 0 3px !important;
+            border-radius: 8px !important;
+            border: 1px solid #CBD5E1 !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+        }
+        #grid-orders-container .dx-datagrid-pager .dx-navigate-button {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            padding: 0 !important;
+            margin: 0 3px !important;
+            border-radius: 8px !important;
+            border: 1px solid #CBD5E1 !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+        }
+
+        /* Khoảng cách giữa các session bằng khoảng cách giữa 2 thẻ NPL (14px) */
+        .tab-tiendo-wrapper,
+        .dashboard-tab-pane.active-tab.tab-tiendo-wrapper {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+            width: 100% !important;
+        }
+
+        .tab-tiendo-wrapper .grid-middle {
+            display: grid !important;
+            grid-template-columns: 1.4fr 1fr !important;
+            gap: 14px !important;
+        }
+
+        /* Chiều cao từng item (dòng) của bảng đơn hàng thoáng đẹp, không bị thanh cuộn che */
+        #grid-orders-container .dx-data-row {
+            height: 40px !important;
+        }
+        #grid-orders-container .dx-data-row > td {
+            padding: 7px 8px !important;
+            vertical-align: middle !important;
+        }
     </style>
 }
 
@@ -41,9 +297,88 @@
 <div id="tab-content-tien-do" class="dashboard-tab-pane active-tab tab-tiendo-wrapper">
     <!-- SECTION 1: BẢNG ĐƠN HÀNG & THỜI GIAN  -->
     <section class="octo-card">
-        <div class="card-header-title">
-            <i class="fa-solid fa-list-check"></i>
-            <span>Bảng Đơn Hàng & Kế Hoạch Thời Gian</span>
+        <div class="card-header-title" style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Bảng Đơn Hàng & Kế Hoạch Thời Gian</span>
+            </div>
+
+            <!-- Nút tùy chỉnh màu cột -->
+            <div class="color-picker-dropdown-wrap" style="position: relative;">
+                <button type="button" id="btn-col-color-trigger" class="btn-color-palette" title="Chỉnh màu các cột">
+                    <i class="fa-solid fa-palette text-amber-500"></i>
+                    <span>Chỉnh màu cột</span>
+                </button>
+
+                <!-- Panel popup chọn màu -->
+                <div id="col-color-panel" class="col-color-popover" style="display: none;">
+                    <div class="popover-title">
+                        <span><i class="fa-solid fa-palette text-blue-600"></i> Bảng Màu Cột</span>
+                        <button type="button" id="btn-close-color-panel" class="popover-close-btn">&times;</button>
+                    </div>
+
+                    <div class="popover-body">
+                        <!-- Mẫu màu có sẵn -->
+                        <div class="color-group-label">Màu mẫu có sẵn:</div>
+                        <div class="theme-presets">
+                            <button type="button" class="theme-chip-btn" data-theme="pink-green" title="Hồng Pastel & Xanh Mint">
+                                <span class="theme-dot" style="background: linear-gradient(135deg, #f580e4 50%, #10B981 50%);"></span>
+                                <span>Hồng & Xanh</span>
+                            </button>
+                            <button type="button" class="theme-chip-btn" data-theme="blue-emerald" title="Xanh Dương & Ngọc Bích">
+                                <span class="theme-dot" style="background: linear-gradient(135deg, #2563EB 50%, #059669 50%);"></span>
+                                <span>Lam & Ngọc</span>
+                            </button>
+                            <button type="button" class="theme-chip-btn" data-theme="indigo-amber" title="Chàm & Cam Hổ Phách">
+                                <span class="theme-dot" style="background: linear-gradient(135deg, #4F46E5 50%, #D97706 50%);"></span>
+                                <span>Chàm & Cam</span>
+                            </button>
+                            <button type="button" class="theme-chip-btn" data-theme="slate-clean" title="Xám Slate Hiện Đại">
+                                <span class="theme-dot" style="background: linear-gradient(135deg, #334155 50%, #64748B 50%);"></span>
+                                <span>Xám Hiện Đại</span>
+                            </button>
+                        </div>
+
+                        <!-- Tùy chỉnh màu -->
+                        <div class="color-group-label" style="margin-top: 10px;">Tự chọn màu:</div>
+                        <div class="color-picker-grid">
+                            <div class="picker-item">
+                                <label>ĐƠN HÀNG (Nền):</label>
+                                <div class="picker-box">
+                                    <input type="color" id="input-color-dh-bg" value="#f580e4">
+                                    <span id="text-color-dh-bg">#f580e4</span>
+                                </div>
+                            </div>
+                            <div class="picker-item">
+                                <label>ĐƠN HÀNG (Chữ):</label>
+                                <div class="picker-box">
+                                    <input type="color" id="input-color-dh-text" value="#0F172A">
+                                    <span id="text-color-dh-text">#0F172A</span>
+                                </div>
+                            </div>
+                            <div class="picker-item">
+                                <label>THỜI GIAN (Nền):</label>
+                                <div class="picker-box">
+                                    <input type="color" id="input-color-tg-bg" value="#f580e4">
+                                    <span id="text-color-tg-bg">#f580e4</span>
+                                </div>
+                            </div>
+                            <div class="picker-item">
+                                <label>THỜI GIAN (Chữ):</label>
+                                <div class="picker-box">
+                                    <input type="color" id="input-color-tg-text" value="#0F172A">
+                                    <span id="text-color-tg-text">#0F172A</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="popover-footer">
+                        <button type="button" id="btn-reset-col-color" class="btn-popover-secondary">Khôi phục</button>
+                        <button type="button" id="btn-apply-col-color" class="btn-popover-primary">Lưu màu</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="grid-orders-container" class="dx-octo-grid-wrapper"></div>
@@ -66,7 +401,7 @@
                 <span>Tỷ Lệ Đáp Ứng NPL</span>
             </div>
             <!-- Biểu đồ hình tròn -->
-            <div id="chart-pie-npl" style="width: 100%; height: 185px; min-height: 185px;"></div>
+            <div id="chart-pie-npl" style="width: 100%; height: 260px; min-height: 260px;"></div>
         </div>
     </section>
 
@@ -119,8 +454,8 @@
 
 
     <!-- DevExtreme Grid Components của 2 Bảng -->
-    <script src="~/Scripts/grid_devextreme/orders-grid-component.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
-    <script src="~/Scripts/grid_devextreme/materials-grid-component.js" charset="utf-8"></script>
+    <script src="~/Scripts/griddevextreme/orders-grid-component.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
+    <script src="~/Scripts/griddevextreme/materials-grid-component.js" charset="utf-8"></script>
 
     <!-- Script Module của Tab Tiến Độ -->
     <script src="~/Scripts/DashboardTongQuanTienDo/dongbo-tab-tiendo.js" charset="utf-8"></script>
@@ -141,6 +476,120 @@
             if (window.TabTienDoModule) {
                 window.TabTienDoModule.activate();
             }
+
+            // Khởi tạo tính năng tùy chỉnh màu cột cho Bảng Đơn Hàng & Kế Hoạch Thời Gian
+            (function initOrdersGridColorManager() {
+                var defaultColors = {
+                    dhBg: '#f580e4',
+                    dhText: '#0F172A',
+                    tgBg: '#f580e4',
+                    tgText: '#0F172A'
+                };
+
+                var themes = {
+                    'pink-green': { dhBg: '#fce7f3', dhText: '#9d174d', tgBg: '#ecfdf5', tgText: '#065f46' },
+                    'blue-emerald': { dhBg: '#eff6ff', dhText: '#1d4ed8', tgBg: '#ecfdf5', tgText: '#065f46' },
+                    'indigo-amber': { dhBg: '#e0e7ff', dhText: '#4338ca', tgBg: '#fef3c7', tgText: '#92400e' },
+                    'slate-clean': { dhBg: '#f1f5f9', dhText: '#0f172a', tgBg: '#e2e8f0', tgText: '#1e293b' }
+                };
+
+                function applyColors(colors) {
+                    var root = document.documentElement;
+                    root.style.setProperty('--col-dh-bg', colors.dhBg);
+                    root.style.setProperty('--col-dh-text', colors.dhText);
+                    root.style.setProperty('--col-tg-bg', colors.tgBg);
+                    root.style.setProperty('--col-tg-text', colors.tgText);
+
+                    $('#input-color-dh-bg').val(colors.dhBg);
+                    $('#text-color-dh-bg').text(colors.dhBg);
+                    $('#input-color-dh-text').val(colors.dhText);
+                    $('#text-color-dh-text').text(colors.dhText);
+
+                    $('#input-color-tg-bg').val(colors.tgBg);
+                    $('#text-color-tg-bg').text(colors.tgBg);
+                    $('#input-color-tg-text').val(colors.tgText);
+                    $('#text-color-tg-text').text(colors.tgText);
+                }
+
+                // Đọc màu đã lưu từ localStorage nếu có
+                var saved = localStorage.getItem('grid_orders_column_colors');
+                if (saved) {
+                    try {
+                        applyColors(JSON.parse(saved));
+                    } catch (e) {
+                        applyColors(defaultColors);
+                    }
+                } else {
+                    applyColors(defaultColors);
+                }
+
+                // Đóng/mở popover
+                $('#btn-col-color-trigger').on('click', function (e) {
+                    e.stopPropagation();
+                    $('#col-color-panel').fadeToggle(150);
+                });
+
+                $('#btn-close-color-panel').on('click', function () {
+                    $('#col-color-panel').fadeOut(150);
+                });
+
+                $(document).on('click', function (e) {
+                    if (!$(e.target).closest('.color-picker-dropdown-wrap').length) {
+                        $('#col-color-panel').fadeOut(150);
+                    }
+                });
+
+                // Chọn màu mẫu có sẵn
+                $('.theme-chip-btn').on('click', function () {
+                    var key = $(this).data('theme');
+                    if (themes[key]) {
+                        applyColors(themes[key]);
+                    }
+                });
+
+                // Thay đổi màu trực tiếp từ ô chọn màu (Live preview)
+                $('#input-color-dh-bg').on('input', function () {
+                    var val = this.value;
+                    $('#text-color-dh-bg').text(val);
+                    document.documentElement.style.setProperty('--col-dh-bg', val);
+                });
+                $('#input-color-dh-text').on('input', function () {
+                    var val = this.value;
+                    $('#text-color-dh-text').text(val);
+                    document.documentElement.style.setProperty('--col-dh-text', val);
+                });
+                $('#input-color-tg-bg').on('input', function () {
+                    var val = this.value;
+                    $('#text-color-tg-bg').text(val);
+                    document.documentElement.style.setProperty('--col-tg-bg', val);
+                });
+                $('#input-color-tg-text').on('input', function () {
+                    var val = this.value;
+                    $('#text-color-tg-text').text(val);
+                    document.documentElement.style.setProperty('--col-tg-text', val);
+                });
+
+                // Nút Lưu màu vào localStorage
+                $('#btn-apply-col-color').on('click', function () {
+                    var colors = {
+                        dhBg: $('#input-color-dh-bg').val(),
+                        dhText: $('#input-color-dh-text').val(),
+                        tgBg: $('#input-color-tg-bg').val(),
+                        tgText: $('#input-color-tg-text').val()
+                    };
+                    localStorage.setItem('grid_orders_column_colors', JSON.stringify(colors));
+                    $('#col-color-panel').fadeOut(150);
+                    if (window.showOctoToast) window.showOctoToast('Đã lưu màu cột');
+                });
+
+                // Nút Khôi phục mặc định
+                $('#btn-reset-col-color').on('click', function () {
+                    applyColors(defaultColors);
+                    localStorage.removeItem('grid_orders_column_colors');
+                    $('#col-color-panel').fadeOut(150);
+                    if (window.showOctoToast) window.showOctoToast('Đã khôi phục màu cột mặc định');
+                });
+            })();
         });
     </script>
 <!--  -->   <script src="~/Scripts/griddevextreme/dx-grid-bundle_0.9.js"></script>  

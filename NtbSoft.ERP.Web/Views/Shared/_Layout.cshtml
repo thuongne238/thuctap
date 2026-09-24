@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.light.css" />
 
     <!-- CSS Component Popup Chi Tiết Dùng Chung Toàn Hệ Thống -->
-    <link rel="stylesheet" href="~/css/grid_devextreme/dx-detail-grid.css" />
+    <link rel="stylesheet" href="~/css/griddevextreme/dx-detail-grid.css" />
 
     <!-- Khu vực nạp CSS riêng của từng trang con (nếu có) -->
     @RenderSection("css", required: false)
@@ -92,7 +92,7 @@
                     <!-- Tab 2: Chuẩn bị sản xuất -->
                     <button type="button" class="side-nav-btn @(ViewBag.ActiveTab == "chuanbi" ? "active" : "")" id="btn-side-tien-do" data-side="tien-do" data-tab="tien-do" title="Tiến độ sản xuất">
                         <i class="fa-solid fa-chart-gantt"></i>
-                        <span>Tiến độ sản xuất</span>
+                        <span>Chuẩn bị sản xuất</span>
                     </button>
                 </div>
             </div>
@@ -234,7 +234,7 @@
     <script src="~/Content/plugins/DevExtreme/dx.all.js" charset="utf-8"></script>
 
     <!-- Component Popup Chi Tiết Dùng Chung Toàn Hệ Thống -->
-    <script src="~/Scripts/grid_devextreme/common-detail-popup.js" charset="utf-8"></script>
+    <script src="~/Scripts/griddevextreme/common-detail-popup.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
 
     <!-- Khu vực nạp Script riêng của từng trang con -->
     @RenderSection("scripts", required: false)
