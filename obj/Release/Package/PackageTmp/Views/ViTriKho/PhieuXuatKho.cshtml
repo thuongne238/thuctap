@@ -1,0 +1,629 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <title>Khai báo kho NPL</title>
+
+    <link href="~/css/TheoDoiHangXuat/fontawesome.pro.6.0.0.css" rel="stylesheet" />
+    <link href="~/css/TheoDoiHangXuat/roboto.css" rel="stylesheet" />
+    <link href="~/css/QRCode/toastr.minM.css" rel="stylesheet" />
+    <link href="~/Content/plugins/select2/css/select2.css" rel="stylesheet" />
+    <link href="~/Scripts/ViTriKho/bootstrap5.3.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+    <link href="~/Scripts/ViTriKho/SignCss.css" rel="stylesheet" />
+
+    <style>
+
+
+        body {
+            background: #f4f6f9;
+            font-family: 'Times New Roman', serif;
+            font-size: 13px;
+        }
+
+        .pw {
+            max-width: 960px;
+            width: 100%;
+            margin: 16px auto;
+            padding: 16px;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            color: #000;
+        }
+
+        .pw-title {
+            text-align: center;
+            font-size: 19px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .pw-date {
+            text-align: center;
+            font-style: italic;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .pw-so {
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .no-co {
+            display: flex;
+            justify-content: flex-end;
+            gap: 24px;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .info-section {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background: #fafafa;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 5px;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+            .info-row:last-child {
+                margin-bottom: 0;
+            }
+
+        .info-label {
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .info-input {
+            flex: 1;
+            border: none;
+            border-bottom: 1px dotted #888;
+            outline: none;
+            font-family: 'Times New Roman', serif;
+            font-size: 13px;
+            padding: 1px 4px;
+            background: transparent;
+            min-width: 80px;
+        }
+
+            .info-input:focus {
+                border-bottom: 1.5px solid #185FA5;
+                background: #f0f7ff;
+            }
+
+        .grid-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 8px 0;
+        }
+
+        #gridPhieu {
+            min-width: 580px;
+            overflow: auto;
+            min-height: 300px;
+            max-height: calc(-562px + 100vh);
+        }
+
+        .ky-section {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .ky-box {
+            border: 1px dashed #aaa;
+            border-radius: 4px;
+            padding: 6px 4px 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .ky-box:hover {
+                background: #f0f7ff;
+                border-color: #185FA5;
+            }
+
+        .ky-title {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 1px;
+        }
+
+        .ky-sub {
+            font-size: 11px;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 2px;
+        }
+
+        .ky-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .ky-placeholder {
+            font-size: 11px;
+            color: #bbb;
+            font-style: italic;
+        }
+
+        .dx-datagrid-headers .dx-header-row td {
+            color: white;
+            background: #20c97d !important;
+            font-weight: bold;
+            font-size: 12px !important;
+        }
+
+        .dx-datagrid td {
+            font-size: 12px !important;
+        }
+
+        @@media (max-width: 768px) {
+            .pw {
+                padding: 10px;
+                margin: 8px;
+            }
+
+            .pw-title {
+                font-size: 15px;
+            }
+
+            .no-co {
+                gap: 12px;
+            }
+
+            .ky-section {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .info-label {
+                font-size: 12px;
+            }
+
+            .info-input {
+                font-size: 12px;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .pw {
+                padding: 8px;
+                margin: 4px;
+            }
+
+            .pw-title {
+                font-size: 14px;
+            }
+
+            .pw-date {
+                font-size: 12px;
+            }
+
+            .info-label {
+                font-size: 11px;
+            }
+
+            .info-input {
+                font-size: 11px;
+            }
+
+            .ky-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .ky-title {
+                font-size: 11px;
+            }
+
+            .ky-sub {
+                font-size: 10px;
+            }
+
+            .ky-box {
+                min-height: 75px;
+            }
+        }
+
+        .title {
+            background: #357C97;
+            color: #Fff
+        }
+
+        .ky-area {
+            position: relative;
+        }
+
+        .ky-img {
+            max-width: 100%;
+            max-height: 60px;
+            object-fit: contain;
+        }
+
+        .ky-remove {
+            display: none
+        }
+
+        .dx-datagrid-headers {
+            background: #f1f3f5 !important;
+        }
+
+            .dx-datagrid-headers .dx-header-row td {
+                font-weight: 600 !important;
+                font-size: 13px !important;
+            }
+
+        .dx-datagrid-rowsview .dx-row {
+            font-size: 13px;
+        }
+
+        .dx-datagrid-rowsview .dx-row-alt > td {
+            background: #fafbfc;
+        }
+
+        .dx-datagrid-summary-item.summaryCustom {
+            text-align: center !important;
+            color: red !important;
+            font-weight: bold;
+        }
+
+        img[src=""] {
+            display: none !important;
+        }
+
+        .dx-row.dx-freespace-row.dx-column-lines {
+            display: none !important
+        }
+    </style>
+</head>
+
+<body>
+    <section class="d-none">
+        <div class="title">
+            <div style="display: flex; align-items: center; width: 100%; ">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
+
+                    <span style="margin-top: 2px; color: white; font-size: 18px; padding: 4px 8px; font-weight: 700;">Phiếu xuất kho</span>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <div class="page-card">
+
+
+
+        <!-- ── BỘ LỌC ── -->
+
+        <div class="pw">
+            <div class="filter-card" style="margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">
+                <div class="row g-2 align-items-end">
+
+                    <!-- Cụm 1: Icon + Phiếu xuất hàng -->
+                    <div class="col-10 col-sm-8 col-lg-5 col-xl-5">
+                        <div class="d-flex align-items-center gap-2">
+                            <i id="home"
+                               style="font-size: 21px; cursor: pointer; color: #000; flex-shrink:0;"
+                               class="fa-sharp fa-solid fa-house">
+                            </i>
+                            <div class="select2_item w-100">
+                                <label class="txtselected">Phiếu xuất hàng</label>
+                                <select class="select_2" id="lockho">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cụm 2: Nút xuất Excel - đẩy sang phải -->
+                    <div class="col-2 col-sm-4 col-lg-7 col-xl-7 d-flex justify-content-end align-items-end">
+                        <button id="btnExport" class="btn btn-success btn-sm d-flex align-items-center gap-2" onclick="handleExportExcel()">
+                            <i class="fa-solid fa-file-excel"></i>
+                            <span class="d-none d-sm-inline">Xuất Excel</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <!-- ── END BỘ LỌC ── -->
+            <!-- Tiêu đề -->
+            <div class="pw-title">Phiếu xuất kho</div>
+            <div class="pw-date" id="pwDate"></div>
+
+            <!-- Nợ / Có + Số phiếu -->
+            <div class="row g-1 align-items-center mb-1">
+                <div class="col-12 col-md-6 order-md-1 order-2 text-center">
+                    Số: <input id="inpSo" class="info-input" style="width:130px; text-align:center;">
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-1 d-flex justify-content-end gap-4">
+                    <span>Nợ: <input id="inpNo" class="info-input" style="width:55px"></span>
+                    <span>Có: <input id="inpCo" class="info-input" style="width:55px"></span>
+                </div>
+            </div>
+
+            <!-- Cụm 1: Thông tin người nhận -->
+            <div class="info-section">
+                <div class="info-row">
+                    <span class="info-label">- Họ tên người nhận hàng :</span>
+                    <input class="info-input" id="inpTenNhan" placeholder="" disabled>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">- Địa chỉ (bộ phận) :</span>
+                    <input class="info-input" id="inpDiaChi" placeholder="" disabled>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">- Lý do xuất kho :</span>
+                    <input class="info-input" id="inpLyDo" placeholder="" disabled>
+                </div>
+                <!-- Xuất kho + Địa điểm -->
+                <div class="row g-2 align-items-baseline">
+                    <div class="col-12 col-md-7">
+                        <div class="info-row" style="margin-bottom:0;">
+                            <span class="info-label">- Xuất tại kho (ngăn lô) :</span>
+                            <input class="info-input" id="inpKho" value="VIKING" placeholder="" disabled>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <div class="info-row" style="margin-bottom:0;">
+                            <span class="info-label">Địa điểm :</span>
+                            <input class="info-input" id="inpDiaDiem" placeholder="" value="CTY VIKING VN" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="grid-wrapper">
+                <div id="gridPhieu"></div>
+            </div>
+
+            <!-- Cụm 2: Tổng tiền -->
+            <div class="info-section">
+                <div class="info-row">
+                    <span class="info-label">- Tổng số tiền (Viết bằng chữ) :</span>
+                    <input class="info-input" id="inpTongTien" placeholder=".">
+                </div>
+                <div class="info-row">
+                    <span class="info-label">- Số chứng từ gốc kèm theo :</span>
+                    <input class="info-input" id="inpChungTu" placeholder="">
+                </div>
+            </div>
+
+            <div class="ky-section">
+                <div class="ky-box" onclick="handleKy('#image1')">
+                    <div class="ky-title">Người lập phiếu</div>
+                    <div class="ky-sub">(Ký, họ tên)</div>
+                    <div class="ky-area" id="image1">
+                        <span class="ky-placeholder">Nhấn để ký</span>
+                    </div>
+                    <div>
+                        <button onclick="event.preventDefault(); event.stopPropagation(); handleKyTuDong('#image1')" data-target="image1" class="btn btn-secondary mt-2 btn-sm" style="font-size:12px"><i class="fa-solid fa-signature me-1"></i> Ký Tên TĐ</button>
+                    </div>
+                </div>
+                <div class="ky-box" onclick="handleKy('#image2')">
+                    <div class="ky-title">Người nhận hàng</div>
+                    <div class="ky-sub">(Ký, họ tên)</div>
+                    <div class="ky-area" id="image2">
+                        <span class="ky-placeholder">Nhấn để ký</span>
+                    </div>
+                    <div>
+                        <button onclick="event.preventDefault(); event.stopPropagation();handleKyTuDong('#image2')" data-target="image2" class="btn btn-secondary mt-2 btn-sm" style="font-size:12px"><i class="fa-solid fa-signature me-1"></i> Ký Tên TĐ</button>
+                    </div>
+                </div>
+                <div class="ky-box" onclick="handleKy('#image3')">
+                    <div class="ky-title">Thủ kho</div>
+                    <div class="ky-sub">(Ký, họ tên)</div>
+                    <div class="ky-area" id="image3">
+                        <span class="ky-placeholder">Nhấn để ký</span>
+                    </div>
+                    <div>
+                        <button onclick="event.preventDefault(); event.stopPropagation(); handleKyTuDong('#image3')" data-target="image3" class="btn btn-secondary mt-2 btn-sm" style="font-size:12px"><i class="fa-solid fa-signature me-1"></i> Ký Tên TĐ</button>
+                    </div>
+                </div>
+                <div class="ky-box" onclick="handleKy('#image4')">
+                    <div class="ky-title">Kế toán trưởng</div>
+                    <div class="ky-sub">(Hoặc bộ phận có nhu cầu nhập)</div>
+                    <div class="ky-sub">(Ký, họ tên)</div>
+                    <div class="ky-area" id="image4">
+                        <span class="ky-placeholder">Nhấn để ký</span>
+                    </div>
+                    <div>
+                        <button onclick="event.preventDefault(); event.stopPropagation(); handleKyTuDong('#image4')" data-target="image4" class="btn btn-secondary mt-2 btn-sm" style="font-size:12px"><i class="fa-solid fa-signature me-1"></i> Ký Tên TĐ</button>
+                    </div>
+                </div>
+                <div class="ky-box" onclick="handleKy('#image5')">
+                    <div class="ky-title">Giám đốc</div>
+                    <div class="ky-sub">(Ký, họ tên)</div>
+                    <div class="ky-area" id="image5">
+                        <span class="ky-placeholder">Nhấn để ký</span>
+                    </div>
+                    <div>
+                        <button onclick="event.preventDefault(); event.stopPropagation(); handleKyTuDong('#image5')" data-target="image5" class="btn btn-secondary mt-2 btn-sm" style="font-size:12px"><i class="fa-solid fa-signature me-1"></i> Ký Tên TĐ</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signatureModalLabel">
+                        <i class="fas fa-pen-fancy me-2"></i>Ký Tên Điện Tử
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Công cụ -->
+                    <div class="row mb-3 g-2">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Màu bút:</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <input type="color" class="color-picker" id="penColor" value="#000000">
+                                <button class="btn btn-tool btn-outline-dark" onclick="setPenColor('#000000')">
+                                    <i class="fas fa-circle" style="color: #000000;"></i>
+                                </button>
+                                <button class="btn btn-tool btn-outline-primary" onclick="setPenColor('#0d6efd')">
+                                    <i class="fas fa-circle" style="color: #0d6efd;"></i>
+                                </button>
+                                <button class="btn btn-tool btn-outline-danger" onclick="setPenColor('#dc3545')">
+                                    <i class="fas fa-circle" style="color: #dc3545;"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Độ dày bút:</label>
+                            <div class="pen-size-selector">
+                                <div class="pen-size-btn active" onclick="setPenSize(2)" data-size="2">
+                                    <div style="width: 6px; height: 6px; background: #000; border-radius: 50%;"></div>
+                                </div>
+                                <div class="pen-size-btn" onclick="setPenSize(4)" data-size="4">
+                                    <div style="width: 10px; height: 10px; background: #000; border-radius: 50%;"></div>
+                                </div>
+                                <div class="pen-size-btn" onclick="setPenSize(6)" data-size="6">
+                                    <div style="width: 14px; height: 14px; background: #000; border-radius: 50%;"></div>
+                                </div>
+                                <div class="pen-size-btn" onclick="setPenSize(8)" data-size="8">
+                                    <div style="width: 18px; height: 18px; background: #000; border-radius: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canvas vẽ chữ ký -->
+                    <div class="position-relative">
+                        <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                        <small class="text-muted d-block mt-2 text-center">
+                            <i class="fas fa-info-circle"></i> Vẽ chữ ký của bạn vào khung trên
+                        </small>
+                    </div>
+
+                    <!-- Nút hành động -->
+                    <div class="d-flex gap-2 mt-3 flex-wrap justify-content-center">
+                        <button class="btn btn-outline-secondary" onclick="clearSignature()">
+                            <i class="fas fa-eraser me-1"></i> Xóa
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="undoSignature()">
+                            <i class="fas fa-undo me-1"></i> Hoàn tác
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveSignature()">
+                        <i class="fas fa-check me-1"></i> Lưu Chữ Ký
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999999">
+        <div id="successToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Thành công</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="successMessage"></div>
+        </div>
+        <div id="errorToast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Lỗi</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="errorMessage"></div>
+        </div>
+        <div id="warningToast" class="toast" role="alert">
+            <div class="toast-header bg-warning text-dark">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong class="me-auto">Cảnh báo</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="warningMessage"></div>
+        </div>
+    </div>
+
+
+
+    <script src="~/Scripts/TheoDoiHangXuat/jquery.js"></script>
+    <script src="~/Scripts/ViTriKho/bootstrap5.3.bundle.min.js"></script>
+    <script src="~/Scripts/TheoDoiHangXuat/select2.js"></script>
+    <link href="~/css/DevExtreme/dx.common.css" rel="stylesheet" />
+    <link href="~/css/DevExtreme/dx.light.css" rel="stylesheet" />
+    <script src="~/css/DevExtreme/dx.all.js"></script>
+    <script src="~/Content/plugins/select2/js/select2.js"></script>
+    <script src="~/Scripts/ViTriKho/Sign.js"></script>
+
+    <script src="~/css/DevExtreme/knockout-latest.min.js"></script>
+    <script>
+        var userName = '@ViewBag.userName';
+        var phieuPKLForward = '@ViewBag.phieuPKL';
+        function showToast(type, message, delay = 2000) {
+            let toastId, messageId;
+
+            switch (type) {
+                case 'success':
+                    toastId = 'successToast';
+                    messageId = 'successMessage';
+                    break;
+                case 'error':
+                    toastId = 'errorToast';
+                    messageId = 'errorMessage';
+                    break;
+                case 'warning':
+                    toastId = 'warningToast';
+                    messageId = 'warningMessage';
+                    break;
+                default:
+                    console.error('Unknown toast type:', type);
+                    return;
+            }
+
+            $('#' + messageId).text(message);
+
+            const toastElement = $('#' + toastId)[0];
+            const toast = new bootstrap.Toast(toastElement, {
+                autohide: true,
+                delay: delay
+            });
+
+            toast.show();
+        }
+    </script>
+    <script src="~/Scripts/ViTriKho/phieuxuatkho.js"></script>
+
+</body>
+</html>

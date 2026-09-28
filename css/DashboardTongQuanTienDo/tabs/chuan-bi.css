@@ -1,0 +1,638 @@
+.realtime-date {
+    font-weight: 800 !important;
+    color: #000000 !important;
+    font-size: 12.5px !important;
+}
+
+.col-pcs-unit {
+    font-weight: 800 !important;
+    color: #000000 !important;
+    font-size: 12px !important;
+}
+
+/* PhĂ¢n cĂ¡ch rĂµ rĂ ng pháº§n ÄÆ N HĂ€NG cá»‘ Ä‘á»‹nh bĂªn trĂ¡i */
+#grid-orders-container .dx-datagrid-content-fixed {
+    border-right: 2px solid #64748B !important;
+}
+
+/* TiĂªu Ä‘á» cĂ¡c cá»™t hiá»ƒn thá»‹ Ä‘áº§y Ä‘á»§, khĂ´ng bá»‹ cáº¯t dáº¥u ... vĂ  CÄ‚N GIá»®A, viá»n rĂµ rĂ ng */
+#grid-orders-container .dx-datagrid-headers .dx-header-row>td {
+    white-space: nowrap !important;
+    text-align: center !important;
+    border-right: 1px solid #94A3B8 !important;
+    border-bottom: 1px solid #94A3B8 !important;
+}
+
+#grid-orders-container .dx-datagrid-headers .dx-header-row>td .dx-datagrid-text-content {
+    white-space: nowrap !important;
+    text-overflow: clip !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Biáº¿n mĂ u cho cĂ¡c cá»™t */
+:root {
+    --col-dh-bg: #CBD5E1;
+    --col-dh-text: #0F172A;
+    --col-tg-bg: #CBD5E1;
+    --col-tg-text: #0F172A;
+}
+
+/* NhĂ³m ÄÆ N HĂ€NG (Cá»‘ Ä‘á»‹nh bĂªn trĂ¡i) */
+#grid-orders-container .dx-datagrid-headers .dx-datagrid-content-fixed td,
+#grid-orders-container .dx-grp-don-hang,
+#grid-orders-container td.dx-grp-don-hang {
+    background-color: var(--col-dh-bg, #CBD5E1) !important;
+    color: var(--col-dh-text, #0F172A) !important;
+    border-right: 1px solid #94A3B8 !important;
+    border-bottom: 1px solid #94A3B8 !important;
+}
+
+/* NhĂ³m THá»œI GIAN (BĂªn pháº£i) */
+#grid-orders-container .dx-datagrid-headers .dx-datagrid-scrollable-simulated td,
+#grid-orders-container .dx-datagrid-headers .dx-header-row>td:not(.dx-col-fixed),
+#grid-orders-container .dx-grp-thoi-gian,
+#grid-orders-container td.dx-grp-thoi-gian {
+    background-color: var(--col-tg-bg, #CBD5E1) !important;
+    color: var(--col-tg-text, #0F172A) !important;
+    border-right: 1px solid #94A3B8 !important;
+    border-bottom: 1px solid #94A3B8 !important;
+}
+
+/* ÄÆ°á»ng viá»n cho dĂ²ng dá»¯ liá»‡u cá»§a báº£ng */
+#grid-orders-container .dx-datagrid-rowsview .dx-data-row>td {
+    border-right: 1px solid #CBD5E1 !important;
+    border-bottom: 1px solid #CBD5E1 !important;
+}
+
+
+
+/* PhĂ¢n trang: CĂ¡c nĂºt tĂ¡ch rá»i hoĂ n toĂ n, khĂ´ng dĂ­nh liá»n */
+.dx-datagrid-pager .dx-pages,
+.dx-datagrid-pager .dx-page-indexes {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.dx-datagrid-pager .dx-page,
+.dx-datagrid-pager .dx-page-indexes .dx-page {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 !important;
+    margin: 0 3px !important;
+    border-radius: 8px !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    background-color: #FFFFFF !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+}
+
+.dx-datagrid-pager .dx-page.dx-selection {
+    background: #1D4ED8 !important;
+    border-color: #1D4ED8 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+
+/* 2 Nút chuyển trang Previous (<) và Next (>) - Không bị lỗi ảnh/tofu */
+.dx-datagrid-pager .dx-navigate-button,
+.dx-pager .dx-pages .dx-navigate-button,
+.dx-pager .dx-navigate-button {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    padding: 0 !important;
+    margin: 0 3px !important;
+    border-radius: 8px !important;
+    border: 1px solid #CBD5E1 !important;
+    background-color: #FFFFFF !important;
+    color: #475569 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    position: relative !important;
+    font-size: 0 !important;
+    overflow: hidden !important;
+    transition: all 0.15s ease !important;
+}
+
+.dx-datagrid-pager .dx-navigate-button:hover:not(.dx-button-disable),
+.dx-pager .dx-pages .dx-navigate-button:hover:not(.dx-button-disable) {
+    background-color: #F8FAFC !important;
+    border-color: #94A3B8 !important;
+    color: #1D4ED8 !important;
+    transform: translateY(-1px);
+}
+
+.dx-datagrid-pager .dx-navigate-button.dx-button-disable,
+.dx-pager .dx-pages .dx-navigate-button.dx-button-disable {
+    opacity: 0.35 !important;
+    cursor: not-allowed !important;
+    background-color: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+    color: #94A3B8 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Nút PREV (<) */
+.dx-datagrid-pager .dx-prev-button::before,
+.dx-pager .dx-pages .dx-prev-button::before,
+.dx-pager .dx-navigate-button.dx-prev-button::before {
+    content: "\f053" !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    top: auto !important;
+    left: auto !important;
+    color: inherit !important;
+}
+
+/* Nút NEXT (>) */
+.dx-datagrid-pager .dx-next-button::before,
+.dx-pager .dx-pages .dx-next-button::before,
+.dx-pager .dx-navigate-button.dx-next-button::before {
+    content: "\f054" !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    top: auto !important;
+    left: auto !important;
+    color: inherit !important;
+}
+
+/* ==========================================================================
+   KHUNG CARD DÙNG CHUNG (.octo-card)
+   ========================================================================== */
+.octo-card {
+    background-color: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.octo-card:hover {
+    border-color: #94A3B8 !important;
+}
+
+.card-header-title {
+    font-size: 13.5px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+}
+
+.card-header-title i {
+    color: #1D4ED8 !important;
+    font-size: 14px !important;
+}
+
+/* Khoảng cách giữa các section trong tab Tiến Độ / Chuẩn Bị (14px) */
+.tab-tiendo-wrapper,
+.dashboard-tab-pane.active-tab.tab-tiendo-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+/* ==========================================================================
+   SECTION 2: MIDDLE ROW (BẢNG NPL & BIỂU ĐỒ TRÒN NẰM CẠNH NHAU)
+   Tỉ lệ 1.55fr : 1fr khít khao, chiều cao 2 thẻ cân đối
+   ========================================================================== */
+.grid-middle,
+.tab-tiendo-wrapper .grid-middle {
+    display: grid !important;
+    grid-template-columns: 1.55fr 1fr !important;
+    gap: 14px !important;
+    align-items: stretch !important;
+    width: 100% !important;
+}
+
+@media (max-width: 1024px) {
+
+    .grid-middle,
+    .tab-tiendo-wrapper .grid-middle {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.grid-middle>.octo-card {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Bảng NPL cố định chiều cao khớp với biểu đồ tròn */
+#grid-materials-container {
+    flex: 1 !important;
+    min-height: 265px !important;
+    height: 265px !important;
+    width: 100% !important;
+}
+
+/* Biểu đồ Donut Tỷ Lệ Đáp Ứng NPL */
+#chart-pie-npl {
+    flex: 1 !important;
+    width: 100% !important;
+    min-height: 265px !important;
+    height: 265px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   SECTION 3: THEO DÕI MUA HÀNG (NGUYÊN PHỤ LIỆU)
+   4 Thẻ KPI dàn đều 4 cột ngang + Biểu đồ nhiệt thanh ngang
+   ========================================================================== */
+.kpi-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin-bottom: 6px !important;
+}
+
+@media (max-width: 768px) {
+    .kpi-stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+.kpi-stat-card {
+    background-color: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease !important;
+}
+
+.kpi-stat-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+    border-color: #94A3B8 !important;
+}
+
+.kpi-stat-card:active {
+    transform: translateY(0) !important;
+}
+
+.kpi-value {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.5px !important;
+}
+
+.kpi-label {
+    font-size: 11.5px !important;
+    color: #475569 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.4px !important;
+}
+
+/* Màu số liệu KPI tương ứng từng thẻ */
+.kpi-card-blue .kpi-value,
+#stat-da-dat {
+    color: #2563EB !important;
+}
+
+.kpi-card-green .kpi-value,
+#stat-da-ve {
+    color: #059669 !important;
+}
+
+.kpi-card-orange .kpi-value,
+#stat-sap-ve {
+    color: #EA580C !important;
+}
+
+.kpi-card-red .kpi-value,
+#stat-tre {
+    color: #DC2626 !important;
+}
+
+/* Khung Biểu đồ thanh ngang mua hàng NPL */
+.chart-heatmap-wrap {
+    width: 100% !important;
+    height: 225px !important;
+    min-height: 225px !important;
+    background: #FFFFFF !important;
+    border-radius: 8px !important;
+    border: 1px solid #E2E8F0 !important;
+    padding: 6px 12px !important;
+    box-sizing: border-box !important;
+}
+
+#chart-heatmap-purchase {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 200px !important;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   TIỆN ÍCH DÙNG TRONG BẢNG (CHỮ MÀU RÕ RÀNG, BỎ HOÀN TOÀN MÀU NỀN BACKGROUND)
+   ========================================================================== */
+.octo-chip,
+span.octo-chip {
+    display: inline-block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+
+.octo-chip.chip-green,
+.chip-green {
+    color: #16A34A !important;
+    /* Xanh lá tươi đẹp */
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+.octo-chip.chip-blue,
+.chip-blue {
+    color: #2563EB !important;
+    /* Xanh dương đậm */
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+.octo-chip.chip-orange,
+.chip-orange {
+    color: #EA580C !important;
+    /* Cam đậm */
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+.octo-chip.chip-red,
+.chip-red {
+    color: #DC2626 !important;
+    /* Đỏ */
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+.octo-chip.chip-gray,
+.chip-gray {
+    color: #64748B !important;
+    /* Xám */
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+.progress-bar-container {
+    width: 100% !important;
+    height: 6px !important;
+    background-color: #E2E8F0 !important;
+    border-radius: 9999px !important;
+    overflow: hidden !important;
+    display: flex !important;
+}
+
+.progress-bar-fill {
+    height: 100% !important;
+    border-radius: 9999px !important;
+    transition: width 0.3s ease !important;
+}
+
+/* Bảng Đơn Hàng Section 1 */
+#grid-orders-container {
+    min-height: 310px !important;
+}
+
+#grid-orders-container .dx-data-row {
+    height: 40px !important;
+}
+
+#grid-orders-container .dx-data-row>td {
+    padding: 7px 8px !important;
+    vertical-align: middle !important;
+}
+
+/* ==========================================================================
+   FONT INTER ĐỒNG BỘ TOÀN DIỆN CHO CẢ CHỮ VÀ SỐ (CHUẨN BỊ SẢN XUẤT)
+   (Bảo toàn nguyên vẹn Font Awesome & DXIcons không bị lỗi tofu ô vuông)
+   ========================================================================== */
+:root {
+    --font-mono: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+#tab-content-chuan-bi,
+#tab-content-chuan-bi .dx-widget,
+#dx-universal-detail-popup,
+#dx-universal-detail-popup .dx-widget,
+.tab-tiendo-wrapper,
+.tab-tiendo-wrapper .dx-widget,
+.font-mono {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Ensure DevExtreme icons retain their font */
+.dx-icon,
+[class*="dx-icon"] {
+    font-family: 'DXIcons' !important;
+}
+
+/* Ensure FontAwesome icons retain their font */
+.fa,
+.fas,
+.far,
+.fa-solid,
+.fa-regular,
+[class*="fa-"] {
+    font-family: "Font Awesome 6 Free", "FontAwesome" !important;
+}
+
+/* ==========================================================================
+   POPUP CHI TIẾT DÙNG CHUNG CỦA 3 SECTION (DEVEXTREME POPUP)
+   ========================================================================== */
+.dx-popup-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Thẻ KPI tóm tắt thông tin trên đầu Popup */
+.dx-popup-kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+}
+
+.dx-popup-kpi-card {
+    background-color: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.dx-popup-kpi-label {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #64748B !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.4px !important;
+}
+
+.dx-popup-kpi-val {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Thanh công cụ tìm kiếm nhanh & Gom nhóm */
+.dx-popup-toolbar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+    margin-top: 2px !important;
+}
+
+.dx-popup-search-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    flex: 1 !important;
+    max-width: 440px !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.dx-popup-search-wrap i {
+    color: #94A3B8 !important;
+    font-size: 13px !important;
+}
+
+.dx-popup-search-input {
+    border: none !important;
+    outline: none !important;
+    font-size: 12.5px !important;
+    width: 100% !important;
+    color: #0F172A !important;
+    background: transparent !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.dx-popup-group-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+}
+
+.dx-popup-group-select {
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    font-size: 12.5px !important;
+    outline: none !important;
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    font-family: 'Inter', sans-serif !important;
+    cursor: pointer !important;
+}
+
+/* Khung DevExtreme DataGrid trong Popup */
+.dx-popup-grid-wrapper {
+    flex: 1 !important;
+    min-height: 380px !important;
+    height: 100% !important;
+    width: 100% !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background-color: #FFFFFF !important;
+}
+
+#dx-universal-detail-popup .dx-popup-title {
+    background-color: #F8FAFC !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    padding: 12px 18px !important;
+}
+
+#dx-universal-detail-popup .dx-popup-title .dx-toolbar-label {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    font-family: 'Inter', sans-serif !important;
+}

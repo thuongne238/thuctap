@@ -1,0 +1,545 @@
+/**
+ * Production Progress Widget - Stylesheet
+ * Module Dashboard: TIẾN ĐỘ SẢN XUẤT (Production Progress)
+ * - Header: TIẾN ĐỘ SẢN XUẤT | Nút tab Ngày / Tuần / Tháng / Năm
+ * - Bên trái: Lưới Tiến độ sản xuất (PO NO. | KHÁCH HÀNG | QTY (PCS) | MÃ HÀNG | TIẾN ĐỘ SX | HẠN SX)
+ * - Bên phải: Biểu đồ tròn phân bổ sản lượng các PO, TÊN PO GHI Ở BÊN TRONG Ô (INSIDE SLICE)
+ * - Tooltip khi rê chuột: Thẻ card chi tiết chuẩn phong cách ảnh thứ 2 (PO, Mã hàng, Khách hàng, Số lượng SX, Thời gian SX, Tiến độ SX %)
+ * - Dưới cùng: Dải trạng thái sản xuất: Hoàn thành (>=95%) | Đạt (80-94%) | Trung bình (50-79%) | Chậm (<50%) | Hôm nay | Hạn hoàn thành
+ */
+
+:root {
+    /* Octo Code - Status & Analytics Colors */
+    --ppw-color-blue: #2563EB;
+    /* Vibrant Royal Blue (Đang chạy / Đã đặt) */
+    --ppw-color-green: #10B981;
+    /* Vibrant Green (Hoàn thành / Đạt / Đã về) */
+    --ppw-color-orange: #F97316;
+    /* Warm Amber/Orange (Sắp về / Trung bình) */
+    --ppw-color-red: #EF4444;
+    /* Vibrant Coral Red (Chậm / Trễ) */
+    /* Octo Code - Canvas & Surface */
+    --ppw-bg: #EBF0F6;
+    /* Xám xanh nhạt dịu mắt */
+    --ppw-card-bg: #FFFFFF;
+    /* Trắng tinh khiết */
+    --ppw-border: #94a3b8;
+    /* Nét mỏng xám xanh mượt mà */
+    --ppw-border-light: #cbd5e1;
+    --ppw-text-main: #1E293B;
+    /* Slate 800 */
+    --ppw-text-muted: #64748B;
+    /* Slate 500 */
+    --ppw-bg-subtle: #F4F7FA;
+    --ppw-radius: 10px;
+    --ppw-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.ppw-theme-dark {
+    --ppw-color-blue: #60a5fa;
+    --ppw-color-green: #34d399;
+    --ppw-color-orange: #fb923c;
+    --ppw-color-red: #f87171;
+    --ppw-bg: #090d16;
+    --ppw-card-bg: #131b2e;
+    --ppw-border: #1e293b;
+    --ppw-border-light: #1e293b;
+    --ppw-text-main: #f8fafc;
+    --ppw-text-muted: #94a3b8;
+    --ppw-bg-subtle: #1a233a;
+    --ppw-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Container */
+.ppw-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ppw-text-main);
+    background: var(--ppw-card-bg);
+    border: 1px solid var(--ppw-border);
+    border-radius: var(--ppw-radius);
+    box-shadow: var(--ppw-shadow);
+    padding: 1.15rem 1.35rem;
+    margin-bottom: 1.5rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.ppw-container * {
+    box-sizing: border-box;
+}
+
+/* 1. Header: TIẾN ĐỘ SẢN XUẤT & Tab buttons Ngày | Tuần | Tháng | Năm */
+.ppw-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    margin-bottom: 0.85rem;
+    border-bottom: 1px solid var(--ppw-border-light);
+}
+
+.ppw-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.ppw-main-title {
+    font-size: 1.05rem;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ppw-legend-item.active {
+    font-weight: 700;
+    color: var(--ppw-text-main);
+}
+
+.ppw-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.ppw-dot-complete {
+    background-color: var(--ppw-color-blue);
+}
+
+/* Hoàn thành (>=95%) - Xanh dương */
+.ppw-dot-passed {
+    background-color: var(--ppw-color-green);
+}
+
+/* Đạt tiến độ (80-94%) - Xanh lá */
+.ppw-dot-average {
+    background-color: var(--ppw-color-orange);
+}
+
+/* Trung bình (50-79%) - Cam */
+.ppw-dot-slow {
+    background-color: var(--ppw-color-red);
+}
+
+/* Chậm tiến độ (<50%) - Đỏ */
+
+.ppw-line-today {
+    display: inline-block;
+    width: 14px;
+    height: 2px;
+    background-color: #64748b;
+    margin-right: 2px;
+}
+
+.ppw-diamond-etd {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border: 1.5px solid #0f172a;
+    transform: rotate(45deg);
+    margin-right: 2px;
+}
+
+.ppw-footer-btn-all {
+    font-size: 0.75rem;
+    color: #3b82f6;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background 0.15s;
+}
+
+.ppw-footer-btn-all:hover {
+    background: #eff6ff;
+    text-decoration: underline;
+}
+
+
+/* Tùy chỉnh màu viền kẻ ô cho đậm lên */
+.ppw-container .dx-datagrid-borders>.dx-datagrid-headers,
+.ppw-container .dx-datagrid-borders>.dx-datagrid-rowsview,
+.ppw-container .dx-datagrid-borders .dx-datagrid-content .dx-datagrid-table .dx-row>td,
+.ppw-container .dx-datagrid-borders .dx-datagrid-content .dx-datagrid-table .dx-row>th {
+    border-color: #475569 !important;
+    /* Xám đậm nét rõ ràng */
+}
+
+
+
+/* DevExtreme DataGrid Headers cho bảng Tiến độ sản xuất */
+.ppw-table-wrapper .dx-datagrid-headers .dx-header-row>td,
+.ppw-table-wrapper .dx-datagrid-headers .dx-datagrid-text-content,
+.ppw-container .dx-datagrid-headers .dx-header-row>td,
+.ppw-container .dx-datagrid-headers .dx-datagrid-text-content {
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.4px !important;
+    text-transform: uppercase !important;
+}
+
+.ppw-table-wrapper .dx-datagrid-headers .dx-header-row>td .dx-sort-indicator,
+.ppw-table-wrapper .dx-datagrid-headers .dx-header-row>td .dx-sort-up,
+.ppw-table-wrapper .dx-datagrid-headers .dx-header-row>td .dx-sort-down,
+.ppw-container .dx-datagrid-headers .dx-header-row>td .dx-sort-indicator,
+.ppw-container .dx-datagrid-headers .dx-header-row>td .dx-sort-up,
+.ppw-container .dx-datagrid-headers .dx-header-row>td .dx-sort-down {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+/* Tăng độ đậm cho dữ liệu trong lưới nhưng không đậm bằng Header */
+.ppw-container .dx-datagrid-rowsview .dx-row>td {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+}
+
+/* Header Right */
+.ppw-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ppw-tab-filters {
+    display: flex;
+    background: #f1f5f9;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.ppw-tab-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.ppw-tab-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.ppw-nav-arrows {
+    display: flex;
+    gap: 4px;
+}
+
+.ppw-nav-btn {
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    padding: 4px 10px;
+    cursor: pointer;
+    color: #475569;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.ppw-nav-btn:hover {
+    background: #f8fafc;
+}
+
+/* Body (Left Grid + Right Pie) */
+.ppw-body {
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+    min-height: 350px;
+}
+
+.ppw-left-table-col {
+    flex: 1 1 55%;
+    overflow: hidden;
+}
+
+.ppw-right-pie-col {
+    flex: 1 1 45%;
+    min-width: 320px;
+    border-left: 1px solid var(--ppw-border);
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Pie Chart Title Bar */
+.ppw-pie-title-bar {
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ppw-btn-back-all {
+    background: #f1f5f9;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #0f172a;
+    transition: all 0.2s ease;
+}
+
+.ppw-btn-back-all:hover {
+    background: #e2e8f0;
+}
+
+.ppw-pie-container {
+    flex: 1;
+    min-height: 250px;
+    width: 100%;
+}
+
+/* DataGrid Progress Bar Cell */
+.ppw-progress-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ppw-progress-bar-track {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.ppw-progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+}
+
+.ppw-progress-pct-label {
+    font-size: 13px;
+    font-weight: 800;
+    font-family: var(--font-inter), monospace, sans-serif;
+    min-width: 35px;
+    text-align: right;
+}
+
+/* Footer Legend */
+.ppw-footer-legend {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--ppw-border-light);
+}
+
+.ppw-legend-list {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.ppw-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ppw-legend-item:hover {
+    color: #0f172a;
+}
+
+/* Tooltip */
+.ppw-custom-tooltip {
+    position: fixed;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+    z-index: 9999;
+    pointer-events: none;
+    font-size: 12.5px;
+    color: #334155;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    display: none;
+}
+
+.ppw-custom-tooltip.show {
+    opacity: 1;
+    display: block;
+}
+
+.ppw-tooltip-po-title {
+    font-weight: 800;
+    font-size: 14px;
+    color: #0f172a;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.ppw-tooltip-line {
+    margin-bottom: 6px;
+}
+
+.ppw-tooltip-line strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.ppw-tooltip-progress-val {
+    font-weight: 800;
+    font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+    .ppw-body {
+        flex-direction: column;
+    }
+
+    .ppw-right-pie-col {
+        border-left: none;
+        border-top: 1px solid var(--ppw-border);
+        padding-left: 0;
+        padding-top: 20px;
+    }
+}/* CH? �? TO�N M�N H�NH */
+.ppw-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    overflow-y: auto !important;
+    background: #ffffff !important;
+    padding: 24px !important;
+    box-sizing: border-box !important;
+}
+
+.ppw-theme-dark.ppw-fullscreen {
+    background: #0f172a !important;
+}
+
+.ppw-fullscreen .ppw-body {
+    height: calc(100vh - 120px) !important;
+}
+    color: #64748b;
+/* ========================================================================= */
+/* CSS CHO TOOLBAR TRONG COMMON DETAIL POPUP */
+/* ========================================================================= */
+.dx-popup-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 0;
+}
+
+.dx-popup-search-wrap {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 12px;
+    width: 320px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.dx-popup-search-wrap:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dx-popup-search-wrap i {
+    color: #64748b;
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.dx-popup-search-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    color: #334155;
+    background: transparent;
+}
+
+.dx-popup-search-input::placeholder {
+    color: #94a3b8;
+}
+
+.dx-popup-group-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #475569;
+    font-weight: 500;
+}
+
+.dx-popup-group-select {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 6px 32px 6px 12px;
+    font-size: 14px;
+    color: #1e293b;
+    background-color: #ffffff;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: border-color 0.2s ease;
+}
+
+.dx-popup-group-select:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+.dx-popup-detail-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.dx-popup-grid-wrapper {
+    flex: 1;
+    overflow: hidden;
+}

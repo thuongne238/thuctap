@@ -1,0 +1,171 @@
+@{
+Layout = "~/Views/Shared/_Layout.cshtml";
+ViewBag.Title = "Dashboard Doanh Thu";
+ViewBag.HeaderTitle = "Báo Cáo Doanh Thu";
+ViewBag.ActiveTab = "doanh-thu";
+}
+
+@section css {
+<!-- DevExtreme CSS -->
+<link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.common.css" onerror="this.onerror=null;this.href='https://cdn3.devexpress.com/jslib/23.2.5/css/dx.common.css';" />
+<link rel="stylesheet" href="~/Content/plugins/DevExtreme/dx.light.css" onerror="this.onerror=null;this.href='https://cdn3.devexpress.com/jslib/23.2.5/css/dx.light.css';" />
+
+<!-- CSS Modules Riêng Của Trang Dashboard -->
+<link href="~/css/DashboardTongQuanTienDo/core/dashboard-widgets.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+<link href="~/css/DashboardTongQuanTienDo/core/dashboard-theme.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+
+}
+
+<div id="tab-content-doanh-thu" class="dashboard-tab-pane active-tab mt-2">
+    <!-- 1. SUMMARY KPI CARDS (Khung Doanh Thu) -->
+    <section class="tqth-kpi-grid mb-2">
+        <!-- Card 1: Doanh Thu Kế Hoạch -->
+        <div class="tqth-kpi-card tqth-doanhthu-card kpi-producing">
+            <div class="tqth-kpi-info">
+                <span class="tqth-kpi-label">DOANH THU MỤC TIÊU</span>
+                <div class="tqth-kpi-number-wrap">
+                    <div class="tqth-kpi-number">
+                        <span id="kpi-val-revenue-target">0</span>
+                        <span class="tqth-kpi-unit">VND</span>
+                    </div>
+                </div>
+                <span class="tqth-kpi-sub">Mục tiêu theo kế hoạch</span>
+            </div>
+            <div class="tqth-kpi-icon-wrap">
+                <i class="fa-solid fa-bullseye"></i>
+            </div>
+        </div>
+
+        <!-- Card 2: Doanh Thu Thực Tế -->
+        <div class="tqth-kpi-card tqth-doanhthu-card kpi-total">
+            <div class="tqth-kpi-info">
+                <span class="tqth-kpi-label">DOANH THU THỰC TẾ</span>
+                <div class="tqth-kpi-number-wrap">
+                    <div class="tqth-kpi-number">
+                        <span id="kpi-val-revenue-current">0</span>
+                        <span class="tqth-kpi-unit">VND</span>
+                    </div>
+                </div>
+                <span class="tqth-kpi-sub">Tổng doanh thu đạt được trong kỳ</span>
+            </div>
+            <div class="tqth-kpi-icon-wrap">
+                <i class="fa-solid fa-sack-dollar"></i>
+            </div>
+        </div>
+
+        <!-- Card 3: Doanh Thu Kỳ Trước -->
+        <div class="tqth-kpi-card tqth-doanhthu-card kpi-delivered">
+            <div class="tqth-kpi-info">
+                <span class="tqth-kpi-label">DOANH THU KỲ TRƯỚC</span>
+                <div class="tqth-kpi-number-wrap">
+                    <div class="tqth-kpi-number">
+                        <span id="kpi-val-revenue-prev">0</span>
+                        <span class="tqth-kpi-unit">VND</span>
+                    </div>
+                </div>
+                <span class="tqth-kpi-sub">So với 1 tháng trước</span>
+            </div>
+            <div class="tqth-kpi-icon-wrap">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+        </div>
+
+        <!-- Card 4: Tăng Trưởng -->
+        <div class="tqth-kpi-card tqth-doanhthu-card kpi-delayed">
+            <div class="tqth-kpi-info">
+                <span class="tqth-kpi-label">TĂNG TRƯỞNG (%)</span>
+                <div class="tqth-kpi-number-wrap">
+                    <div class="tqth-kpi-number" id="kpi-val-revenue-growth">
+                        0%
+                    </div>
+                </div>
+                <span class="tqth-kpi-sub">Tỷ lệ tăng trưởng so với kỳ trước</span>
+            </div>
+            <div class="tqth-kpi-icon-wrap">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. BẢNG DOANH THU THEO ĐƠN HÀNG/PO VÀ TOP KHÁCH HÀNG -->
+    <div style="display: flex; gap: 1.25rem; margin-top: 0; margin-bottom: 1.25rem; flex-wrap: wrap;">
+        <!-- Cột trái: Bảng Doanh thu theo Đơn hàng (58%) -->
+        <section class="tqth-stages-block" style="flex: 1 1 58%; min-width: 500px;">
+            <div class="tqth-block-header">
+                <h2 class="tqth-block-title">DOANH THU THEO ĐƠN HÀNG / PO</h2>
+            </div>
+            <div id="grid-revenue-by-order" class="ppw-container ppw-table-wrapper" style="width: 100%; margin-top: 15px; padding: 0; border: none; box-shadow: none; background: transparent;"></div>
+        </section>
+
+        <!-- Cột phải: Biểu đồ tròn và Lưới Khách Hàng (42%) -->
+        <section class="tqth-stages-block" style="flex: 1 1 42%; min-width: 450px;">
+            <div class="tqth-block-header">
+                <h2 class="tqth-block-title">TOP KHÁCH HÀNG</h2>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 15px;">
+                <!-- Grid bên trái -->
+                <div id="grid-revenue-top-customers" style="flex: 1 1 50%;"></div>
+                <!-- Pie chart bên phải -->
+                <div id="revenue-pie-chart" style="flex: 1 1 50%; height: 260px;"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 3. BIỂU ĐỒ DOANH THU THEO THÁNG & CHUYỀN -->
+    <div style="display: flex; gap: 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+        <!-- Biểu đồ theo tháng (50%) -->
+        <section class="tqth-stages-block" style="flex: 1 1 48%; min-width: 400px;">
+            <div class="tqth-block-header">
+                <h2 class="tqth-block-title">DOANH THU THEO THÁNG</h2>
+            </div>
+            <div id="revenue-bar-chart" style="width: 100%; height: 350px;"></div>
+        </section>
+
+        <!-- Biểu đồ theo chuyền (50%) -->
+        <section class="tqth-stages-block" style="flex: 1 1 48%; min-width: 400px;">
+            <div class="tqth-block-header">
+                <h2 class="tqth-block-title">DOANH THU THEO CHUYỀN TRONG THÁNG</h2>
+            </div>
+            <div id="revenue-line-chart" style="width: 100%; height: 350px;"></div>
+        </section>
+    </div>
+
+</div>
+
+@section scripts {
+<!-- Apache ECharts CDN -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script>
+    if (typeof echarts === 'undefined') {
+        document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"><\/script>');
+}
+</script>
+
+<!-- DevExtreme JS -->
+<script src="~/Scripts/dx.all.js" charset="utf-8"></script>
+<script>
+        if (typeof DevExpress === 'undefined') {
+                document.write('<script src="https://cdn3.devexpress.com/jslib/23.2.5/js/dx.all.js" charset="utf-8"><\/script>');
+            }
+</script>
+
+<script src="~/Scripts/DashboardTongQuanTienDo/tabs/tab-doanh-thu.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
+<script src="~/Scripts/DashboardTongQuanTienDo/tabs/dongbo-tab-tinhhinh.js?v=@DateTime.Now.Ticks" charset="utf-8"></script>
+
+<script>
+    $(document).ready(function () {
+        // Khởi tạo tab doanh thu được xử lý tự động trong tab-doanh-thu.js (TabDoanhThuApp)
+
+        // Lắng nghe sự kiện thay đổi ngày từ DateRangePicker trên Header (_Layout)
+        $(document).on('dashboard:dateChanged', function (e, data) {
+            if (window.TabDoanhThuApp) window.TabDoanhThuApp.loadData(data.startDate, data.endDate);
+        });
+
+        // Lắng nghe sự kiện bấm nút Refresh trên Header (_Layout)
+        $(document).on('dashboard:refresh', function () {
+            if (window.TabDoanhThuApp) window.TabDoanhThuApp.loadData();
+        });
+    });
+</script>
+
+}

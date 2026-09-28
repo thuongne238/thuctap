@@ -1,0 +1,176 @@
+﻿.modal-footer-nguoigiaoviec {
+    background: #f7f9fc;
+    border-top: 1px solid #e8edf5;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selected-preview {
+    font-size: 0.8rem;
+    color: #6c7a8d;
+}
+
+    .selected-preview span {
+        color: #1a56db;
+        font-weight: 600;
+    }
+
+.btn-confirm {
+    background: linear-gradient(135deg, #4f84fa, #3974f0);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 24px;
+    font-family: inherit;
+    transition: opacity 0.2s, transform 0.1s;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+    .btn-confirm:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .btn-confirm:active {
+        transform: translateY(0);
+    }
+
+.labelHeader {
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 4px;
+}
+
+#itemCodeGiaoViec {
+    height: 35px;
+    font-size: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 8px 30px 8px 12px;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    cursor: pointer;
+    width: 100%;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+    #itemCodeGiaoViec:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+#dropdownGiaoViec {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 4px;
+    right: 4px;
+    z-index: 9999;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    max-height: 300px;
+    overflow: hidden;
+    margin-top: 2px;
+}
+
+    #dropdownGiaoViec .search-box {
+        padding: 8px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+
+#searchItemGiaoViec {
+    height: 30px;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+#itemListGiaoViec {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#dropdownGiaoViec .dropdown-item {
+    padding: 6px 12px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f8f9fa;
+    cursor: pointer;
+}
+
+    #dropdownGiaoViec .dropdown-item:hover {
+        background-color: #e9ecef;
+    }
+
+    #dropdownGiaoViec .dropdown-item input[type="checkbox"] {
+        margin-right: 10px;
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+    }
+
+    #dropdownGiaoViec .dropdown-item label {
+        margin-bottom: 0;
+        cursor: pointer;
+        width: 100%;
+    }
+
+.check-all {
+    background: #fff;
+    font-weight: bold;
+    border-bottom: 2px solid #eee !important;
+}
+
+.input-disabled {
+    height: 35px !important;
+    background-color: #e9ecef !important;
+    font-size: 13px !important;
+}
+
+#ngayDangKy {
+    height: 35px !important;
+    font-size: 14px !important;
+}
+
+#txtMaLenh.input-disabled {
+    background-color: #ffffff !important;
+    color: #495057;
+    opacity: 1;
+    cursor: default;
+    font-size: 14px !important;
+}
+
+#modalGiaoViec .select2-container--default .select2-selection--single {
+    height: 35px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    display: flex;
+}
+
+    #modalGiaoViec .select2-container--default .select2-selection--single .select2-selection__rendered {
+        font-size: 14px;
+        margin-top: -3px !important
+    }
+
+    #modalGiaoViec .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 33px !important;
+    }
+
+#modalGiaoViec .row.align-items-end .col-6 {
+    display: flex;
+    flex-direction: column;
+}

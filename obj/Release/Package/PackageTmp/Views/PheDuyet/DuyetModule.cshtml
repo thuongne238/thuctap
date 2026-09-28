@@ -1,0 +1,334 @@
+﻿@{
+    ViewBag.Title = "Phê duyệt";
+    ViewBag.PageTitle = "PHÊ DUYỆT";
+    Layout = "~/Views/PheDuyet/Shared/_Layout.cshtml";
+
+}
+
+@section styles {
+    <link href="~/css/PheDuyet/PheDuyet.css" rel="stylesheet" />
+}
+
+@*@section headerButtons {
+    <div class="card-header ui-header d-flex align-items-center ms-auto border-0">
+        <div class="d-flex flex-wrap gap-2 group-btn-duyet" style="background: #00477f">
+            <button class="btn btn-sm px-3 d-none" id="btn-duyet-all">
+                <i class="fa-solid fa-circle-check me-1"></i>
+                Duyệt tất cả
+            </button>
+
+
+            <button class="btn btn-sm px-3" id="btn-duyet">
+                <i class="fa-solid fa-circle-check me-1"></i>
+                Duyệt
+            </button>
+
+
+            <button class="btn btn-sm px-3" id="btn-huy-duyet">
+                <i class="fa-solid fa-circle-xmark me-1"></i>
+                Hủy duyệt
+            </button>
+            <button class="btn btn-sm px-3" id="btn-refresh">
+                <i class="fa-solid fa-rotate-right me-1"></i>
+                Nạp lại
+            </button>
+
+            <button class="btn btn-sm px-3 d-none" id="btn-save">
+                <i class="fa-solid fa-floppy-disk me-1"></i>
+                Lưu
+            </button>
+
+
+            <button class="btn btn-sm px-3 d-none" id="btn-excel">
+                <i class="fa-solid fa-file-excel me-1"></i>
+                Excel
+            </button>
+
+
+            <button class="btn btn-sm px-3" id="btn-refresh">
+                <i class="fa-solid fa-rotate-right me-1"></i>
+                Nạp lại
+            </button>
+        </div>
+    </div>
+   
+}*@
+@**@
+<div class="child-content">
+    <div id="dxMainTabs"></div>
+    <div class="content-area">
+        <div class="container-duyet">
+            <div style="background: #f8f9fa; padding: 5px; border-left: 4px solid #007bff; border-radius: 4px;">
+                <strong>Thông tin duyệt</strong>
+
+            </div>
+            <div id="gridContainer"></div>
+        </div>
+        <div class="container-detail-duyet">
+            <div style="background: #f8f9fa; padding: 5px; border-left: 4px solid #007bff; border-radius: 4px;">
+                <strong>Thông tin sơ đồ TNC </strong>
+
+            </div>
+            <div id="gridDetaiPheDuyet"></div>
+        </div>
+
+    </div>
+</div>
+@**@
+
+<div id="Popup-SubDetail">
+
+</div>
+@**@
+<div id="detailPopup" style="display:none">
+    <div id="sumary-detail" style="display:none"> </div>
+    <div id="detailGridContainer"></div>
+</div>
+@*Popup Đánh giá *@
+<div id="PopupDanhGia" style="display:none">
+
+    <div class="grid-contianer">
+
+        <div id="gridPhieuDanhGia">
+
+        </div>
+        <div class="container-danh-gia">
+            <table class="danhgia-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <div style="display: flex; justify-content: flex-start; align-items: center; gap: 20px;" class="xac-nhan-de-xuat">
+                                <div> Người đề xuất <br><strong> Ý kiến khác </strong></div>
+                                <div class="d-flex gap-3 align-items-center flex-shrink-0 kq-danh-gia">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="result-nguoi-de-xuat" id="KQPass_NgDeXuat" value="pass">
+                                        <label class="form-check-label text-success font-weight-bold" for="KQPass_NgDeXuat">Đồng ý</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="result-nguoi-de-xuat" id="KQFail_NgDeXuat" value="fail">
+                                        <label class="form-check-label text-danger font-weight-bold" for="KQFail_NgDeXuat">Không đồng ý</label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </th>
+                        <th>
+
+                            <div style="display: flex; justify-content: flex-start; align-items: center; gap: 20px;" class="xac-nhan-soat-xet">
+                                <div> Soát xét <br><strong> Ý kiến khác </strong></div>
+                                <div class="d-flex gap-3 align-items-center flex-shrink-0 kq-danh-gia">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="result-soat-xet" id="KQPass_SoatXet" value="pass">
+                                        <label class="form-check-label text-success font-weight-bold" for="KQPass_SoatXet">Đồng ý</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="result-soat-xet" id="KQFail_SoatXet" value="fail">
+                                        <label class="form-check-label text-danger font-weight-bold" for="KQFail_SoatXet">Không đồng ý</label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </th>
+
+                        <th>
+
+                            <div style="display: flex; justify-content: flex-start; align-items: center; gap: 20px;" class="xac-nhan-giam-doc">
+                                <div> Tổng giám đốc <br><strong> Ý kiến khác </strong></div>
+                                <div class="d-flex gap-3 align-items-center flex-shrink-0 kq-danh-gia">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="result-tong-giam-doc" id="KQPass_TongGiamDoc" value="pass">
+                                        <label class="form-check-label text-success font-weight-bold" for="KQPass_TongGiamDoc">Đồng ý</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="result-tong-giam-doc" id="KQFail_TongGiamDoc" value="fail">
+                                        <label class="form-check-label text-danger font-weight-bold" for="KQFail_TongGiamDoc">Không đồng ý</label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyXNKiem">
+                    <tr>
+                        <td>
+                            <div class="cell-content xac-nhan-de-xuat">
+                                <div>
+
+                                    <div>
+
+                                        <textarea class="danhgia-textarea" id="txtDG_QC"></textarea>
+                                    </div>
+
+                                </div>
+                                <div class="signature-wrapper">
+                                    <div class="content-sign">
+                                        <span class="signature-label">Ký Tên</span>
+                                        <div class="signature-controls">
+                                            <button class="btn btn-clear" onclick="clearSignature('signQC')">Xóa</button>
+
+                                        </div>
+                                    </div>
+                                    <div class="signature-pad-container">
+                                        <canvas class="signature-pad" id="signQC"></canvas>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-content xac-nhan-soat-xet">
+                                <textarea class="danhgia-textarea" id="txtDG_Mer"></textarea>
+                                <div class="signature-wrapper">
+                                    <div class="content-sign">
+                                        <span class="signature-label">Ký Tên</span>
+                                        <div class="signature-controls">
+                                            <button class="btn btn-clear" onclick="clearSignature('signMer')">Xóa</button>
+
+                                        </div>
+                                    </div>
+                                    <div class="signature-pad-container">
+                                        <canvas class="signature-pad" id="signMer"></canvas>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-content xac-nhan-giam-doc">
+                                <textarea class="danhgia-textarea" id="txtDG_KQ"></textarea>
+                                <div class="signature-wrapper">
+                                    <div class="content-sign">
+                                        <span class="signature-label">Ký Tên</span>
+                                        <div class="signature-controls">
+                                            <button class="btn btn-clear" onclick="clearSignature('signXN_KQ')">Xóa</button>
+
+                                        </div>
+                                    </div>
+                                    <div class="signature-pad-container">
+                                        <canvas class="signature-pad" id="signXN_KQ"></canvas>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@*Popup ĐH Tổng PO*@
+<div id="popupDHPO" style="display:none">
+    <div style="padding: 10px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">   
+        <div class="group-title" style="margin-bottom: 15px;">
+            <div style="background: #f8f9fa; padding: 5px; border-left: 4px solid #007bff; border-radius: 4px;">
+                <div id="headerInfo"></div>
+            </div>
+        </div>
+        <div style="background: #f8f9fa; padding: 5px; border-left: 4px solid #007bff; border-radius: 4px;">
+            <strong>TT PO-Lệnh Sản Xuất </strong>
+            <div id="gridLenhSX" style="margin-bottom: 20px;"></div>
+        </div>
+    
+        <div style="background: #f8f9fa; padding: 5px; border-left: 4px solid #007bff; border-radius: 4px;">
+            <strong>TT Cấp phát </strong>
+            <div id="gridCapPhat"></div>
+        </div>
+
+
+    </div>
+</div>
+
+
+<div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<div class="modal-title" id="signatureModalLabel">
+
+                    </div>*@
+                <div id="header-title-signature"></div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Công cụ -->
+                <div class="row mb-3 g-2">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small fw-bold">Màu bút:</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <input type="color" class="color-picker" id="penColor" value="#000000">
+                            <button class="btn btn-tool btn-outline-dark" onclick="setPenColor('#000000')">
+                                <i class="fas fa-circle" style="color: #000000;"></i>
+                            </button>
+                            <button class="btn btn-tool btn-outline-primary" onclick="setPenColor('#0d6efd')">
+                                <i class="fas fa-circle" style="color: #0d6efd;"></i>
+                            </button>
+                            <button class="btn btn-tool btn-outline-danger" onclick="setPenColor('#dc3545')">
+                                <i class="fas fa-circle" style="color: #dc3545;"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small fw-bold">Độ dày bút:</label>
+                        <div class="pen-size-selector">
+                            <div class="pen-size-btn active" onclick="setPenSize(2)" data-size="2">
+                                <div style="width: 6px; height: 6px; background: #000; border-radius: 50%;"></div>
+                            </div>
+                            <div class="pen-size-btn" onclick="setPenSize(4)" data-size="4">
+                                <div style="width: 10px; height: 10px; background: #000; border-radius: 50%;"></div>
+                            </div>
+                            <div class="pen-size-btn" onclick="setPenSize(6)" data-size="6">
+                                <div style="width: 14px; height: 14px; background: #000; border-radius: 50%;"></div>
+                            </div>
+                            <div class="pen-size-btn" onclick="setPenSize(8)" data-size="8">
+                                <div style="width: 18px; height: 18px; background: #000; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas vẽ chữ ký -->
+                <div class="position-relative">
+                    <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                    <small class="text-muted d-block mt-2 text-center">
+                        <i class="fas fa-info-circle"></i> Vẽ chữ ký của bạn vào khung trên
+                    </small>
+                </div>
+
+                <!-- Nút hành động -->
+                <div class="d-flex gap-2 mt-3 flex-wrap justify-content-center">
+                    <button class="btn btn-outline-secondary" onclick="clearSignature('signatureCanvas')">
+                        <i class="fas fa-eraser me-1"></i> Xóa
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="undoSignature()">
+                        <i class="fas fa-undo me-1"></i> Hoàn tác
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Hủy
+                </button>
+                <button type="button" id="signature-kho-npl" class="btn btn-primary">
+                    <i class="fas fa-check me-1"></i> Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+
+}

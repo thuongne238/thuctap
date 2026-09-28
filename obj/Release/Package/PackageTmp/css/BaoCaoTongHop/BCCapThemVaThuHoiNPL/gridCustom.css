@@ -1,0 +1,8 @@
+﻿body {
+}
+
+.dx-datagrid-headers {
+    position: sticky !important;
+    top: 100px !important; /* chiều cao header + tab */
+    z-index: 998 !important;
+}

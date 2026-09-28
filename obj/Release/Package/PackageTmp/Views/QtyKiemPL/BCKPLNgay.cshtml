@@ -1,0 +1,268 @@
+﻿
+@{
+    ViewBag.Title = "BCKiemPLNgay";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BB Kiểm Phụ Liệu</title>
+
+    <link rel="stylesheet" href="~/Content/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/Content/plugins/select2/css/select2.min.css">
+    <link href="~/Content/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="~/css/TheoDoiHangXuat/fontawesome.pro.6.0.0.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Content/plugins/fontawesome-free/css/all.min.css">
+    @*<link href="~/css/NguyenPhuLieu/Sign.css" rel="stylesheet" />*@
+    <link href="~/Scripts/ViTriKho/bootstrap5.3.min.css" rel="stylesheet" />
+    <link href="~/Content/plugins/DevExtreme/dx.light.css" rel="stylesheet" />
+    <link href="~/Content/plugins/DevExtreme/dx.common.css" rel="stylesheet" />
+    @*<script src="~/Scripts/NguyenPhuLieu/Sign.js"></script>*@
+    <link href="~/css/QtyKiemPL/PhieuKiem.css" rel="stylesheet" />
+    <link href="~/css/QtyKiemPL/BCNguyenPhuLieuNgay.css" rel="stylesheet" />
+
+
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <div class="header-section bg-info sticky-top">
+            <div class="container-fluid">
+                <div class="header-content d-flex flex-wrap align-items-center justify-content-between gap-3 py-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <a href="~/Home/DashBoard" class="text-white" id="home">
+                            <i class="fas fa-home fa-lg"></i>
+                        </a>
+                        <h5 class="header-title mb-0 text-white">
+
+                            <span class="d-block text-sm opacity-90">Báo Cáo Nguyên Phụ Liệu Theo Ngày</span>
+                        </h5>
+                    </div>
+
+                    <div class="action-buttons d-flex align-items-center gap-2 flex-nowrap">
+
+                        <!-- Lọc -->
+                        <div class="d-flex align-items-center gap-1 flex-nowrap" style="font-size: 13px;">
+                            <i class="fa-brands fa-codepen"></i>
+                            <span>Lọc</span>
+                            <select class="form-control form-control-dropdown" id="select-filer" style="width: 90px;">
+                                <option value="ALL">ALL</option>
+                                <option value="0">FAIL</option>
+                                <option value="1">PASS</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-custom bg-danger bg-gradient" id="toggleAll"> <i class="fa-solid fa-sun"></i> Thu gọn</button>
+                        <!-- Nạp Lại -->
+                        <button class="btn btn-custom btn-refresh bg-primary" id="btn-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                            Nạp Lại
+                        </button>
+                        <button class="btn btn-custom btn-success bg-success" id="btn-Excel">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-card animate-in">
+              
+            <div class="sticky-filter-tab">
+                <div class="form-section">
+                    <div class="row g-2 align-items-start filter-summary-row">
+
+                        <div id="dateFilterContent" class="date-filter-content container-fluid px-0">
+                            <div class="filter-toolbar row g-2 align-items-end">
+
+                                <div class="filter-date-item col-6 col-md-3 col-xl">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-calendar-alt me-1"></i>Từ Ngày
+                                    </label>
+                                    <div id="fromDate"></div>
+                                </div>
+
+                                <div class="filter-date-item col-6 col-md-3 col-xl">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-calendar-alt me-1"></i>Đến Ngày
+                                    </label>
+                                    <div id="toDate"></div>
+                                </div>
+
+                                <div class="filter-inline-col col-6 col-md-3 col-xl">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-file-invoice me-1"></i>PO Mua
+                                    </label>
+                                    <div id="filterPOMua"></div>
+                                </div>
+
+                                <div class="filter-inline-col col-6 col-md-3 col-xl">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-box me-1"></i>Số Lô
+                                    </label>
+                                    <div id="filterSoLo"></div>
+                                </div>
+
+                                <div class="filter-inline-col col-6 col-md-3 col-xl">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-users me-1"></i>Khách Hàng
+                                    </label>
+                                    <div id="filterTenKH"></div>
+                                </div>
+
+                                <div class="filter-inline-col col-6 col-md-4 col-xl">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-users me-1"></i>Nhà Cung Cấp
+                                    </label>
+                                    <div id="filterNhaCC"></div>
+                                </div>
+
+                                <div class="filter-inline-col col-6 col-md-3 col-xl">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-layer-group me-1"></i>Chủng Loại
+                                    </label>
+                                    <div id="filterTenCL"></div>
+                                </div>
+                                <div class="filter-inline-col col-6 col-md-2 col-xl">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-barcode me-1"></i>Item Code
+                                    </label>
+                                    <div id="filterItemCode"></div>
+                                </div>
+                                <div class="filter-action-item col-6 col-md-1 col-xl-1">
+                                    <label class="form-label-custom">
+                                        <i class="fas fa-filter me-1"></i>Lọc
+                                    </label>
+
+                                    <button id="btn-open-filter"
+                                            class="btn btn-primary btn-filter-inline btn-custom ">
+                                        <i class="fas fa-filter ml-1"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <div class="dash-wrap" id="dashWrap">
+
+                    <!-- PANEL 1: OVERVIEW -->
+                    <div class="panel expanded" data-id="1">
+                        <div class="panel-head">
+                            <div class="panel-head-left">
+                                <div class="panel-dot dot-blue"></div>
+                                <span class="panel-title">Overview</span>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="panel-body cols4" id="summary-overview">
+                            <div class="metric">
+                                <div class="metric-lbl">Tổng nhập</div>
+                                <div class="metric-val v-blue">0</div>
+                                <div class="metric-bar"><div class="bar-fill f-blue" style="width:0%"></div></div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-lbl">Chưa kiểm</div>
+                                <div class="metric-val v-amber">0</div>
+                                <div class="metric-bar"><div class="bar-fill f-amber" style="width:0%"></div></div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-lbl">Lần trễ</div>
+                                <div class="metric-val v-red">0</div>
+                                <div class="metric-bar"><div class="bar-fill f-red" style="width:0%"></div></div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-lbl">Tỉ lệ trễ</div>
+                                <div class="metric-val v-red">0</div>
+                                <div class="metric-bar"><div class="bar-fill f-red" style="width:0%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PANEL 2: QC SUMMARY -->
+                    <div class="panel expanded" data-id="2">
+                        <div class="panel-head">
+                            <div class="panel-head-left">
+                                <div class="panel-dot dot-green"></div>
+                                <span class="panel-title">QC Summary</span>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="panel-body cols4" id="summary-QC">
+                           
+                        </div>
+                    </div>
+
+                    <!-- PANEL 3: MERCHANDISING SUMMARY -->
+                    <div class="panel expanded" data-id="3">
+                        <div class="panel-head">
+                            <div class="panel-head-left">
+                                <div class="panel-dot dot-amber"></div>
+                                <span class="panel-title">Merchandising Summary</span>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="panel-body cols4" id="summary-Mer">
+                          
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="tab-kiem-npl"></div>
+            </div>
+
+            <div class="row grid-row">
+                <div class="col-12 grid-col">
+                    <div class="grid-contianer">
+                        <div id="grvPhuLieuKiemNgay"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="customLoaderWrapper" class="custom-loader-wrapper">
+        <div class="custom-loader-box">
+            <div class="custom-loading-text">Đang lấy dữ liệu...</div>
+            <div id="customLoader" class="custom-loader">
+                <div id="customProgressBar" class="custom-progress" data-percentage="100%"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="~/Scripts/jquery.min-3.6.1.js"></script>
+    <script src="~/Content/plugins/moment/moment.min.js"></script>
+    <script src="/Content/js/core/utils.js"></script>
+    <script src="/Content/js/core/common.js"></script>
+    <script src="~/Scripts/Toast/Toast.js"></script>
+    <script src="~/Content/plugins/select2/js/select2.full.min.js"></script>
+    <script src="~/Content/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="~/Scripts/ViTriKho/bootstrap5.3.bundle.min.js"></script>
+    <script src="~/Content/dist/js/adminlte.min.js"></script>
+    <script src="~/Content/plugins/DevExtreme/dx.all.js"></script>
+    <script src="~/Content/plugins/DevExtreme/knockout-latest.min.js"></script>
+    <script src="~/Content/plugins/PadSign/signature_pad.min.js"></script>
+    <script src="~/Scripts/QtyKiemPL/BCKiemPLNgay/BCKiemPLNgay.js?version=1.1"></script>
+    <script>
+
+         var _userName = '@ViewBag.userName';
+        if (window.CefSharp) {
+            $("#home").hide();
+            localStorage.setItem('username1', _userName)
+        }
+    </script>
+    <div id="popupCustomFilter"></div>
+</body>
+
+</html>
+
+
